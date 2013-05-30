@@ -1,0 +1,44 @@
+#!/usr/bin/perl -w -I/opt/eprints3/perl_lib
+
+use EPrints;
+use strict;
+
+my $session = new EPrints::Session;
+return unless( defined $session );
+
+unless( $session->can_call( 'irstats2', 'allow' ) && $session->call( ['irstats2', 'allow'], $session, 'irstats2/export' ) )
+{
+        $session->get_request->status( 401 );
+        $session->terminate;
+        exit;
+}
+
+my $docs_count = EPrints::Plugin::Stats::Utils::human_display( $session->dataset( 'archive' )->search( 
+                filters => [{
+                        meta_fields => [ 'full_text_status' ],
+                        value => "public restricted",
+			merge => "ANY",
+                }] )->count 
+);
+
+print <<HTML;
+<span style='padding-right:10px;'>$docs_count full-texts to date</span>
+HTML
+
+my $handler = $session->plugin( "Stats::Handler" );
+return unless(defined $handler);
+
+my $ctx = $handler->context( { datatype => 'eprint_downloads' } )->forever;
+my $dl_all = EPrints::Plugin::Stats::Utils::human_display( $ctx->select()->sum_all );
+print <<HTML;
+<span style='padding-right:10px;'>$dl_all full-text downloads to date</span>
+HTML
+
+$ctx->dates( { range => '1y' } );
+my $dl_year = EPrints::Plugin::Stats::Utils::human_display( $ctx->select()->sum_all );
+
+print <<HTML;
+<span style='padding-right:10px;'>$dl_year full-text downloads in the past year</span>
+HTML
+
+return;

@@ -1,0 +1,88 @@
+use strict;
+
+use EPrints;
+
+my $session = new EPrints::Session;
+return unless( defined $session );
+
+unless( $session->can_call( 'irstats2', 'allow' ) && $session->call( ['irstats2', 'allow'], $session, 'irstats2/view' ) )
+{
+	$session->get_request->status( 401 );
+        $session->terminate;
+        exit;
+}
+
+my $handler = $session->plugin( "Stats::Handler" );
+unless(defined $handler)
+{
+        print STDOUT "<p>IRStats2: internal error (handler not available)</p>";
+        $session->terminate();
+        return;
+}
+
+my ($context, $params) = &_get_context( $session, $handler );
+
+my $view = $params->{view};
+
+unless( defined $view )
+{
+	print STDOUT "<p>IRStats2: missing parameters in request.</p>";
+	$session->terminate;
+	return;
+}
+
+my $view_plugin = $session->plugin( "Stats::View::$view", handler => $handler, options => $params );
+unless( defined $view_plugin )
+{
+	print STDOUT "<p>IRStats2: unknown view <strong>$view</strong></p>";
+	$session->terminate;
+	return;
+}
+
+if( defined $params->{export} )
+{
+	my $export_plugin = $session->plugin( "Stats::Export::".$params->{export} );
+	if( defined $export_plugin )
+	{
+		$params->{export_plugin} = $export_plugin;
+		$session->send_http_header( content_type => $export_plugin->mimetype );
+		$view_plugin->export( $context, $params );	
+	}
+}
+else
+{
+	$session->send_http_header( content_type => $view_plugin->mimetype );
+	$view_plugin->ajax( $context );
+}
+
+$session->terminate;
+return;
+
+sub _get_context
+{
+	my( $session, $handler ) = @_;
+
+	my $context_fields = {
+		set_name => 1,
+		set_value => 1,
+		from => 1,
+		to => 1,
+		range => 1,
+		datatype => 1,
+		datafilter => 1,
+		grouping => 1
+	};
+
+	my $context = $handler->context->from_request( $session );
+
+	my %params;
+
+	my @sparams = $session->param();
+	foreach( @sparams )
+	{
+		my $val = $session->param( $_ );
+		next if( !EPrints::Utils::is_set( $val ) || $context_fields->{$_} );
+		$params{$_} = $val;
+	}
+	return ( $context, \%params );
+}

@@ -1,0 +1,111 @@
+use strict;
+
+use EPrints;
+
+# TODO: remove document.write - this is awful - instead use a JS connector to display (error) messages.
+
+my $session = new EPrints::Session;
+return unless( defined $session );
+
+unless( $session->can_call( 'irstats2', 'allow' ) && $session->call( ['irstats2', 'allow'], $session, 'irstats2/view' ) )
+{
+        $session->get_request->status( 401 );
+        $session->terminate;
+        exit;
+}
+
+my $referer = $session->param( "referer" );
+if( !EPrints::Utils::is_set( $referer ) )
+{
+        $referer = EPrints::Apache::AnApache::header_in(
+                                $session->get_request,
+                                'Referer' );
+}
+
+unless( defined $referer )
+{
+	$session->terminate;
+	return;
+}
+
+print STDERR "Referrer is '$referer'\n";
+
+unless( $referer =~ m#/view/(\w+)/(.*)\.html#i )
+{
+	print STDERR "failed to parse the referer\n";
+	return;
+}
+
+my($viewid,$key) = ($1,$2);
+
+print STDERR "viewid = '$viewid' - key = '$key'\n";
+
+my $handler = $session->plugin( "Stats::Handler" );
+unless(defined $handler)
+{
+        print STDOUT "<p>IRStats2: internal error (handler not available)</p>";
+        $session->terminate();
+        return;
+}
+
+if( $viewid ne ' year' && $handler->valid_set_value( $viewid, $key ) )
+{
+	print STDERR "Stats/browse: invalid set value\n";
+	$session->terminate;
+	return;
+}
+
+# need a way to map a view path to a Sets / reports of some sorts in IRStats2
+# for now:
+
+my $mappings = {
+	divisions => 'divisions',
+	year => undef,
+	creators => 'authors',
+};
+
+my $setid = $mappings->{$viewid} || $viewid;
+
+unless( defined $setid )
+{
+	print STDERR "Unknown set/view '$viewid'\n";
+	return;
+}
+
+$key =~ s/(\..*)$//g;
+$key =~ s/(\/.*)$//g;
+
+# need to translate $viewid / $key into proper set_name/set_value??
+
+# need to cleanup 'key' for sure...
+print STDERR "set_name = $setid - set_value = $key\n";
+
+my $ctx_params = {
+	datatype => 'eprint_downloads', 
+	set_name => $setid, 
+	set_value => $key
+};
+
+if( $viewid eq 'year' )
+{
+	$ctx_params->{range} = $key;	
+	delete $ctx_params->{set_name};
+	delete $ctx_params->{set_value};
+}
+
+if( $viewid eq 'institution' )
+{
+	$ctx_params->{set_value} =~ s/_/ /g;
+}
+
+my $ctx = $handler->context( $ctx_params );
+
+my $opts = { date_resolution => 'month', graph_type => 'column' };
+
+my $view = $session->plugin( "Stats::View::Google::Graph", handler => $handler, session => $session, options => $opts ) or die( 'no view plugin...' );
+#my $view = $session->plugin( "Stats::View::KeyFigures", handler => $handler, session => $session, options => {} ) or die( 'no view plugin...' );
+
+binmode( STDOUT, ":utf8" );
+print STDOUT EPrints::XML::to_string( $view->render( $ctx ) );
+
+exit;

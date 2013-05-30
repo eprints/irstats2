@@ -1,0 +1,96 @@
+use strict;
+
+use EPrints;
+
+# This extension works only with Stats::View::SetDesc
+
+my $session = new EPrints::Session;
+return unless( defined $session );
+
+unless( $session->can_call( 'irstats2', 'allow' ) && $session->call( ['irstats2', 'allow'], $session, 'irstats2/view' ) )
+{
+	$session->get_request->status( 401 );
+	$session->terminate;
+	exit;
+}
+
+my $handler = $session->plugin( "Stats::Handler" );
+unless(defined $handler)
+{
+        print STDOUT "<p>IRStats2: internal error (handler not available)</p>";
+        $session->terminate();
+        return;
+}
+
+##$handler->{noise}++;
+
+my $set_name = $session->param( 'set_name' );
+
+unless( defined $set_name )
+{
+	$session->terminate;
+	return;
+}
+
+my $base_url = $session->param( 'base_url' ) || '/cgi/stats/report';
+$base_url =~ s/\/$//g;
+my $report = '';
+if( $base_url =~ /report\/(.*)$/ )
+{
+	$report = $1;
+	$base_url =~ s/\/?([^\/]*)$//g;
+}
+
+my $q = $session->param( 'q' );
+
+my $values;
+
+if( $set_name eq 'eprintid' )
+{
+	# special case - there should only be only one match
+	my $eprint = $session->dataset( 'archive' )->dataobj( $q );
+	if( defined $eprint )
+	{
+		print STDOUT "<a href='/cgi/stats/report/eprint/$q'>".$eprint->value( 'title' )."</a>";
+		$session->terminate;
+		return;
+	}
+}
+else
+{
+	$values = $handler->get_all_rendered_set_values( $set_name, $q );
+}
+
+my $html = "<ul class='irstats2_setfinder_values'>";
+my $done_any = 0;
+foreach my $value ( @$values )
+{
+	my $escape_value = $value->{set_value};
+	$escape_value =~ s/'/\\'/g;
+#	unless( EPrints::Utils::is_set( $q ) )
+	if(0)
+	{
+		# if $q is set, then we're doing a COLLATE utf8_general_ci LIKE '%$q%'
+		# this seems to SELECT the data differently than usual and doesn't require utf8::decode
+		utf8::decode( $escape_value );
+		utf8::decode( $value->{rendered_set_value} );
+	}
+	$html .= "<li><div class='irstats2_setfinder_row'><a href='$base_url/$set_name/".EPrints::Utils::url_escape( $escape_value )."/$report'>".$value->{rendered_set_value}."</a></div></li>";
+
+	$done_any++;
+}
+
+if( $done_any )
+{
+	$html .= "</ul>";
+}
+else
+{
+	$html = "<span>No match</span>";
+}
+
+print STDOUT $html;
+
+$session->terminate;
+return;
+

@@ -1,0 +1,15 @@
+use EPrints;
+use EPrints::ScreenProcessor;
+
+use strict;
+
+my $session = EPrints::Session->new();
+exit( 0 ) unless( defined $session );
+
+EPrints::ScreenProcessor->process(
+	session => $session,
+	screenid => "IRStats2::Report",
+);
+
+$session->terminate;
+

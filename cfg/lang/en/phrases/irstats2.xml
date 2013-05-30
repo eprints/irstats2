@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no" ?>
+<!DOCTYPE phrases SYSTEM "entities.dtd">
+
+<epp:phrases xmlns="http://www.w3.org/1999/xhtml" xmlns:epp="http://eprints.org/ep3/phrase" xmlns:epc="http://eprints.org/ep3/control">
+
+<!-- Misc -->
+<epp:phrase id="lib/irstats2/unknown:eprint">Unknown EPrint '<epc:pin name="id"/>'.</epp:phrase>
+<epp:phrase id="lib/irstats2/unknown:subject">Unknown Subject '<epc:pin name="id"/>'.</epp:phrase>
+<epp:phrase id="lib/irstats2/unknown:set">Unknown <epc:pin name="set_name"/>: <epc:pin name="set_value"/>.</epp:phrase>
+<epp:phrase id="lib/irstats2/export_as">Export as <epc:pin name="id"/></epp:phrase>
+
+<!-- Dates -->
+<epp:phrase id="lib/irstats2/dates:separator"><span class='irstats2_date_separator'>-</span></epp:phrase>
+<epp:phrase id="lib/irstats2/dates:forever"><span class='irstats2_date_label'>All</span></epp:phrase>
+<epp:phrase id="lib/irstats2/dates:unknown"><span class='irstats2_date_label'>Unknown dates</span></epp:phrase>
+<epp:phrase id="lib/irstats2/dates:invalid_range"><span class='irstats2_date_label'>Invalid range</span></epp:phrase>
+<epp:phrase id="lib/irstats2/dates:granularity:y">year</epp:phrase>
+<epp:phrase id="lib/irstats2/dates:granularity:plural:y">years</epp:phrase>
+<epp:phrase id="lib/irstats2/dates:granularity:m">month</epp:phrase>
+<epp:phrase id="lib/irstats2/dates:granularity:plural:m">months</epp:phrase>
+<epp:phrase id="lib/irstats2/dates:granularity:d">day</epp:phrase>
+<epp:phrase id="lib/irstats2/dates:granularity:plural:d">days</epp:phrase>
+<epp:phrase id="lib/irstats2/dates:range"><span class='irstats2_date_label'>Past <epc:pin name="value"/> <epc:pin name="granularity"/></span></epp:phrase>
+<epp:phrase id="lib/irstats2/dates:join_dates"> - </epp:phrase>
+
+<!-- Sets -->
+<epp:phrase id="lib/irstats2/sets:repository">All items</epp:phrase>
+<epp:phrase id="lib/irstats2/sets:divisions">University structure</epp:phrase>
+<epp:phrase id="lib/irstats2/sets:authors">Authors</epp:phrase>
+<epp:phrase id="lib/irstats2/sets:userid">Depositors</epp:phrase>
+<epp:phrase id="lib/irstats2/sets:subjects">Subjects</epp:phrase>
+<epp:phrase id="lib/irstats2/sets:type">Item type</epp:phrase>
+<epp:phrase id="lib/irstats2/sets:institution">Institution</epp:phrase>
+<epp:phrase id="lib/irstats2/sets:eprint">Item</epp:phrase>
+<epp:phrase id="lib/irstats2/sets:eprintid">EPrint ID</epp:phrase>
+
+<epp:phrase id="Plugin/Screen/IRStats2/Report:title">Repository Statistics</epp:phrase>
+<epp:phrase id="Plugin/Screen/IRStats2/Report:invalid_set_value">Invalid set value.</epp:phrase>
+<epp:phrase id="Plugin/Screen/IRStats2/Report:invalid_report">Report does not exist.</epp:phrase>
+
+<epp:phrase id="Plugin/Stats/View/KeyFigures:title">Activity Overview</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:collection">Collection</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:total_usage">Total usage</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:last_month">Past month</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:downloads_trend">Downloads trend</epp:phrase>
+
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:plural:work">Works</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:singular:work">Work</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:plural:full_text">Full text</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:singular:full_text">Full text</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:plural:open_access">Open access</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:singular:open_access">Open access</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:plural:downloads">Downloads</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:singular:downloads">Download</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:plural:deposits">Items</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:singular:deposits">Item</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:singular:hits">Hit</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:plural:hits">Hits</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:ratio_openaccess">Open access</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:metric:ratio_fulltext">Full text</epp:phrase>
+
+<epp:phrase id="Plugin/Stats/View/KeyFigures:deposits_details">
+<div class='irstats2_deposit_details'><epc:pin name="fulltext"/> Full text - <epc:pin name="openaccess"/> Open access</div>
+</epp:phrase>
+
+<epp:phrase id="Plugin/Stats/View/SetDesc:search">Search</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/SetDesc:view_all">View all</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/SetDesc:view">View</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/SetDesc:eprintid">EPrint ID: </epp:phrase>
+
+<epp:phrase id="Plugin/Stats/View/LinksToReports:title">Reports</epp:phrase>
+
+<epp:phrase id="irstats2/view/export_section">
+<form action="/cgi/stats/get" method="get">
+<epc:pin name="params"/>
+Export as <epc:pin name="options"/>
+<input type="submit" value="Export"/> 
+</form>
+</epp:phrase>
+
+
+
+<!-- Pseudo reports (eg. the ones on citations/summary pages) -->
+<epp:phrase id="lib/irstats2:embedded:citation:eprint">
+        <script type="text/javascript">
+        document.observe("dom:loaded",function(){
+                new EPJS_Stats_Sparkline ( {
+                        'container_id': 'spark_<epc:pin name='eprintid'/>',
+                        'datatype': 'downloads',
+                        'set_name': 'eprint',
+                        'set_value': '<epc:pin name='eprintid'/>'
+                });
+        });
+        </script>
+</epp:phrase>
+
+<epp:phrase id="lib/irstats2:embedded:summary_page:eprint:downloads">
+<h3 class="irstats2_summary_page_header">Downloads</h3>
+<div class="irstats2_summary_page_container">
+<p>Downloads per month over past year</p>
+<div id="irstats2_summary_page_downloads" class="irstats2_graph"/>
+<!--<p style="text-align:center"><a href="#" id="irstats2_summary_page:link">View more statistics</a></p>-->
+</div>
+<script type="text/javascript">
+document.observe("dom:loaded",function(){
+
+		var irstats2_summary_page_eprintid = '<epc:pin name='eprintid'/>';
+
+		/* $( 'irstats2_summary_page:link' ).setAttribute( 'href', '/cgi/stats/report/eprint/' + irstats2_summary_page_eprintid ); */
+
+		new EPJS_Stats_GoogleGraph ( { 'context': {
+			'range':'1y',
+			'set_name': 'eprint',
+			'set_value': irstats2_summary_page_eprintid,
+			'datatype':'downloads' },
+			'options': {
+			'container_id': 'irstats2_summary_page_downloads', 'date_resolution':'month','graph_type':'column'
+			} } );
+		});
+
+</script>
+</epp:phrase>
+
+<epp:phrase id="lib/irstats2:embedded:summary_page:eprint:origin">
+<h3>Origin of downloads</h3>
+<div id="irstats2_summary_page_countries" class="irstats2_google_geochart"/>
+<script type="text/javascript">
+document.observe("dom:loaded",function(){
+
+		var irstats2_summary_page_eprintid = '<epc:pin name='eprintid'/>';
+
+		new EPJS_Stats_GoogleGeoChart ( { 'context': {
+			'range':'1y',
+			'set_name': 'eprint',
+			'set_value': irstats2_summary_page_eprintid,
+			'datatype':'countries'
+			}, 'options': {
+			'container_id': 'irstats2_summary_page_countries'
+
+			}});
+		}); 
+</script>
+</epp:phrase>
+
+<!-- Errors -->
+<epp:phrase id="lib/irstats2/error:invalid_dataset">Unknown datatype '<epc:pin name="dataset"/>'</epp:phrase>
+<epp:phrase id="lib/irstats2/error:no_data">No data found.</epp:phrase>
+
+<!-- Report categories -->
+<epp:phrase id="lib/irstats2:category:most_popular">Most popular</epp:phrase>
+<epp:phrase id="lib/irstats2:category:advanced">Advanced</epp:phrase>
+<epp:phrase id="lib/irstats2:category:custom">Custom reports</epp:phrase>
+<epp:phrase id="lib/irstats2:category:general">General</epp:phrase>
+
+<!-- Reports -->
+<epp:phrase id="lib/irstats2:report:main">Statistics Overview</epp:phrase>
+<epp:phrase id="lib/irstats2:report:most_popular_authors">Authors</epp:phrase>
+<epp:phrase id="lib/irstats2:report:most_popular_eprints">Works</epp:phrase>
+<epp:phrase id="lib/irstats2:report:most_popular_divisions">Divisions</epp:phrase>
+<epp:phrase id="lib/irstats2:report:deposits">Deposits</epp:phrase>
+<epp:phrase id="lib/irstats2:report:requests">Requests</epp:phrase>
+<epp:phrase id="lib/irstats2:report:compare_years">Comparison per year</epp:phrase>
+<epp:phrase id="lib/irstats2:report:eprint">Statistics Overview</epp:phrase>
+
+<epp:phrase id="lib/irstats2:report:advanced:robots">Site crawlers</epp:phrase>
+<epp:phrase id="lib/irstats2:report:most_popular:most_popular_authors">Authors</epp:phrase>
+<epp:phrase id="lib/irstats2:report:most_popular:most_popular_eprints">Works</epp:phrase>
+<epp:phrase id="lib/irstats2:report:most_popular:most_popular_divisions">Divisions</epp:phrase>
+<epp:phrase id="lib/irstats2:report:advanced:deposits">Deposits</epp:phrase>
+<epp:phrase id="lib/irstats2:report:custom:custom">Start</epp:phrase>
+<epp:phrase id="lib/irstats2:report:advanced:requests">Requests</epp:phrase>
+<epp:phrase id="lib/irstats2:report:general:main">Summary</epp:phrase>
+<epp:phrase id="lib/irstats2:report:general:compare_years">Comparison per year</epp:phrase>
+
+<epp:phrase id="lib/irstats2:report:timeline:content">
+	<div style='float:left;'>
+		<epc:pin name='date'/>
+	</div>
+	<div style='float:right;'>
+		<epc:pin name='pickers'/>
+	</div>
+	<div style='clear:both' />
+</epp:phrase>
+
+<epp:phrase id="Plugin/Stats/View/Table:title:eprint">Most popular works</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/Table:title:authors">Most popular authors</epp:phrase>
+
+<epp:phrase id="Plugin/Stats/View/Table:label:view_more"><span style="padding-right: 5px;">View more</span></epp:phrase>
+<epp:phrase id="Plugin/Stats/View/Table:label:view_all"><span style="padding-right: 5px;">View all</span></epp:phrase>
+<epp:phrase id="Plugin/Stats/View/Table:label:ranking">Ranking</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/Table:label:item">Item</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/Table:label:count">Count</epp:phrase>
+
+<epp:phrase id="Plugin/Stats/View/Timeline:select_dates">Select dates</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/Timeline:select_range">-or- Select a time range</epp:phrase>
+
+<epp:phrase id="Plugin/Stats/View/Timeline:intro">
+<div style="padding:5px;">Please select a range or dates below.</div>
+</epp:phrase>
+
+<epp:phrase id="lib/irstats2/datepicker">
+<div class="irstats2_datepicker_inner">
+<table cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse;">
+<tr>
+<td style="font-weight: bold;padding: 5px;border:1px solid #CCC" valign="middle" align="center">Select dates:</td>
+<td style="padding: 5px;border:1px solid #CCC">
+	<form id="irstats2_datepicker">
+	<table cellspacing="0" cellpadding="0" border="0">
+	<tr>
+	<td><label for="sd" style='width: 30px;'>Start Date : </label></td>
+	<td><input type="text" class="w8em format-d-m-y highlight-days-67 range-high-today" name="from" id="sd" value= "" maxlength="10"/></td>
+	</tr>
+	<tr>
+	<td><label for="ed" style='width: 30px;'>End Date : </label></td>
+	<td><input type="text" class="w8em format-d-m-y highlight-days-67 range-high-today" name="to" id="ed" value="" maxlength="10"/></td>
+	<td align='center' rowspan='2'><input type='submit' value='View' style="margin-left:25px;" class='ep_form_action_button'/></td>
+	</tr>
+	</table>
+	</form>
+</td>
+</tr>
+<tr>
+<td style="font-weight: bold; padding: 5px;border:1px solid #CCC" valign="middle" align="center">-OR- select a range:</td>
+<td style="padding: 5px;border:1px solid #CCC">
+	<form>
+	<epc:pin name="ranges"/>
+	<input type="submit" name="view_range" value="View" class="ep_form_action_button"/>
+	</form>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+     document.observe( "dom:loaded", function() {
+		new EPJS_Stats_Placeholder( 'sd', 'DD/MM/YYYY' );
+		new EPJS_Stats_Placeholder( 'ed', 'DD/MM/YYYY' );
+     } );
+</script>
+</div>
+</epp:phrase>
+
+
+<!-- datasets descriptions -->
+
+<epp:phrase id="lib/irstats2/type:countries">Countries</epp:phrase>
+<epp:phrase id="lib/irstats2/type:deposits">Deposits</epp:phrase>
+<epp:phrase id="lib/irstats2/type:doc_access">Full text information</epp:phrase>
+<epp:phrase id="lib/irstats2/type:downloads">Downloads</epp:phrase>
+<epp:phrase id="lib/irstats2/type:search_terms">Search terms</epp:phrase>
+<epp:phrase id="lib/irstats2/type:eprints_referrer">Referrers</epp:phrase>
+<epp:phrase id="lib/irstats2/type:mime_type">Document formats</epp:phrase>
+
+<epp:phrase id="lib/irstats2/type:deposits:inbox">Deposits (User inbox)</epp:phrase>
+<epp:phrase id="lib/irstats2/type:deposits:buffer">Deposits (Review)</epp:phrase>
+<epp:phrase id="lib/irstats2/type:deposits:archive">Deposits (Archive)</epp:phrase>
+<epp:phrase id="lib/irstats2/type:deposits:deletion">Items deleted</epp:phrase>
+
+<epp:phrase id="lib/irstats2/type:downloads:downloads">Downloads</epp:phrase>
+<epp:phrase id="lib/irstats2/type:downloads:views">Hits</epp:phrase>
+
+<!-- Views -->
+<epp:phrase id="Plugin/Stats/View/Counter:title">Overview</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/DownloadsGraph:title">Downloads</epp:phrase>
+
+
+<!-- Test for Browse Views, ignore -> experimental -->
+<!--
+ <epp:phrase id="Update/Views:export_section">
+<table width="100%"><tr>
+  <td align="left">Export as <epc:pin name="menu"/><epc:pin name="button"/></td>
+  <td align="right"><epc:pin name="feeds"/></td>
+</tr>
+<tr>
+  <td align="left" colspan="2">
+    <epc:pin name="tools"/>
+  </td>
+</tr>
+<tr>
+  <td colspan="2">
+     <script type="text/javascript">
+	document.observe( "dom:loaded", function() {
+		new EPJS_Stats_Browse( { "container_id": "stats_browse_test" } );
+	} );
+     </script>
+  </td>
+</tr>
+</table>
+<div id="stats_browse_test"/>
+</epp:phrase>
+-->
+
+<!-- Dashboard -->
+
+<epp:phrase id="Plugin/Screen/Public/Stats/Repository:title">Repository Statistics</epp:phrase>
+
+<!-- MePrints Plugins -->
+
+<epp:phrase id="Plugin/MePrints/Widget/Repostats/Downloads:title">Downloads</epp:phrase>
+<epp:phrase id="Plugin/MePrints/Widget/Repostats/TopTen:title">Most viewed items</epp:phrase>
+
+<!-- objects -->
+
+<epp:phrase id="irstats2_objects:country_code:A1"><img src="{$config{rel_path}}/images/irstats2/flags/unknown.png"/><span style="padding-left:5px;">Anonymous Proxy</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:A2"><img src="{$config{rel_path}}/images/irstats2/flags/unknown.png"/><span style="padding-left:5px;">Satellite Provider</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:O1"><img src="{$config{rel_path}}/images/irstats2/flags/unknown.png"/><span style="padding-left:5px;">Other Country</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AD"><img src="{$config{rel_path}}/images/irstats2/flags/ad.png"/><span style="padding-left:5px;">Andorra</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AE"><img src="{$config{rel_path}}/images/irstats2/flags/ae.png"/><span style="padding-left:5px;">United Arab Emirates</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AF"><img src="{$config{rel_path}}/images/irstats2/flags/af.png"/><span style="padding-left:5px;">Afghanistan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AG"><img src="{$config{rel_path}}/images/irstats2/flags/ag.png"/><span style="padding-left:5px;">Antigua and Barbuda</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AI"><img src="{$config{rel_path}}/images/irstats2/flags/ai.png"/><span style="padding-left:5px;">Anguilla</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AL"><img src="{$config{rel_path}}/images/irstats2/flags/al.png"/><span style="padding-left:5px;">Albania</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AM"><img src="{$config{rel_path}}/images/irstats2/flags/am.png"/><span style="padding-left:5px;">Armenia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AN"><img src="{$config{rel_path}}/images/irstats2/flags/an.png"/><span style="padding-left:5px;">Netherlands Antilles</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AO"><img src="{$config{rel_path}}/images/irstats2/flags/ao.png"/><span style="padding-left:5px;">Angola</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AP"><img src="{$config{rel_path}}/images/irstats2/flags/ap.png"/><span style="padding-left:5px;">Asia/Pacific Region</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AQ"><img src="{$config{rel_path}}/images/irstats2/flags/aq.png"/><span style="padding-left:5px;">Antarctica</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AR"><img src="{$config{rel_path}}/images/irstats2/flags/ar.png"/><span style="padding-left:5px;">Argentina</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AS"><img src="{$config{rel_path}}/images/irstats2/flags/as.png"/><span style="padding-left:5px;">American Samoa</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AT"><img src="{$config{rel_path}}/images/irstats2/flags/at.png"/><span style="padding-left:5px;">Austria</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AU"><img src="{$config{rel_path}}/images/irstats2/flags/au.png"/><span style="padding-left:5px;">Australia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AW"><img src="{$config{rel_path}}/images/irstats2/flags/aw.png"/><span style="padding-left:5px;">Aruba</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AX"><img src="{$config{rel_path}}/images/irstats2/flags/ax.png"/><span style="padding-left:5px;">Aland Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:AZ"><img src="{$config{rel_path}}/images/irstats2/flags/az.png"/><span style="padding-left:5px;">Azerbaijan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BA"><img src="{$config{rel_path}}/images/irstats2/flags/ba.png"/><span style="padding-left:5px;">Bosnia and Herzegovina</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BB"><img src="{$config{rel_path}}/images/irstats2/flags/bb.png"/><span style="padding-left:5px;">Barbados</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BD"><img src="{$config{rel_path}}/images/irstats2/flags/bd.png"/><span style="padding-left:5px;">Bangladesh</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BE"><img src="{$config{rel_path}}/images/irstats2/flags/be.png"/><span style="padding-left:5px;">Belgium</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BF"><img src="{$config{rel_path}}/images/irstats2/flags/bf.png"/><span style="padding-left:5px;">Burkina Faso</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BG"><img src="{$config{rel_path}}/images/irstats2/flags/bg.png"/><span style="padding-left:5px;">Bulgaria</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BH"><img src="{$config{rel_path}}/images/irstats2/flags/bh.png"/><span style="padding-left:5px;">Bahrain</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BI"><img src="{$config{rel_path}}/images/irstats2/flags/bi.png"/><span style="padding-left:5px;">Burundi</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BJ"><img src="{$config{rel_path}}/images/irstats2/flags/bj.png"/><span style="padding-left:5px;">Benin</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BM"><img src="{$config{rel_path}}/images/irstats2/flags/bm.png"/><span style="padding-left:5px;">Bermuda</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BN"><img src="{$config{rel_path}}/images/irstats2/flags/bn.png"/><span style="padding-left:5px;">Brunei Darussalam</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BO"><img src="{$config{rel_path}}/images/irstats2/flags/bo.png"/><span style="padding-left:5px;">Bolivia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BR"><img src="{$config{rel_path}}/images/irstats2/flags/br.png"/><span style="padding-left:5px;">Brazil</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BS"><img src="{$config{rel_path}}/images/irstats2/flags/bs.png"/><span style="padding-left:5px;">Bahamas</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BT"><img src="{$config{rel_path}}/images/irstats2/flags/bt.png"/><span style="padding-left:5px;">Bhutan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BV"><img src="{$config{rel_path}}/images/irstats2/flags/bv.png"/><span style="padding-left:5px;">Bouvet Island</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BW"><img src="{$config{rel_path}}/images/irstats2/flags/bw.png"/><span style="padding-left:5px;">Botswana</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BY"><img src="{$config{rel_path}}/images/irstats2/flags/by.png"/><span style="padding-left:5px;">Belarus</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BZ"><img src="{$config{rel_path}}/images/irstats2/flags/bz.png"/><span style="padding-left:5px;">Belize</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CA"><img src="{$config{rel_path}}/images/irstats2/flags/ca.png"/><span style="padding-left:5px;">Canada</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CC"><img src="{$config{rel_path}}/images/irstats2/flags/cc.png"/><span style="padding-left:5px;">Cocos (Keeling) Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CD"><img src="{$config{rel_path}}/images/irstats2/flags/cd.png"/><span style="padding-left:5px;">Congo, The Democratic Republic of the</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CF"><img src="{$config{rel_path}}/images/irstats2/flags/cf.png"/><span style="padding-left:5px;">Central African Republic</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CG"><img src="{$config{rel_path}}/images/irstats2/flags/cg.png"/><span style="padding-left:5px;">Congo</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CH"><img src="{$config{rel_path}}/images/irstats2/flags/ch.png"/><span style="padding-left:5px;">Switzerland</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CI"><img src="{$config{rel_path}}/images/irstats2/flags/ci.png"/><span style="padding-left:5px;">Cote d'Ivoire</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CK"><img src="{$config{rel_path}}/images/irstats2/flags/ck.png"/><span style="padding-left:5px;">Cook Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CL"><img src="{$config{rel_path}}/images/irstats2/flags/cl.png"/><span style="padding-left:5px;">Chile</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CM"><img src="{$config{rel_path}}/images/irstats2/flags/cm.png"/><span style="padding-left:5px;">Cameroon</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CN"><img src="{$config{rel_path}}/images/irstats2/flags/cn.png"/><span style="padding-left:5px;">China</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CO"><img src="{$config{rel_path}}/images/irstats2/flags/co.png"/><span style="padding-left:5px;">Colombia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CR"><img src="{$config{rel_path}}/images/irstats2/flags/cr.png"/><span style="padding-left:5px;">Costa Rica</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CU"><img src="{$config{rel_path}}/images/irstats2/flags/cu.png"/><span style="padding-left:5px;">Cuba</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CV"><img src="{$config{rel_path}}/images/irstats2/flags/cv.png"/><span style="padding-left:5px;">Cape Verde</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CX"><img src="{$config{rel_path}}/images/irstats2/flags/cx.png"/><span style="padding-left:5px;">Christmas Island</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CY"><img src="{$config{rel_path}}/images/irstats2/flags/cy.png"/><span style="padding-left:5px;">Cyprus</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CZ"><img src="{$config{rel_path}}/images/irstats2/flags/cz.png"/><span style="padding-left:5px;">Czech Republic</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:DE"><img src="{$config{rel_path}}/images/irstats2/flags/de.png"/><span style="padding-left:5px;">Germany</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:DJ"><img src="{$config{rel_path}}/images/irstats2/flags/dj.png"/><span style="padding-left:5px;">Djibouti</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:DK"><img src="{$config{rel_path}}/images/irstats2/flags/dk.png"/><span style="padding-left:5px;">Denmark</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:DM"><img src="{$config{rel_path}}/images/irstats2/flags/dm.png"/><span style="padding-left:5px;">Dominica</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:DO"><img src="{$config{rel_path}}/images/irstats2/flags/do.png"/><span style="padding-left:5px;">Dominican Republic</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:DZ"><img src="{$config{rel_path}}/images/irstats2/flags/dz.png"/><span style="padding-left:5px;">Algeria</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:EC"><img src="{$config{rel_path}}/images/irstats2/flags/ec.png"/><span style="padding-left:5px;">Ecuador</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:EE"><img src="{$config{rel_path}}/images/irstats2/flags/ee.png"/><span style="padding-left:5px;">Estonia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:EG"><img src="{$config{rel_path}}/images/irstats2/flags/eg.png"/><span style="padding-left:5px;">Egypt</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:EH"><img src="{$config{rel_path}}/images/irstats2/flags/eh.png"/><span style="padding-left:5px;">Western Sahara</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:ER"><img src="{$config{rel_path}}/images/irstats2/flags/er.png"/><span style="padding-left:5px;">Eritrea</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:ES"><img src="{$config{rel_path}}/images/irstats2/flags/es.png"/><span style="padding-left:5px;">Spain</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:ET"><img src="{$config{rel_path}}/images/irstats2/flags/et.png"/><span style="padding-left:5px;">Ethiopia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:EU"><img src="{$config{rel_path}}/images/irstats2/flags/eu.png"/><span style="padding-left:5px;">Europe</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:FI"><img src="{$config{rel_path}}/images/irstats2/flags/fi.png"/><span style="padding-left:5px;">Finland</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:FJ"><img src="{$config{rel_path}}/images/irstats2/flags/fj.png"/><span style="padding-left:5px;">Fiji</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:FK"><img src="{$config{rel_path}}/images/irstats2/flags/fk.png"/><span style="padding-left:5px;">Falkland Islands (Malvinas)</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:FM"><img src="{$config{rel_path}}/images/irstats2/flags/fm.png"/><span style="padding-left:5px;">Micronesia, Federated States of</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:FO"><img src="{$config{rel_path}}/images/irstats2/flags/fo.png"/><span style="padding-left:5px;">Faroe Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:FR"><img src="{$config{rel_path}}/images/irstats2/flags/fr.png"/><span style="padding-left:5px;">France</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GA"><img src="{$config{rel_path}}/images/irstats2/flags/ga.png"/><span style="padding-left:5px;">Gabon</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GB"><img src="{$config{rel_path}}/images/irstats2/flags/gb.png"/><span style="padding-left:5px;">United Kingdom</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GD"><img src="{$config{rel_path}}/images/irstats2/flags/gd.png"/><span style="padding-left:5px;">Grenada</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GE"><img src="{$config{rel_path}}/images/irstats2/flags/ge.png"/><span style="padding-left:5px;">Georgia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GF"><img src="{$config{rel_path}}/images/irstats2/flags/gf.png"/><span style="padding-left:5px;">French Guiana</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GG"><img src="{$config{rel_path}}/images/irstats2/flags/gg.png"/><span style="padding-left:5px;">Guernsey</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GH"><img src="{$config{rel_path}}/images/irstats2/flags/gh.png"/><span style="padding-left:5px;">Ghana</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GI"><img src="{$config{rel_path}}/images/irstats2/flags/gi.png"/><span style="padding-left:5px;">Gibraltar</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GL"><img src="{$config{rel_path}}/images/irstats2/flags/gl.png"/><span style="padding-left:5px;">Greenland</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GM"><img src="{$config{rel_path}}/images/irstats2/flags/gm.png"/><span style="padding-left:5px;">Gambia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GN"><img src="{$config{rel_path}}/images/irstats2/flags/gn.png"/><span style="padding-left:5px;">Guinea</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GP"><img src="{$config{rel_path}}/images/irstats2/flags/gp.png"/><span style="padding-left:5px;">Guadeloupe</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GQ"><img src="{$config{rel_path}}/images/irstats2/flags/gq.png"/><span style="padding-left:5px;">Equatorial Guinea</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GR"><img src="{$config{rel_path}}/images/irstats2/flags/gr.png"/><span style="padding-left:5px;">Greece</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GS"><img src="{$config{rel_path}}/images/irstats2/flags/gs.png"/><span style="padding-left:5px;">South Georgia and the South Sandwich Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GT"><img src="{$config{rel_path}}/images/irstats2/flags/gt.png"/><span style="padding-left:5px;">Guatemala</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GU"><img src="{$config{rel_path}}/images/irstats2/flags/gu.png"/><span style="padding-left:5px;">Guam</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GW"><img src="{$config{rel_path}}/images/irstats2/flags/gw.png"/><span style="padding-left:5px;">Guinea-Bissau</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:GY"><img src="{$config{rel_path}}/images/irstats2/flags/gy.png"/><span style="padding-left:5px;">Guyana</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:HK"><img src="{$config{rel_path}}/images/irstats2/flags/hk.png"/><span style="padding-left:5px;">Hong Kong</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:HM"><img src="{$config{rel_path}}/images/irstats2/flags/hm.png"/><span style="padding-left:5px;">Heard Island and McDonald Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:HN"><img src="{$config{rel_path}}/images/irstats2/flags/hn.png"/><span style="padding-left:5px;">Honduras</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:HR"><img src="{$config{rel_path}}/images/irstats2/flags/hr.png"/><span style="padding-left:5px;">Croatia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:HT"><img src="{$config{rel_path}}/images/irstats2/flags/ht.png"/><span style="padding-left:5px;">Haiti</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:HU"><img src="{$config{rel_path}}/images/irstats2/flags/hu.png"/><span style="padding-left:5px;">Hungary</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:ID"><img src="{$config{rel_path}}/images/irstats2/flags/id.png"/><span style="padding-left:5px;">Indonesia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:IE"><img src="{$config{rel_path}}/images/irstats2/flags/ie.png"/><span style="padding-left:5px;">Ireland</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:IL"><img src="{$config{rel_path}}/images/irstats2/flags/il.png"/><span style="padding-left:5px;">Israel</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:IM"><img src="{$config{rel_path}}/images/irstats2/flags/im.png"/><span style="padding-left:5px;">Isle of Man</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:IN"><img src="{$config{rel_path}}/images/irstats2/flags/in.png"/><span style="padding-left:5px;">India</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:IO"><img src="{$config{rel_path}}/images/irstats2/flags/io.png"/><span style="padding-left:5px;">British Indian Ocean Territory</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:IQ"><img src="{$config{rel_path}}/images/irstats2/flags/iq.png"/><span style="padding-left:5px;">Iraq</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:IR"><img src="{$config{rel_path}}/images/irstats2/flags/ir.png"/><span style="padding-left:5px;">Iran, Islamic Republic of</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:IS"><img src="{$config{rel_path}}/images/irstats2/flags/is.png"/><span style="padding-left:5px;">Iceland</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:IT"><img src="{$config{rel_path}}/images/irstats2/flags/it.png"/><span style="padding-left:5px;">Italy</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:JE"><img src="{$config{rel_path}}/images/irstats2/flags/je.png"/><span style="padding-left:5px;">Jersey</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:JM"><img src="{$config{rel_path}}/images/irstats2/flags/jm.png"/><span style="padding-left:5px;">Jamaica</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:JO"><img src="{$config{rel_path}}/images/irstats2/flags/jo.png"/><span style="padding-left:5px;">Jordan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:JP"><img src="{$config{rel_path}}/images/irstats2/flags/jp.png"/><span style="padding-left:5px;">Japan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:KE"><img src="{$config{rel_path}}/images/irstats2/flags/ke.png"/><span style="padding-left:5px;">Kenya</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:KG"><img src="{$config{rel_path}}/images/irstats2/flags/kg.png"/><span style="padding-left:5px;">Kyrgyzstan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:KH"><img src="{$config{rel_path}}/images/irstats2/flags/kh.png"/><span style="padding-left:5px;">Cambodia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:KI"><img src="{$config{rel_path}}/images/irstats2/flags/ki.png"/><span style="padding-left:5px;">Kiribati</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:KM"><img src="{$config{rel_path}}/images/irstats2/flags/km.png"/><span style="padding-left:5px;">Comoros</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:KN"><img src="{$config{rel_path}}/images/irstats2/flags/kn.png"/><span style="padding-left:5px;">Saint Kitts and Nevis</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:KP"><img src="{$config{rel_path}}/images/irstats2/flags/kp.png"/><span style="padding-left:5px;">Korea, Democratic People's Republic of</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:KR"><img src="{$config{rel_path}}/images/irstats2/flags/kr.png"/><span style="padding-left:5px;">Korea, Republic of</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:KW"><img src="{$config{rel_path}}/images/irstats2/flags/kw.png"/><span style="padding-left:5px;">Kuwait</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:KY"><img src="{$config{rel_path}}/images/irstats2/flags/ky.png"/><span style="padding-left:5px;">Cayman Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:KZ"><img src="{$config{rel_path}}/images/irstats2/flags/kz.png"/><span style="padding-left:5px;">Kazakhstan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:LA"><img src="{$config{rel_path}}/images/irstats2/flags/la.png"/><span style="padding-left:5px;">Lao People's Democratic Republic</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:LB"><img src="{$config{rel_path}}/images/irstats2/flags/lb.png"/><span style="padding-left:5px;">Lebanon</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:LC"><img src="{$config{rel_path}}/images/irstats2/flags/lc.png"/><span style="padding-left:5px;">Saint Lucia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:LI"><img src="{$config{rel_path}}/images/irstats2/flags/li.png"/><span style="padding-left:5px;">Liechtenstein</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:LK"><img src="{$config{rel_path}}/images/irstats2/flags/lk.png"/><span style="padding-left:5px;">Sri Lanka</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:LR"><img src="{$config{rel_path}}/images/irstats2/flags/lr.png"/><span style="padding-left:5px;">Liberia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:LS"><img src="{$config{rel_path}}/images/irstats2/flags/ls.png"/><span style="padding-left:5px;">Lesotho</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:LT"><img src="{$config{rel_path}}/images/irstats2/flags/lt.png"/><span style="padding-left:5px;">Lithuania</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:LU"><img src="{$config{rel_path}}/images/irstats2/flags/lu.png"/><span style="padding-left:5px;">Luxembourg</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:LV"><img src="{$config{rel_path}}/images/irstats2/flags/lv.png"/><span style="padding-left:5px;">Latvia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:LY"><img src="{$config{rel_path}}/images/irstats2/flags/ly.png"/><span style="padding-left:5px;">Libyan Arab Jamahiriya</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MA"><img src="{$config{rel_path}}/images/irstats2/flags/ma.png"/><span style="padding-left:5px;">Morocco</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MC"><img src="{$config{rel_path}}/images/irstats2/flags/mc.png"/><span style="padding-left:5px;">Monaco</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MD"><img src="{$config{rel_path}}/images/irstats2/flags/md.png"/><span style="padding-left:5px;">Moldova, Republic of</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:ME"><img src="{$config{rel_path}}/images/irstats2/flags/me.png"/><span style="padding-left:5px;">Montenegro</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MG"><img src="{$config{rel_path}}/images/irstats2/flags/mg.png"/><span style="padding-left:5px;">Madagascar</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MH"><img src="{$config{rel_path}}/images/irstats2/flags/mh.png"/><span style="padding-left:5px;">Marshall Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MK"><img src="{$config{rel_path}}/images/irstats2/flags/mk.png"/><span style="padding-left:5px;">Macedonia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:ML"><img src="{$config{rel_path}}/images/irstats2/flags/ml.png"/><span style="padding-left:5px;">Mali</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MM"><img src="{$config{rel_path}}/images/irstats2/flags/mm.png"/><span style="padding-left:5px;">Myanmar</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MN"><img src="{$config{rel_path}}/images/irstats2/flags/mn.png"/><span style="padding-left:5px;">Mongolia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MO"><img src="{$config{rel_path}}/images/irstats2/flags/mo.png"/><span style="padding-left:5px;">Macao</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MP"><img src="{$config{rel_path}}/images/irstats2/flags/mp.png"/><span style="padding-left:5px;">Northern Mariana Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MQ"><img src="{$config{rel_path}}/images/irstats2/flags/mq.png"/><span style="padding-left:5px;">Martinique</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MR"><img src="{$config{rel_path}}/images/irstats2/flags/mr.png"/><span style="padding-left:5px;">Mauritania</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MS"><img src="{$config{rel_path}}/images/irstats2/flags/ms.png"/><span style="padding-left:5px;">Montserrat</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MT"><img src="{$config{rel_path}}/images/irstats2/flags/mt.png"/><span style="padding-left:5px;">Malta</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MU"><img src="{$config{rel_path}}/images/irstats2/flags/mu.png"/><span style="padding-left:5px;">Mauritius</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MV"><img src="{$config{rel_path}}/images/irstats2/flags/mv.png"/><span style="padding-left:5px;">Maldives</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MW"><img src="{$config{rel_path}}/images/irstats2/flags/mw.png"/><span style="padding-left:5px;">Malawi</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MX"><img src="{$config{rel_path}}/images/irstats2/flags/mx.png"/><span style="padding-left:5px;">Mexico</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MY"><img src="{$config{rel_path}}/images/irstats2/flags/my.png"/><span style="padding-left:5px;">Malaysia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MZ"><img src="{$config{rel_path}}/images/irstats2/flags/mz.png"/><span style="padding-left:5px;">Mozambique</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NA"><img src="{$config{rel_path}}/images/irstats2/flags/na.png"/><span style="padding-left:5px;">Namibia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NC"><img src="{$config{rel_path}}/images/irstats2/flags/nc.png"/><span style="padding-left:5px;">New Caledonia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NE"><img src="{$config{rel_path}}/images/irstats2/flags/ne.png"/><span style="padding-left:5px;">Niger</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NF"><img src="{$config{rel_path}}/images/irstats2/flags/nf.png"/><span style="padding-left:5px;">Norfolk Island</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NG"><img src="{$config{rel_path}}/images/irstats2/flags/ng.png"/><span style="padding-left:5px;">Nigeria</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NI"><img src="{$config{rel_path}}/images/irstats2/flags/nh.png"/><span style="padding-left:5px;">Nicaragua</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NL"><img src="{$config{rel_path}}/images/irstats2/flags/nl.png"/><span style="padding-left:5px;">Netherlands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NO"><img src="{$config{rel_path}}/images/irstats2/flags/no.png"/><span style="padding-left:5px;">Norway</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NP"><img src="{$config{rel_path}}/images/irstats2/flags/np.png"/><span style="padding-left:5px;">Nepal</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NR"><img src="{$config{rel_path}}/images/irstats2/flags/nr.png"/><span style="padding-left:5px;">Nauru</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NU"><img src="{$config{rel_path}}/images/irstats2/flags/nu.png"/><span style="padding-left:5px;">Niue</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:NZ"><img src="{$config{rel_path}}/images/irstats2/flags/nz.png"/><span style="padding-left:5px;">New Zealand</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:OM"><img src="{$config{rel_path}}/images/irstats2/flags/om.png"/><span style="padding-left:5px;">Oman</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PA"><img src="{$config{rel_path}}/images/irstats2/flags/pa.png"/><span style="padding-left:5px;">Panama</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PE"><img src="{$config{rel_path}}/images/irstats2/flags/pe.png"/><span style="padding-left:5px;">Peru</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PF"><img src="{$config{rel_path}}/images/irstats2/flags/pf.png"/><span style="padding-left:5px;">French Polynesia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PG"><img src="{$config{rel_path}}/images/irstats2/flags/pg.png"/><span style="padding-left:5px;">Papua New Guinea</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PH"><img src="{$config{rel_path}}/images/irstats2/flags/ph.png"/><span style="padding-left:5px;">Philippines</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PK"><img src="{$config{rel_path}}/images/irstats2/flags/pk.png"/><span style="padding-left:5px;">Pakistan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PL"><img src="{$config{rel_path}}/images/irstats2/flags/pl.png"/><span style="padding-left:5px;">Poland</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PM"><img src="{$config{rel_path}}/images/irstats2/flags/pm.png"/><span style="padding-left:5px;">Saint Pierre and Miquelon</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PN"><img src="{$config{rel_path}}/images/irstats2/flags/pn.png"/><span style="padding-left:5px;">Pitcairn</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PR"><img src="{$config{rel_path}}/images/irstats2/flags/pr.png"/><span style="padding-left:5px;">Puerto Rico</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PS"><img src="{$config{rel_path}}/images/irstats2/flags/ps.png"/><span style="padding-left:5px;">Palestinian Territory</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PT"><img src="{$config{rel_path}}/images/irstats2/flags/pt.png"/><span style="padding-left:5px;">Portugal</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PW"><img src="{$config{rel_path}}/images/irstats2/flags/pw.png"/><span style="padding-left:5px;">Palau</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:PY"><img src="{$config{rel_path}}/images/irstats2/flags/py.png"/><span style="padding-left:5px;">Paraguay</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:QA"><img src="{$config{rel_path}}/images/irstats2/flags/qa.png"/><span style="padding-left:5px;">Qatar</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:RE"><img src="{$config{rel_path}}/images/irstats2/flags/re.png"/><span style="padding-left:5px;">Reunion</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:RO"><img src="{$config{rel_path}}/images/irstats2/flags/ro.png"/><span style="padding-left:5px;">Romania</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:RS"><img src="{$config{rel_path}}/images/irstats2/flags/rs.png"/><span style="padding-left:5px;">Serbia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:RU"><img src="{$config{rel_path}}/images/irstats2/flags/ru.png"/><span style="padding-left:5px;">Russian Federation</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:RW"><img src="{$config{rel_path}}/images/irstats2/flags/rw.png"/><span style="padding-left:5px;">Rwanda</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SA"><img src="{$config{rel_path}}/images/irstats2/flags/sa.png"/><span style="padding-left:5px;">Saudi Arabia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SB"><img src="{$config{rel_path}}/images/irstats2/flags/sb.png"/><span style="padding-left:5px;">Solomon Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SC"><img src="{$config{rel_path}}/images/irstats2/flags/sc.png"/><span style="padding-left:5px;">Seychelles</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SD"><img src="{$config{rel_path}}/images/irstats2/flags/sd.png"/><span style="padding-left:5px;">Sudan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SE"><img src="{$config{rel_path}}/images/irstats2/flags/se.png"/><span style="padding-left:5px;">Sweden</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SG"><img src="{$config{rel_path}}/images/irstats2/flags/sg.png"/><span style="padding-left:5px;">Singapore</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SH"><img src="{$config{rel_path}}/images/irstats2/flags/sh.png"/><span style="padding-left:5px;">Saint Helena</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SI"><img src="{$config{rel_path}}/images/irstats2/flags/si.png"/><span style="padding-left:5px;">Slovenia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SJ"><img src="{$config{rel_path}}/images/irstats2/flags/sj.png"/><span style="padding-left:5px;">Svalbard and Jan Mayen</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SK"><img src="{$config{rel_path}}/images/irstats2/flags/sk.png"/><span style="padding-left:5px;">Slovakia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SL"><img src="{$config{rel_path}}/images/irstats2/flags/sl.png"/><span style="padding-left:5px;">Sierra Leone</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SM"><img src="{$config{rel_path}}/images/irstats2/flags/sm.png"/><span style="padding-left:5px;">San Marino</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SN"><img src="{$config{rel_path}}/images/irstats2/flags/sn.png"/><span style="padding-left:5px;">Senegal</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SO"><img src="{$config{rel_path}}/images/irstats2/flags/so.png"/><span style="padding-left:5px;">Somalia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SR"><img src="{$config{rel_path}}/images/irstats2/flags/sr.png"/><span style="padding-left:5px;">Suriname</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:ST"><img src="{$config{rel_path}}/images/irstats2/flags/st.png"/><span style="padding-left:5px;">Sao Tome and Principe</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SV"><img src="{$config{rel_path}}/images/irstats2/flags/sv.png"/><span style="padding-left:5px;">El Salvador</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SY"><img src="{$config{rel_path}}/images/irstats2/flags/sy.png"/><span style="padding-left:5px;">Syrian Arab Republic</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SZ"><img src="{$config{rel_path}}/images/irstats2/flags/sz.png"/><span style="padding-left:5px;">Swaziland</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TC"><img src="{$config{rel_path}}/images/irstats2/flags/tc.png"/><span style="padding-left:5px;">Turks and Caicos Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TD"><img src="{$config{rel_path}}/images/irstats2/flags/td.png"/><span style="padding-left:5px;">Chad</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TF"><img src="{$config{rel_path}}/images/irstats2/flags/tf.png"/><span style="padding-left:5px;">French Southern Territories</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TG"><img src="{$config{rel_path}}/images/irstats2/flags/tg.png"/><span style="padding-left:5px;">Togo</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TH"><img src="{$config{rel_path}}/images/irstats2/flags/th.png"/><span style="padding-left:5px;">Thailand</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TJ"><img src="{$config{rel_path}}/images/irstats2/flags/tj.png"/><span style="padding-left:5px;">Tajikistan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TK"><img src="{$config{rel_path}}/images/irstats2/flags/tk.png"/><span style="padding-left:5px;">Tokelau</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TL"><img src="{$config{rel_path}}/images/irstats2/flags/tl.png"/><span style="padding-left:5px;">Timor-Leste</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TM"><img src="{$config{rel_path}}/images/irstats2/flags/tm.png"/><span style="padding-left:5px;">Turkmenistan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TN"><img src="{$config{rel_path}}/images/irstats2/flags/tn.png"/><span style="padding-left:5px;">Tunisia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TO"><img src="{$config{rel_path}}/images/irstats2/flags/to.png"/><span style="padding-left:5px;">Tonga</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TR"><img src="{$config{rel_path}}/images/irstats2/flags/tr.png"/><span style="padding-left:5px;">Turkey</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TT"><img src="{$config{rel_path}}/images/irstats2/flags/tt.png"/><span style="padding-left:5px;">Trinidad and Tobago</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TV"><img src="{$config{rel_path}}/images/irstats2/flags/tv.png"/><span style="padding-left:5px;">Tuvalu</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TW"><img src="{$config{rel_path}}/images/irstats2/flags/tw.png"/><span style="padding-left:5px;">Taiwan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:TZ"><img src="{$config{rel_path}}/images/irstats2/flags/tz.png"/><span style="padding-left:5px;">Tanzania, United Republic of</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:UA"><img src="{$config{rel_path}}/images/irstats2/flags/ua.png"/><span style="padding-left:5px;">Ukraine</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:UG"><img src="{$config{rel_path}}/images/irstats2/flags/ug.png"/><span style="padding-left:5px;">Uganda</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:UM"><img src="{$config{rel_path}}/images/irstats2/flags/um.png"/><span style="padding-left:5px;">United States Minor Outlying Islands</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:US"><img src="{$config{rel_path}}/images/irstats2/flags/us.png"/><span style="padding-left:5px;">United States</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:UY"><img src="{$config{rel_path}}/images/irstats2/flags/uy.png"/><span style="padding-left:5px;">Uruguay</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:UZ"><img src="{$config{rel_path}}/images/irstats2/flags/uz.png"/><span style="padding-left:5px;">Uzbekistan</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:VA"><img src="{$config{rel_path}}/images/irstats2/flags/va.png"/><span style="padding-left:5px;">Holy See (Vatican City State)</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:VC"><img src="{$config{rel_path}}/images/irstats2/flags/vc.png"/><span style="padding-left:5px;">Saint Vincent and the Grenadines</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:VE"><img src="{$config{rel_path}}/images/irstats2/flags/ve.png"/><span style="padding-left:5px;">Venezuela</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:VG"><img src="{$config{rel_path}}/images/irstats2/flags/vg.png"/><span style="padding-left:5px;">Virgin Islands, British</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:VI"><img src="{$config{rel_path}}/images/irstats2/flags/vi.png"/><span style="padding-left:5px;">Virgin Islands, U.S.</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:VN"><img src="{$config{rel_path}}/images/irstats2/flags/vn.png"/><span style="padding-left:5px;">Vietnam</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:VU"><img src="{$config{rel_path}}/images/irstats2/flags/vu.png"/><span style="padding-left:5px;">Vanuatu</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:WF"><img src="{$config{rel_path}}/images/irstats2/flags/wf.png"/><span style="padding-left:5px;">Wallis and Futuna</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:WS"><img src="{$config{rel_path}}/images/irstats2/flags/ws.png"/><span style="padding-left:5px;">Samoa</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:YE"><img src="{$config{rel_path}}/images/irstats2/flags/ye.png"/><span style="padding-left:5px;">Yemen</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:YT"><img src="{$config{rel_path}}/images/irstats2/flags/yt.png"/><span style="padding-left:5px;">Mayotte</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:ZA"><img src="{$config{rel_path}}/images/irstats2/flags/za.png"/><span style="padding-left:5px;">South Africa</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:ZM"><img src="{$config{rel_path}}/images/irstats2/flags/zm.png"/><span style="padding-left:5px;">Zambia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:ZW"><img src="{$config{rel_path}}/images/irstats2/flags/zw.png"/><span style="padding-left:5px;">Zimbabwe</span></epp:phrase>
+
+</epp:phrases>
+

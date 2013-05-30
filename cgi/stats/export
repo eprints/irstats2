@@ -1,0 +1,106 @@
+use strict;
+
+use EPrints;
+
+# format is:
+# /cgi/stats/export/<ExportPluginId>/...
+
+my $session = new EPrints::Session;
+return unless( defined $session );
+
+unless( $session->can_call( 'irstats2', 'allow' ) && $session->call( ['irstats2', 'allow'], $session, 'irstats2/export' ) )
+{
+	$session->get_request->status( 401 );
+        $session->terminate;
+        exit;
+}
+
+my $context = &get_context( $session );
+
+my $export = $context->{format};
+
+unless( defined $export )
+{
+	print STDOUT "<p>IRStats2: missing parameters in request.</p>";
+	$session->terminate;
+	return;
+}
+
+my $dbh = $session->plugin( "Stats::Handler" );
+unless(defined $dbh)
+{
+        print STDOUT "<p>IRStats2: internal error (handler not available)</p>";
+        $session->terminate();
+        return;
+}
+
+my $export_plugin = $session->plugin( "Stats::Export::$export" );
+unless( defined $export_plugin )
+{
+	print STDOUT "<p>IRStats2: unknown export <strong>$export</strong></p>";
+	$session->terminate;
+	return;
+}
+
+$session->send_http_header( content_type => $export_plugin->mimetype );
+$export_plugin->export( $dbh, $context );
+
+$session->terminate;
+return;
+
+
+# should be moved to Stats::Utils or something like that
+sub get_context
+{
+	my( $session ) = @_;
+
+	my $context = {};
+
+	# via URI or via params?
+	my $uri = $session->get_uri(); 
+
+	# remove the trailing slash
+	$uri =~ s/\/$//g;
+
+	if( $uri =~ m#^/cgi/stats/export/(.*)$# ) #
+	{
+		my @paths = split( /\//, $1 );
+		if( scalar(@paths) == 1 )
+		{
+			$context->{format} = $paths[0];
+			$context->{set_name} = $paths[0];
+		}
+		elsif( scalar(@paths) > 1 )
+		{
+			$context->{set_name} = $paths[0];
+			$context->{set_value} = $paths[1];
+			$context->{format} = $paths[2] if( defined $paths[2] );
+		}
+	}
+
+	foreach( 'from', 'to', 'range', 'datatype' )
+	{
+		my $value = $session->param( $_ );
+		$context->{$_} = $value if( EPrints::Utils::is_set( $value ) );
+	}
+
+	# allows dates to be separated by / or -
+	if( defined $context->{from} && $context->{from} =~ m#^(\d{2})[/-](\d{2})[/-](\d{4})$# )	#
+	{
+		$context->{from} = $3.$2.$1;
+	}
+	if( defined $context->{to} && $context->{to} =~ m#^(\d{2})[/-](\d{2})[/-](\d{4})$# )	#
+	{
+		$context->{to} = $3.$2.$1;
+	}
+
+	# if one of these 2 isn't set, delete/ignore both
+	if( !defined $context->{set_name} ne !defined $context->{set_value} )
+	{
+		delete $context->{set_name};
+		delete $context->{set_value};
+	}
+
+	return $context;
+}
+

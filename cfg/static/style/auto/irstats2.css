@@ -1,0 +1,521 @@
+/* IRStats2 CSS */
+
+div.irstats2_view
+{
+	width: 100%;
+	text-align:left;
+	font-family: Verdana, Arial, sans-serif;
+	margin: 10px;
+	border: 1px solid #D7D9E5;
+	border-radius: 3px;
+}
+
+div.irstats2_view_title
+{
+	border-top: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	border-bottom: 1px solid #D7D9E5;
+	font-weight: bold;
+	font-size: 14px;
+	padding: 5px;
+	color: #000;
+	background: url("images/toolbox.png") repeat-x scroll 0 0 #E7E9F5;
+}
+
+div.irstats2_view_content
+{
+	line-height: 20px;
+	margin: auto;
+}
+
+div.irstats2_piechart
+{
+	width: 400px;
+	height: 350px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.irstats2_googlepiechart
+{
+	width: 400px;
+	height: 250px;
+	margin-left: auto;
+	margin-right: auto;
+}
+div.irstats2_googlegeochart
+{
+	width: 600px;
+	height: 300px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.irstats2_googlegraph
+{
+	width: 800px;
+	height: 200px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.irstats2_googlespark
+{
+	width: 150px;
+	height: 50px;
+	margin: 0px;
+	display: inline;
+	float:left;
+	border: 0px;
+	padding: 0px;
+}
+
+div.irstats2_counter
+{
+	display: inline;
+}
+
+div.irstats2_view_KeyFigures div.irstats2_view_content
+{
+	padding-top: 10px;
+}
+
+span.irstats2_keyfigures_metric_figure
+{
+	font-weight: bold;
+	font-size: 20px;
+}
+
+span.irstats2_keyfigures_metric_text
+{
+	padding-left: 5px;
+}
+
+div.irstats2_ruler {
+	clear:both;
+	margin-bottom: 10px;
+}
+
+div.irstats2_keyfigures_section {
+	float:left;
+	width: 50%
+}
+
+div.irstats2_keyfigures_deposits {
+	float:left;
+	width: 50%
+}
+
+div.irstats2_keyfigures_downloads {
+	float:right;
+	width: 50%
+}
+
+div.irstats2_keyfigures_fulltext {
+	float:left;
+	width: 50%;
+}
+
+div.irstats2_keyfigures_openaccess {
+	float:right;
+	width: 50%
+}
+
+table.irstats2_keyfigures_progress {
+	margin-left:12px;
+}
+
+table.irstats2_keyfigures_progress div.irstats2_progress_wrapper {
+	height: 25px;
+}
+
+
+table.irstats2_keyfigures_progress div.irstats2_progress {
+	height: 25px;
+}
+
+table.irstats2_keyfigures_progress td {
+	padding: 5px;
+}
+
+div.irstats2_deposit_details {
+	font-size: 12px;
+	color: #666;
+	margin-top: 5px;
+	margin-left: 10px;
+}
+
+span.irstats2_counter_label
+{
+	color: #333333;
+	font-size: 14px;
+	margin: auto 2px;	
+	vertical-align: middle;
+}
+
+span.irstats2_counter_value
+{
+	color: #000000;
+	font-size: 20px;
+	font-weight:bold;
+	margin: auto 2px;
+	vertical-align: bottom;
+	padding-bottom:4px;
+}
+
+img.irstats2_spin
+{
+	vertical-align:middle;
+}
+
+span.irstats2_loading
+{
+	margin-left: 5px;
+	vertical-align:middle;
+	color: #666666;
+}
+
+table.irstats2_table
+{
+	border-collapse: collapse;
+	margin-left:auto;
+	margin-right:auto;
+	margin-top: 10px;
+	width: 100%;
+}
+
+div.irstats2_table_options
+{
+	text-align: center;
+}
+
+div.irstats2_table_options > a
+{
+	padding-left: 5px;
+}
+
+tr.irstats2_table_headings > td
+{
+	font-weight: bold;	
+	background-color: #666;
+	color: #FFF;
+	text-align: left;
+	padding: 2px;
+}
+
+td.irstats2_table_cell_order
+{
+	text-align:center;
+	width: 20px;
+}
+
+td.irstats2_table_cell_object
+{
+	padding-left: 5px;
+}
+
+td.irstats2_table_cell_count
+{
+	text-align:center;
+	width: 100px;
+}
+
+tr.irstats2_table_row_even > td
+{
+	padding: 2px;
+	background-color: #FFFFFF;
+}
+
+tr.irstats2_table_row_odd > td
+{
+	padding: 2px;
+	background-color: #EEE;
+}
+
+div.irstats2_reportmenu_row
+{
+	padding: 5px;
+	vertical-align:bottom;
+}
+span.irstats2_date_separator
+{
+	padding-left:5px;
+	padding-right:5px;
+}
+span.irstats2_date_label
+{
+	font-size:14px;
+	font-weight:bold;
+}
+div.irstats2_progress
+{
+        background-color: #c1d0ef;
+        color: #000;
+	text-align:left;
+	padding: 0px;
+	margin: 0px;
+}
+div.irstats2_progress_wrapper
+{
+	border: 1px solid #3366cc;
+	margin: 0px;
+	padding: 0px;
+	text-align:left;
+}
+div.irstats2_progress > span
+{
+	padding-left: 5px;
+}
+
+span.irstats2_keyfigures_metric {
+	font-size: 14px;
+	line-height: 50px;
+}
+
+h3.irstats2_keyfigures_heading, h3.irstats2_linkstoreports_heading
+{
+	margin-top: 2px;
+	margin-bottom: 2px;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+div.irstats2_keyfigures_column
+{
+	width: 25%;
+	float: left;
+	text-align:left;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+div.irstats2_reportheader_column
+{
+	float: left;
+	text-align:left;
+	margin-left:15px;
+}
+
+table.irstats2_reports 
+{
+	border-collapse:collapse;	
+	width: 100%;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+td.irstats2_reports_heading
+{
+	border: 1px solid #CCC;
+	padding: 2px 10px;
+	text-align:right;
+	width: 20%;
+	background-color: #EEE;
+}
+
+td.irstats2_reports_heading > span
+{
+	color: #222;
+}
+
+td.irstats2_reports_content
+{
+	border: 1px solid #CCC;
+	padding: 2px 10px;
+	text-align: left;
+	width: 80%;
+}
+
+td.irstats2_reports_content > span
+{
+	padding-right: 10px;
+	font-family: Verdana;
+}
+
+
+a.irstats2_export_bar_toggle
+{
+	float: right;
+}
+
+div.irstats2_export_bar
+{
+	text-align: left;
+}
+
+div.irstats2_export_content
+{
+	margin: 0px auto;
+	border-bottom: 1px solid #D7D9E5;
+	padding: 5px;
+	text-align: center;
+	background-color: #F9F9F9;
+}
+
+.irstats2_setdesc_link
+{
+	margin-left: 5px;
+	width: 45px;
+}
+
+input.irstats2_setdesc_q
+{
+	margin-top: 5px;
+	border: 1px solid #CCCCCC;
+	padding: 2px;
+	font-size: 14px;	
+}
+
+input.irstats2_placeholder
+{
+	color: #AAA;
+	font-style: italic;
+}
+
+div.irstats2_setdesc_values
+{
+	max-height:150px;
+	overflow-y:scroll; 
+	margin: 5px; 
+	padding: 5px; 
+	border: 1px solid #CCCCCC;
+	background-color: #FFFFFF;
+}
+
+ul.irstats2_setfinder_values
+{
+	margin: 0px;
+	padding: 0px;
+}
+
+ul.irstats2_setfinder_values > li
+{
+}
+
+div.irstats2_setfinder_row > a
+{
+	display: block
+}
+
+div.irstats2_setfinder_row > a:hover
+{
+	background-color: #F5F5F5;
+}
+
+div.irstats2_datepicker_inner
+{
+	font-size:11px;
+	padding: 4px;
+	color:#000;
+}
+
+p.irstats2_error_login {
+	width: 100%;
+	text-align: center;
+}
+
+h3.irstats2_summary_page_header {
+	margin-top:20px;
+}
+
+div.irstats2_summary_page_container {
+	border:1px solid #CCC;
+	width:80%;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+div.irstats2_summary_page_container > p {
+	text-align:center;
+	width:100%;
+	margin:5px 0px 0px 0px;
+	color:#666;
+}
+
+#irstats2_summary_page_downloads {
+	height:250px;
+	width:100%
+}
+
+#irstats2_summary_page_countries {
+	height:250px;
+	width:100%
+}
+
+td.irstats2_reportheader_breadcrumbs {
+	width: 60%;
+	font-size: 14px;
+	font-weight: bold;
+	padding: 5px;
+}
+
+td.irstats2_reportheader_breadcrumbs > a, td.irstats2_reportheader_breadcrumbs > a:visited {
+	color: #0645AD;
+}
+
+div.irstats2_reportheader_timeline {
+	width: 30%;
+	float: right;
+	text-align: right;
+	vertical-align: middle;
+}
+
+div.irstats2_reportheader_timeline_frame {
+	font-size: 14px;
+	padding: 5px;
+	text-align: right;
+	float: right;
+}
+
+div.irstats2_reportheader_options {
+	width:100%;
+	text-align: left;
+	vertical-align: middle;
+}
+
+div.irstats2_reportheader_clear {
+	clear:both;
+}
+
+div.irstats2_reportheader {
+	width: 100%;
+	padding: 0px;
+}
+
+table.irstats2_reportheader {
+	width: 100%;
+}
+
+div.irstats2_view_ReportHeader {
+	border: 0px;
+}
+
+input.irstats2_form_action_button {
+	text-align: center;
+	border-width: 2px;
+	border-style: solid;
+	border-radius: 3px;
+	padding: 2px 20px;
+	cursor: pointer;
+	background-color: #F9F9F9;
+	color: #111;
+}
+
+input.irstats2_form_action_button:active, input.irstats2_form_action_button:hover, input.irstats2_form_action_button_selected {
+	background-color: #EEE;
+	color: #222;
+}
+
+div.irstats2_options_dates, div.irstats2_options_filters, div.irstats2_options_reports {
+	background-color: #EEE;
+	text-align: left;
+	border-width: 2px;
+	border-style: solid;
+	border-radius: 3px;
+	border-color: #DDD;
+}
+
+table.irstats2_view_Grid div.irstats2_view {
+	width: 97%;
+}

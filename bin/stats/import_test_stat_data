@@ -1,0 +1,157 @@
+#!/usr/bin/perl -w -I/opt/eprints3/perl_lib
+
+use strict;
+use EPrints;
+
+# Set STDOUT to auto flush (without needing a \n)
+$|=1;
+
+my $repoid = shift @ARGV;
+unless( defined $repoid )
+{
+	print STDERR "\nNeed repository_id\n\n";
+	exit(1);
+}
+
+my $session = new EPrints::Session( 1, $repoid );
+exit( 1 ) unless( defined $session );
+
+# to be safe... :)
+my $ok = EPrints::Utils::get_input( '^(yes|no)$', "Never run this script on a live repository as this will create LOADS of fake access data that cannot be removed. Continue?", "yes" );
+
+unless( $ok eq "yes" )
+{
+	$session->terminate;
+	exit;
+}
+
+
+# some real and a fake user agent strings:
+my $UA = [
+	'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322)',
+	'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; InfoPath.1)',
+	'Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit/419.2.1 (KHTML like Gecko) Safari/419.3',
+	'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.12) Gecko/20080225 Ubuntu/8.04 (hardy) Firefox/2.0.0.12',
+	'msnbot/1.1 (+http://search.msn.com/msnbot.htm)',
+	'Opera/9.51 (Windows NT 6.0; U; en)',
+	'Googlebot-Image/1.0',
+	'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+	'FakeUserAgentString',
+];
+
+
+# real and fake referrers
+my $REF = [
+	'http://www.google.com/search?hl=en&q=test+data+stuff+word&start=10&sa=N',
+	'http://www.google.fr/search?client=firefox-a&rls=org.mozilla%3Afr-FR%3Aofficial&channel=s&hl=fr&q=sometopic&meta=&btnG=Recherche+Google',
+	'http://www.google.pl/search?hl=pl&q=rzecz&btnG=Szukaj+w+Google&lr=&aq=f&oq=',
+	'http://hk.search.yahoo.com/search/combo?p=conics+equation&rd=r1&fr=FP-tab-web-t&fr2=sb-top&xargs=0&pstart=1&b=11',
+	'http://search.yahoo.co.jp/search?p=Southampton&ei=UTF-8&fr=top_ga1&x=wrt',
+	'http://www.bing.com/search?q=university+of+southampton+research+proposal&form=QBRE&filt=all&qs=n&adlt=strict',
+	'http://www.bing.com/search?q=vector+equations+pdf&FORM=MSNH90&mkt=en-gb',
+	'http://some.host.com/blaf/search?z=something',
+];
+
+# adding some internal search:
+my $base_url = $session->get_repository->get_conf( "base_url" );
+my $int_search_1 = "$base_url/cgi/search/simple?_action_search=Search&q=test+data+stat&_order=bytitle&basic_srchtype=ALL&_satisfyall=ALL&_default_action=search";
+push @$REF, $int_search_1;
+my $int_search_2 = "$base_url/cgi/search/advanced?_action_search=Search&q=test+stat&_order=bytitle&basic_srchtype=ALL&_satisfyall=ALL&_default_action=search";
+push @$REF, $int_search_2;
+
+
+# how many access record to create:
+my $N = 20000;
+
+# need to know valid eprintid and docid ?
+
+# load all known eprintids in the archive
+my $searchexp = new EPrints::Search(
+                session=>$session,
+                dataset=>$session->get_repository->get_dataset( "archive" ),
+                allow_blank => 1 
+);
+
+my $eplist = $searchexp->perform_search;
+
+my $EPRINT_IDS;
+
+if( $eplist->count )
+{
+	$EPRINT_IDS = $eplist->get_ids;
+}
+else
+{
+	print STDERR "\nDidnt find any eprint ids, will use epid=1,2,3,4,5 for all stats";
+	push @$EPRINT_IDS, "1";
+	push @$EPRINT_IDS, "2";
+	push @$EPRINT_IDS, "3";
+	push @$EPRINT_IDS, "4";
+	push @$EPRINT_IDS, "5";
+}
+my $EP_COUNT = scalar( @$EPRINT_IDS );
+
+$eplist->dispose;
+
+srand;
+
+my $now = time;
+
+# starting about 5 years ago:
+my $start_date_offset = 3600*24*365*5;
+my $ctime = time - $start_date_offset;
+
+my $time_offset = $start_date_offset / $N;
+
+my $c = 0;
+while(1)
+{
+	last if( $c++ >= $N );
+
+	$ctime += $time_offset;
+
+	my $epid = $$EPRINT_IDS[int( rand $EP_COUNT )];
+	my $docid = int(rand 10) > 5 ? undef : 0;
+
+	my $access = {};
+
+	$access->{datestamp} = EPrints::Time::get_iso_timestamp( int($ctime) );
+	$access->{requester_id} = &_generate_ip();
+	$access->{referent_id} = $epid;
+	$access->{referent_docid} = $docid if( defined $docid);
+	$access->{referring_entity_id} = &_generate_ref();	#$r->headers_in->{ "Referer" };
+	$access->{service_type_id} = defined $docid ? "?fulltext=yes" : "?abstract=yes";
+	$access->{requester_user_agent} = &_generate_user_agent();			#$r->headers_in->{ "User-Agent" };
+
+	#print STDERR "\nCreating record:".join(",",keys %$access)." \nvalues: ".join(",",values %$access);
+
+	$session->get_repository->get_dataset( "access" )->create_object( $session, $access );
+}
+
+$session->terminate;
+exit;
+
+sub _generate_ip
+{
+	my $ip = "";
+	for(1..4)
+	{
+		$ip .= (int(rand 250) + 1).".";
+	}
+	chop($ip);	
+	return $ip;
+}
+
+sub _generate_ref
+{
+	return "" if( int( rand 10 ) > 5 );
+	return $$REF[int rand scalar(@$REF)];
+}
+
+sub _generate_user_agent
+{
+	return $$UA[int rand scalar(@$UA)];
+}
+
+
+

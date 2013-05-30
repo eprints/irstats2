@@ -1,0 +1,61 @@
+IRStats2 beta
+
+Quick word
+==========
+
+Thanks for looking at the Beta version of IRStats2 - It's been tested already on a few live repositories and it is stable enough. It is very unlikely that installing IRStats2 on your 
+repository will break it as it lives apart, in its own world...
+
+If you do find bugs or if you have ideas for bringing this forward, please contact me directly or fill in a bug/comment on the project's Github page: https://github.com/eprints/irstats2 - also beware that there are many configuration options and it's possible to generate stats on pretty much anything. So don't feel restricted by what you see initially.
+
+I hope you'll enjoy using it.
+
+Quick Install Guide
+===================
+
+(*) EPrints 3.3+
+
+If you're running 3.3 simply use the Bazaar package which is in the epm/ folder. Upload it via [Admin] > [System Tools] > [EPrints Bazaar] > [Available] and scroll down the bottom of the page.
+
+I'll try to keep an up to date version of the epm/ (i.e. which reflects the files in Git).
+
+You will be able to update the package following the same step, until the final release is there and ready.
+
+Follow steps 6 to 9 in the instructions for EPrints 3.2 below to generate and view the stats. 
+
+
+(*) EPrints 3.2
+
+1- get the files from Git, though you've probably done that already since you're reading that file.
+
+2- Copy the files to your local archive (it's likely I'll produce a Bazaar package when the release is ready):
+
+cp bin/* /opt/eprints3/archives/<ID>/bin/
+cp cfg/* /opt/eprints3/archives/<ID>/cfg/
+cp cgi/* /opt/eprints3/archives/<ID>/cgi/
+
+(create the bin and cgi directories if they don't exist).
+
+3- Test everything is OK: /opt/eprints3/bin/epadmin test
+
+4- Add in the <head> sections of your template files (usually located in /opt/eprints3/archives/<id>/cfg/lang/en/templates/) the following:
+
+<!-- google charts -->
+<script type="text/javascript" src="http://www.google.com/jsapi">// <!-- No script --></script>
+<script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart", "geochart"]});
+</script>
+
+5- Restart the web server
+
+6- process the stats (note that this may take a loooong time (hours) to process the stats initially):
+
+/opt/eprints3/archives/<id>/bin/stats/process_stats <id> --setup --verbose
+
+7- Daily updates of the stats (e.g. via CRON) should be done without the "--setup" parameter (and probably without --verbose, but that's up to you)
+
+8- Feel free to have a look at /opt/eprints3/archives/<id>/cfg/cfg.d/z_stats.pl and change some of the settings to reflect your repository's set-up.
+
+9- Point your browser at http://your-repo-url/cgi/stats/report/ to view some figures!
+
+
