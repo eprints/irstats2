@@ -121,6 +121,30 @@ $c->{irstats2}->{allow} = sub {
 # time-out for the so-called "double-click" filtering - default to 3600 secs = 1 hour
 $c->{plugins}->{"Stats::Filter::Repeat"}->{params}->{timeout} = 3600 * 24;
 
+# Trigger to load the Google Charts library from the template(s)
+$c->add_trigger( EP_TRIGGER_DYNAMIC_TEMPLATE , sub
+{
+	my( %args ) = @_;
+
+	my( $repo, $pins ) = @args{qw/ repository pins/};
+
+	$pins->{"utf-8.head"} = "" if( !exists $pins->{"utf-8.head"} );
+
+	my $protocol = $repo->get_secure ? 'https':'http';
+
+	$pins->{"utf-8.head"} .= <<GCHARTS;
+
+<!-- IRStats2 -->
+<script type="text/javascript" src="$protocol://www.google.com/jsapi">// <!-- No script --></script>
+<script type="text/javascript">google.load("visualization", "1", {packages:["corechart", "geochart"]});</script>
+<!-- end IRStats2 -->
+GCHARTS
+
+	return EP_TRIGGER_OK;
+} );
+
+# Hide the link to the reports by default:
+$c->{plugins}->{"Screen::IRStats2::Report"}->{appears}->{key_tools} = undef;
 
 ##########
 # Reports
@@ -405,4 +429,50 @@ $c->{irstats2}->{report} = {
 	},
 
 };
+
+# Bazaar config
+
+$c->{plugins}{"Stats::Context"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Data"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Export"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Handler"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Processor"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Sets"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Utils"}{params}{disable} = 0;
+$c->{plugins}{"Stats::View"}{params}{disable} = 0;
+
+$c->{plugins}{"Stats::Export::CSV"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Export::JSON"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Export::XML"}{params}{disable} = 0;
+
+$c->{plugins}{"Stats::Filter::Robots"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Filter::Repeat"}{params}{disable} = 0;
+
+$c->{plugins}{"Stats::Processor::Access"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Processor::Access::Browsers"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Processor::Access::Country"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Processor::Access::Downloads"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Processor::Access::Referrer"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Processor::Access::SearchTerms"}{params}{disable} = 0;
+
+$c->{plugins}{"Stats::Processor::EPrint"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Processor::EPrint::Deposits"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Processor::EPrint::DocumentAccess"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Processor::EPrint::DocumentFormat"}{params}{disable} = 0;
+
+$c->{plugins}{"Stats::Processor::History"}{params}{disable} = 0;
+$c->{plugins}{"Stats::Processor::History::Actions"}{params}{disable} = 0;
+
+$c->{plugins}{"Stats::View::Compare"}{params}{disable} = 0;
+$c->{plugins}{"Stats::View::Counter"}{params}{disable} = 0;
+$c->{plugins}{"Stats::View::Google::GeoChart"}{params}{disable} = 0;
+$c->{plugins}{"Stats::View::Google::Graph"}{params}{disable} = 0;
+$c->{plugins}{"Stats::View::Google::PieChart"}{params}{disable} = 0;
+$c->{plugins}{"Stats::View::Google::Spark"}{params}{disable} = 0;
+$c->{plugins}{"Stats::View::Grid"}{params}{disable} = 0;
+$c->{plugins}{"Stats::View::KeyFigures"}{params}{disable} = 0;
+$c->{plugins}{"Stats::View::ReportHeader"}{params}{disable} = 0;
+$c->{plugins}{"Stats::View::Table"}{params}{disable} = 0;
+
+$c->{plugins}{"Screen::IRStats2::Report"}{params}{disable} = 0;
 
