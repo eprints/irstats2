@@ -6,6 +6,7 @@ v0.0.3
 Changes:
 
 - Fixes problems with detecting EPrints's VERSION (Handler.pm)
+- added robot 'Funnelback'
 
 v0.0.2
 ------
