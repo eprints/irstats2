@@ -1,0 +1,13 @@
+v0.0.3
+------
+
+2013-06-17
+
+Changes:
+
+- Fixes problems with detecting EPrints's VERSION (Handler.pm)
+
+v0.0.2
+------
+
+- Created when first committed data to GitHub
