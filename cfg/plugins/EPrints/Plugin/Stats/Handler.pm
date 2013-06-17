@@ -1199,7 +1199,15 @@ sub _create_table
 {
 	my( $self, $tablename, $setkey, @fields ) = @_;
 
-	if( (EPrints->VERSION()||'v3.2.0') gt v3.3.8 )
+	my $version = EPrints->VERSION();
+
+	if( !EPrints::Utils::is_set( $version ) )
+	{
+		# EPrints->VERSION() was added in the 3.3 branch so if VERSION() doesn't exist, assume an older version of EPrints
+		$version = v3.2.0;
+	}
+
+	if( $version gt v3.3.8 )
 	{
 		return $self->{dbh}->create_table( $tablename, $setkey, @fields );
 	}
