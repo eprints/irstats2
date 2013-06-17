@@ -377,6 +377,7 @@ fireball
 fouineur
 francoroute
 freecrawl
+funnelback
 funnelweb
 gama
 gazz
