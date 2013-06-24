@@ -40,7 +40,7 @@ cp cgi/* /opt/eprints3/archives/<ID>/cgi/
 
 4- Add in the <head> sections of your template files (usually located in /opt/eprints3/archives/<id>/cfg/lang/en/templates/) the following:
 
-<!-- google charts -->
+<!-- IRStats2 -->
 <script type="text/javascript" src="http://www.google.com/jsapi">// <!-- No script --></script>
 <script type="text/javascript">
         google.load("visualization", "1", {packages:["corechart", "geochart"]});
