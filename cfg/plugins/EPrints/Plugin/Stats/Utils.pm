@@ -125,17 +125,15 @@ sub normalise_dates
 	my ($to_y, $to_m, $to_d);
         my ($from_y, $from_m, $from_d );
 	my ($to, $from);
-	
+
 	if( defined $daterange->{range} && $daterange->{range} eq '_ALL_' )
 	{
-		my ($min_date, undef) = $handler->get_dataset_boundaries( 'access' );
-		$daterange->{from} = $min_date if( defined $min_date );
 		delete $daterange->{range};
 
-                ($to_y, $to_m, $to_d) = Date::Calc::Add_Delta_YMD( Date::Calc::Today(), 0, 0, -1 );
-                $to = $to_y * 10000 + $to_m * 100 + $to_d;
+		($to_y, $to_m, $to_d) = Date::Calc::Add_Delta_YMD( Date::Calc::Today(), 0, 0, -1 );
+		$to = $to_y * 10000 + $to_m * 100 + $to_d;
 
-		return( $min_date, $to );
+		return( '19000101', $to );
 	}
 	
 	if( EPrints::Utils::is_set( $daterange->{range} ) )

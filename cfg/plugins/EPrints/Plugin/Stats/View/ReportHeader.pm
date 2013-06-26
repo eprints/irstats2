@@ -64,10 +64,13 @@ sub render_timeline
 
 	my $tl_frame = $tl->appendChild( $session->make_element( 'div', class => 'irstats2_reportheader_timeline_frame' ) );
 
-	my $from = $context->get_property( 'from' );
-	my $to = $context->get_property( 'to' );
+	if( !defined $context->{range} || $context->{range} ne '_ALL_' )
+	{
+		my $from = $context->get_property( 'from' );
+		my $to = $context->get_property( 'to' );
 
-	$tl_frame->appendChild( EPrints::Plugin::Stats::Utils::render_date( $session, { from => $from, to => $to } ) );
+		$tl_frame->appendChild( EPrints::Plugin::Stats::Utils::render_date( $session, { from => $from, to => $to } ) );
+	}
 
 	return $tl;
 }
