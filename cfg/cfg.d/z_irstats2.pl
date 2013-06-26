@@ -124,24 +124,26 @@ $c->{plugins}->{"Stats::Filter::Repeat"}->{params}->{timeout} = 3600 * 24;
 # Trigger to load the Google Charts library from the template(s)
 $c->add_trigger( EP_TRIGGER_DYNAMIC_TEMPLATE , sub
 {
-	my( %args ) = @_;
+        my( %args ) = @_;
 
-	my( $repo, $pins ) = @args{qw/ repository pins/};
+        my( $repo, $pins ) = @args{qw/ repository pins/};
 
-	$pins->{"utf-8.head"} = "" if( !exists $pins->{"utf-8.head"} );
+        my $protocol = $repo->get_secure ? 'https':'http';
 
-	my $protocol = $repo->get_secure ? 'https':'http';
+        if( !exists $pins->{head} )
+        {
+                $pins->{head} = $repo->make_doc_fragment;
+        }
 
-	$pins->{"utf-8.head"} .= <<GCHARTS;
+        $pins->{head}->appendChild( $repo->make_javascript( undef,
+                src => "$protocol://www.google.com/jsapi"
+        ) );
 
-<!-- IRStats2 -->
-<script type="text/javascript" src="$protocol://www.google.com/jsapi">// <!-- No script --></script>
-<script type="text/javascript">google.load("visualization", "1", {packages:["corechart", "geochart"]});</script>
-<!-- end IRStats2 -->
-GCHARTS
+        $pins->{head}->appendChild( $repo->make_javascript( 'google.load("visualization", "1", {packages:["corechart", "geochart"]});' ) );
 
-	return EP_TRIGGER_OK;
+        return EP_TRIGGER_OK;
 } );
+
 
 # Hide the link to the reports by default:
 $c->{plugins}->{"Screen::IRStats2::Report"}->{appears}->{key_tools} = undef;
@@ -397,25 +399,6 @@ $c->{irstats2}->{report} = {
 		]	
 		} },    # end of Grid
 
-		{ plugin => 'Grid', options => { items => [
-
-		{
-			plugin => 'Table',
-			datatype => 'robots',
-			options => {
-				top => 'robots',
-				title => 'Site Crawlers'
-			}
-		},
-		{
-			plugin => 'Table',
-			datatype => 'search_terms',
-			options => {
-				title => 'Search terms',
-				top => 'search_terms'
-			}
-		},
-		] } },
 		],
 		category => 'advanced',
 	},
