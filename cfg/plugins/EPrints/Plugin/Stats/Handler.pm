@@ -333,7 +333,7 @@ sub extract_eprint_data
 	}
 
 	# LIMIT, OFFSET 
-	my $sth = $self->{dbh}->prepare_select( $sql, limit => $conf->{limit}, offset => $conf->{offset} );
+	my $sth = $self->prepare_select( $sql, limit => $conf->{limit}, offset => $conf->{offset} );
 
 	$self->log( "SQL IS '$sql'" );
 
@@ -508,7 +508,7 @@ sub extract_set_data
 		my $internal_count_limit = delete $conf->{limit} if( $use_internal_sum );
 
 		# LIMIT, OFFSET 
-		my $sth = $self->{dbh}->prepare_select( $sql, limit => $conf->{limit}, offset => $conf->{offset} );
+		my $sth = $self->prepare_select( $sql, limit => $conf->{limit}, offset => $conf->{offset} );
 		
 		$self->log( "SQL IS '$sql'" );
 
@@ -613,7 +613,7 @@ sub extract_set_data
 	$sql .= " GROUP BY $Q_grouping_tablename.$Q_grouping_value ORDER BY SUM( $Q_data_tablename.$Q_count ) $order_desc";
 
 
-	my $sth = $self->{dbh}->prepare_select( $sql, limit => $conf->{limit}, offset => $conf->{offset} );
+	my $sth = $self->prepare_select( $sql, limit => $conf->{limit}, offset => $conf->{offset} );
 	
 	$self->log( "SQL IS '$sql'" );
 	
@@ -708,7 +708,7 @@ sub get_all_rendered_set_values
 		# this allows proper order'ing of values
 		$sql .= " COLLATE utf8_unicode_ci";
 	}
-	my $sth = $self->{dbh}->prepare_select( $sql );
+	my $sth = $self->prepare_select( $sql );
 			
 	$self->log( "SQL IS '$sql'" );
 
@@ -741,7 +741,7 @@ sub get_rendered_set_value
 
 	my $sql = "SELECT $Q_rendered_set_value FROM $Q_table WHERE $Q_field_set_name = $Q_set_name AND $Q_field_set_value = $Q_set_value";
 
-	my $sth = $self->{dbh}->prepare_select( $sql );
+	my $sth = $self->prepare_select( $sql );
 			
 	$self->log( "SQL IS '$sql'" );
 
@@ -787,7 +787,7 @@ sub delete_sets_tables
                 # sf2 / should use $self->{dbh}->sql_LIKE (but doesn't work on 3.2)
                 my $sql = "SHOW TABLES LIKE ".$self->{dbh}->quote_value( $table_prefix."_%" );
 
-                my $sth = $self->{dbh}->prepare_select( $sql );
+                my $sth = $self->prepare_select( $sql );
 
                 $self->{dbh}->execute( $sth, $sql );
 
@@ -931,7 +931,7 @@ sub valid_set_value
         my $Q_set_value = $self->{dbh}->quote_value( $set_value );
 
         my $sql = "SELECT 1 FROM $Q_set_table WHERE $Q_set_value_field = $Q_set_value";
-        my $sth = $self->{dbh}->prepare_select( $sql, limit => 1 );
+        my $sth = $self->prepare_select( $sql, limit => 1 );
 
         $self->log( "SQL IS '$sql'" );
 
@@ -1186,7 +1186,7 @@ sub get_next_counter
 	my $Q_tablename = $self->{dbh}->quote_identifier( $tablename );
 
 	my $sql = "SELECT MAX($Q_uid) FROM $Q_tablename;";
-	my $sth = $self->{dbh}->prepare_select( $sql );
+	my $sth = $self->prepare_select( $sql );
 	$self->{dbh}->execute( $sth, $sql );
 
 	my @r = $sth->fetchrow_array;
@@ -1216,6 +1216,27 @@ sub _create_table
 	return $self->{dbh}->create_table( $tablename, undef, $setkey, @fields );
 }
 
+# See https://github.com/eprints/irstats2/issues/1 to see why it's not re-using the EPrints' prepare_select function
+sub prepare_select
+{
+        my( $self, $sql, %options ) = @_;
+
+        if( defined $options{limit} && length($options{limit}) )
+        {
+                if( defined $options{offset} && length($options{offset}) )
+                {
+                        $sql .= sprintf(" LIMIT %d OFFSET %d",
+                                $options{limit},
+                                $options{offset} );
+                }
+                else
+                {
+                        $sql .= sprintf(" LIMIT %d", $options{limit} );
+                }
+        }
+
+        return $self->{dbh}->prepare( $sql );
+}
 
 
 # Called by bin/ script when processing stats
@@ -1296,7 +1317,7 @@ sub uninstall
 	# sf2 / should use $self->{dbh}->sql_LIKE (but doesn't work on 3.2)
 	my $sql = "SHOW TABLES LIKE ".$self->{dbh}->quote_value( "irstats2_%" );
 
-        my $sth = $self->{dbh}->prepare_select( $sql );
+        my $sth = $self->prepare_select( $sql );
 
         $self->{dbh}->execute( $sth, $sql );
 
