@@ -1,8 +1,13 @@
-#!/usr/bin/perl -w -I/opt/eprints3/perl_lib
+#!/usr/bin/perl -w 
+
+use strict;
+
+# The script should be installed in $EPRINTS_PATH/archives/<id>/bin/stats/
+use FindBin;
+use lib "$FindBin::Bin/../../../../perl_lib";
 
 use Getopt::Long;
 use Pod::Usage;
-use strict;
 
 use EPrints;
 
