@@ -11,7 +11,7 @@ use Digest::MD5 qw(md5_hex);
 #
 # One of the core classes of the Stats package. This handles the definition, processing and rendering of Sets.
 # 
-# Sets are configured in z_stats.pl. Have a look there to see how to configure new Sets.
+# Sets are configured in z_irstats2.pl. Have a look there to see how to configure new Sets.
 # 
 
 sub new
@@ -29,24 +29,6 @@ sub new
 }
 
 sub handler { shift->{handler} }
-
-# $self->{sets}->{$set_name} = {
-#	
-#	type => $field_type,
-#	field => $field_name,
-#
-#	# optional:
-#
-#	name => $custom_name,		# custom name for the set e.g. 'authors' instead of 'creators'
-#	anon => BOOLEAN,		# anonymse the set values? useful for creators_id if you don't want to show the creators' emails
-#	groupings => [ $other_set_1, $other_set_2 ],
-#
-#	# for compound fields only (only creators type of field is supported at the moment):
-#
-#	use_ids => BOOLEAN,	# tell IRStats2 to use the id's as set_value, it will ignore any empty _id values.
-#	id_field => '$sub_fieldname' #	tell IRStats2 which field to use as keys... by default it will use _id
-#
-# }
 
 
 # Loads the 'sets' configuration (from cfg.d/z_stats.pl) and parse the sets/groupings definition
@@ -352,8 +334,9 @@ sub normalise_set_values
 	elsif( $type eq 'name' )
 	{
 		# use special rendering for names
-		$value->{key} = $self->generate_key( $set, $raw_value );
-		$value->{display} = $self->normalise_name( $raw_value );
+
+                $value->{display} = $self->normalise_name( $raw_value );
+                $value->{key} = $self->generate_key( $set, $value->{display} );
 
 		push @extracted_values, $value;
 	}
