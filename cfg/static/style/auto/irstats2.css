@@ -266,6 +266,8 @@ div.irstats2_progress_wrapper
 div.irstats2_progress > span
 {
 	padding-left: 5px;
+	display: block;
+	width: 100px;
 }
 
 span.irstats2_keyfigures_metric {
