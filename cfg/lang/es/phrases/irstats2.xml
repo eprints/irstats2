@@ -8,6 +8,9 @@
 <epp:phrase id="lib/irstats2/unknown:subject">Tema desconocido '<epc:pin name="id"/>'.</epp:phrase>
 <epp:phrase id="lib/irstats2/unknown:set">Desconocido <epc:pin name="set_name"/>: <epc:pin name="set_value"/>.</epp:phrase>
 <epp:phrase id="lib/irstats2/export_as">Exportar como <epc:pin name="id"/></epp:phrase>
+<epp:phrase id="lib/irstats2/header:filter_items">Filtrar elementos</epp:phrase>
+<epp:phrase id="lib/irstats2/header:dates">Fechas</epp:phrase>
+<epp:phrase id="lib/irstats2/header:available_reports">Reportes disponibles</epp:phrase>
 
 <!-- Dates -->
 <epp:phrase id="lib/irstats2/dates:separator"><span class='irstats2_date_separator'>-</span></epp:phrase>
@@ -74,7 +77,7 @@
 <form action="/cgi/stats/get" method="get">
 <epc:pin name="params"/>
 Exportar como <epc:pin name="options"/>
-<input type="submit" value="Export"/> 
+<input type="submit" value="Exportar"/> 
 </form>
 </epp:phrase>
 
