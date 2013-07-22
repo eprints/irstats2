@@ -86,7 +86,7 @@ sub render_filters
 	$frag->appendChild( $session->make_element( 'input',
 			type => 'submit', 
                         class => 'irstats2_form_action_button',
-                        value => $self->phrase('lib/irstats2/header:filter_items'),
+                        value => $self->phrase('filter_items'),
 			id => 'irstats2_filters_button',
 			onclick => "return EPJS_Stats_Action_Toggle( 'irstats2_filters_button', 'irstats2_filters', 'irstats2_form_action_button_selected' );",
         ) );
@@ -95,7 +95,7 @@ sub render_filters
 	$frag->appendChild( $session->make_element( 'input',
 			type => 'submit', 
                         class => 'irstats2_form_action_button',
-                        value => $self->phrase('lib/irstats2/header:dates'),
+                        value => $self->phrase('dates'),
 			id => 'irstats2_dates_button',
 			onclick => "return EPJS_Stats_Action_Toggle( 'irstats2_dates_button', 'irstats2_dates', 'irstats2_form_action_button_selected' );",
         ) );
@@ -104,7 +104,7 @@ sub render_filters
 	$frag->appendChild( $session->make_element( 'input', 
 			type => 'submit',
                         class => 'irstats2_form_action_button',
-                        value => $self->phrase('lib/irstats2/header:available_reports'),
+                        value => $self->phrase('available_reports'),
 			id => 'irstats2_reports_button',
 			onclick => "return EPJS_Stats_Action_Toggle( 'irstats2_reports_button', 'irstats2_reports', 'irstats2_form_action_button_selected' );",
         ) );
