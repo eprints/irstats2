@@ -40,6 +40,17 @@ sub can_be_viewed
 	return 0;
 }
 
+sub render_action_link
+{
+        my( $self, %opts ) = @_;
+
+        my $link = $self->SUPER::render_action_link( %opts );
+        my $uri = URI->new( '/cgi/stats/report' );
+        $uri->query( undef );
+        $link->setAttribute( href => $uri );
+        return $link;
+}
+
 sub from
 {
 	my( $self ) = @_;
