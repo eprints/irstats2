@@ -130,16 +130,28 @@ $c->add_trigger( EP_TRIGGER_DYNAMIC_TEMPLATE , sub
 
         my $protocol = $repo->get_secure ? 'https':'http';
 
-        if( !exists $pins->{head} )
-        {
-                $pins->{head} = $repo->make_doc_fragment;
-        }
+        my $head = $repo->make_doc_fragment;
 
-        $pins->{head}->appendChild( $repo->make_javascript( undef,
+        $head->appendChild( $repo->make_javascript( undef,
                 src => "$protocol://www.google.com/jsapi"
         ) );
 
-        $pins->{head}->appendChild( $repo->make_javascript( 'google.load("visualization", "1", {packages:["corechart", "geochart"]});' ) );
+        $head->appendChild( $repo->make_javascript( 'google.load("visualization", "1", {packages:["corechart", "geochart"]});' ) );
+
+        if( defined $pins->{'utf-8.head'} )
+        {
+                $pins->{'utf-8.head'} .= $repo->xhtml->to_xhtml( $head );
+        }
+
+        if( defined $pins->{head} )
+        {
+                $head->appendChild( $pins->{head} );
+                $pins->{head} = $head;
+        }
+        else
+        {
+                $pins->{head} = $head;
+        }
 
         return EP_TRIGGER_OK;
 } );
