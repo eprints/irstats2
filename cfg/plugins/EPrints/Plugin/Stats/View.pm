@@ -170,9 +170,15 @@ sub render
 		unless( defined $options->{show_title} && !$options->{show_title} )
 		{
 			$title = $session->make_element( "div", class => 'irstats2_view_title' );
+
+			# note that this option has been deprecated because it doesn't support internationalisation
 			if( defined $options->{title} )
 			{
 				$title->appendChild( $session->make_text( $options->{title} ) );
+			}
+			elsif( defined $options->{title_phrase} )
+			{
+				$title->appendChild( $session->html_phrase( "lib/irstats2:view:".$options->{title_phrase} ) );
 			}
 			else
 			{

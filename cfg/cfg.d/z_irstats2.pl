@@ -232,7 +232,7 @@ $c->{irstats2}->{report} = {
 					options => {
 						limit => 5,
 						top => 'eprint',
-						title => 'Most downloaded items',
+						title_phrase => 'top_downloads'
 					},
 				},
 				{
@@ -241,7 +241,7 @@ $c->{irstats2}->{report} = {
 					options => {
 						limit => 5,
 						top => 'authors',
-						title => 'Top Authors'
+						title_phrase => 'top_authors',
 					}
 				},
 			] },
@@ -250,7 +250,6 @@ $c->{irstats2}->{report} = {
 		category => 'general',
 	},
 	
-# EPrint report?
 	eprint => {
 		items => [ 
 		{ plugin => 'ReportHeader' },
@@ -292,7 +291,7 @@ $c->{irstats2}->{report} = {
 			options => {
 				limit => 10,
 				top => 'eprint',
-				title => 'Top Publications'
+				title_phrase => 'top_downloads'
 			},
 		},
 		]
@@ -310,7 +309,7 @@ $c->{irstats2}->{report} = {
 			options => {
 				limit => 10,
 				top => 'eprint',
-				title => 'Top Publications'
+				title_phrase => 'top_downloads',
 			},
 		},
 		],
@@ -332,7 +331,7 @@ $c->{irstats2}->{report} = {
 			datatype => 'downloads',
 			options => {
 				top => 'authors',
-				title => 'Top Authors'
+				title_phrase => 'top_authors',
 			}
 		},
 		{ plugin => 'KeyFigures', },
@@ -383,14 +382,14 @@ $c->{irstats2}->{report} = {
                         datafilter => 'archive',
                         options => {
                                 top => 'type',
-                                title => 'Type of resources',
+				title_phrase => 'item_types'
                         }
                 },
 		{
 			plugin => 'Table',
 			datatype => 'doc_format',
 			options => {
-				title => 'File formats',
+				title_phrase => 'file_format',
 				top => 'doc_format',
 			}
 		},
@@ -404,17 +403,17 @@ $c->{irstats2}->{report} = {
 		items => [
 		{ plugin => 'ReportHeader' },
 		{
-			plugin => 'Table',
+			plugin => 'Google::GeoChart',
 			datatype => 'countries',
-			options => { top => 'countries', title => 'Origin of downloads' },
+			options => {
+				title_phrase => 'download_countries',
+			}
 		},
-		# if you'd rather see a map, un-comment the following below - however be aware of some Javascript issues: https://github.com/eprints/irstats2/issues/3
+		# if you'd rather see a table of countries, use this:
 		#{
-		#	plugin => 'Google::GeoChart',
+		#	plugin => 'Table',
 		#	datatype => 'countries',
-		#	options => {
-		#		title => 'Origin of downloads',
-		#	}
+		#	options => { top => 'countries', title => 'Countries' },
 		#},
 		{
 			plugin => 'Grid',
@@ -425,7 +424,7 @@ $c->{irstats2}->{report} = {
 			plugin => 'Table',
 			datatype => 'referrer',
 			options => {
-				title => 'Top Referrers',
+				title_phrase => 'top_referrers',
 				top => 'referrer',
 			}
 		},
@@ -433,7 +432,7 @@ $c->{irstats2}->{report} = {
 			plugin => 'Table',
 			datatype => 'browsers',
 			options => {
-				title => 'Browsers',
+				title_phrase => 'browsers',
 				top => 'browsers',
 			}
 		},

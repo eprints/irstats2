@@ -156,14 +156,15 @@ document.observe("dom:loaded",function(){
 <epp:phrase id="lib/irstats2:category:general">General</epp:phrase>
 
 <!-- Reports -->
-<epp:phrase id="lib/irstats2:report:main">Statistics Overview</epp:phrase>
-<epp:phrase id="lib/irstats2:report:most_popular_authors">Authors</epp:phrase>
-<epp:phrase id="lib/irstats2:report:most_popular_eprints">Works</epp:phrase>
-<epp:phrase id="lib/irstats2:report:most_popular_divisions">Divisions</epp:phrase>
+<epp:phrase id="lib/irstats2:report:main">Statistics</epp:phrase>
+<epp:phrase id="lib/irstats2:report:most_popular_authors">Statistics</epp:phrase>
+<epp:phrase id="lib/irstats2:report:most_popular_eprints">Statistics</epp:phrase>
+<epp:phrase id="lib/irstats2:report:most_popular_divisions">Statistics</epp:phrase>
 <epp:phrase id="lib/irstats2:report:deposits">Deposits</epp:phrase>
 <epp:phrase id="lib/irstats2:report:requests">Requests</epp:phrase>
 <epp:phrase id="lib/irstats2:report:compare_years">Comparison per year</epp:phrase>
 <epp:phrase id="lib/irstats2:report:eprint">Statistics Overview</epp:phrase>
+<epp:phrase id="lib/irstats2:report:author">Author statistics</epp:phrase>
 
 <epp:phrase id="lib/irstats2:report:advanced:robots">Site crawlers</epp:phrase>
 <epp:phrase id="lib/irstats2:report:most_popular:most_popular_authors">Authors</epp:phrase>
@@ -174,6 +175,18 @@ document.observe("dom:loaded",function(){
 <epp:phrase id="lib/irstats2:report:advanced:requests">Requests</epp:phrase>
 <epp:phrase id="lib/irstats2:report:general:main">Summary</epp:phrase>
 <epp:phrase id="lib/irstats2:report:general:compare_years">Comparison per year</epp:phrase>
+
+
+<!-- View titles -->
+
+<epp:phrase id="lib/irstats2:view:top_downloads">Most downloaded items</epp:phrase>
+<epp:phrase id="lib/irstats2:view:top_authors">Top Authors</epp:phrase>
+<epp:phrase id="lib/irstats2:view:item_types">Type of resources</epp:phrase>
+<epp:phrase id="lib/irstats2:view:file_format">File formats</epp:phrase>
+<epp:phrase id="lib/irstats2:view:download_countries">Origin of downloads</epp:phrase>
+<epp:phrase id="lib/irstats2:view:top_referrers">Top Referrers</epp:phrase>
+<epp:phrase id="lib/irstats2:view:browsers">Browsers</epp:phrase>
+
 
 <epp:phrase id="lib/irstats2:report:timeline:content">
 	<div style='float:left;'>
