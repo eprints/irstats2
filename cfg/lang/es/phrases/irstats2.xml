@@ -211,11 +211,11 @@ document.observe("dom:loaded",function(){
 	<table cellspacing="0" cellpadding="0" border="0">
 	<tr>
 	<td><label for="sd" style='width: 30px;'>Fecha de inicio: </label></td>
-	<td><input type="text" class="w8em format-d-m-y highlight-days-67 range-high-today" name="from" id="sd" value= "" maxlength="10"/></td>
+	<td><input type="text" class="w8em format-y-m-d highlight-days-67 range-high-today" name="from" id="sd" value= "" maxlength="10"/></td>
 	</tr>
 	<tr>
 	<td><label for="ed" style='width: 30px;'>Fecha de término: </label></td>
-	<td><input type="text" class="w8em format-d-m-y highlight-days-67 range-high-today" name="to" id="ed" value="" maxlength="10"/></td>
+	<td><input type="text" class="w8em format-y-m-d highlight-days-67 range-high-today" name="to" id="ed" value="" maxlength="10"/></td>
 	<td align='center' rowspan='2'><input type='submit' value='View' style="margin-left:25px;" class='ep_form_action_button'/></td>
 	</tr>
 	</table>
@@ -234,8 +234,8 @@ document.observe("dom:loaded",function(){
 </table>
 <script type="text/javascript">
      document.observe( "dom:loaded", function() {
-		new EPJS_Stats_Placeholder( 'sd', 'DD/MM/YYYY' );
-		new EPJS_Stats_Placeholder( 'ed', 'DD/MM/YYYY' );
+		new EPJS_Stats_Placeholder( 'sd', 'YYYY/MM/DD' );
+		new EPJS_Stats_Placeholder( 'ed', 'YYYY/MM/DD' );
      } );
 </script>
 </div>
