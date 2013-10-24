@@ -165,7 +165,7 @@ sub ajax
 	{
 		$json_data_points .= (length $json_data_points) ? ", [ \"$_->{description}\", $_->{count}" : "[ \"$_->{description}\", $_->{count}";
 
-		if( $_->{average} )
+		if( exists $_->{average} )
 		{
 			$json_data_points .= ", $_->{average}";
 		}
