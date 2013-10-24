@@ -128,10 +128,10 @@ sub render
 		}
 		$local_context->parse_context() if( $done_any );
 
-		my $plugin = $session->plugin( "Stats::View::$pluginid", handler => $handler, options => $options );
+		my $plugin = $session->plugin( "Stats::View::$pluginid", handler => $handler, options => $options, context => $local_context );
 		next unless( defined $plugin );	# an error / warning would be nice...
 		
-		$frag->appendChild( $plugin->render( $local_context ) );
+		$frag->appendChild( $plugin->render );
 	}
 
 	return $frag;	

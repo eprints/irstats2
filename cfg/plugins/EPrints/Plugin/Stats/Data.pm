@@ -20,12 +20,14 @@ sub new
 	$self->{handler} = $params{handler};
 	$self->{context} = $params{context};	# || {};
 
-	$self->{data} = undef;
+	$self->{data} = $params{data} || [];
 
 	if( defined $self->context && defined $self->context->{datatype} )
 	{
 		$self->{processor} = $self->handler->get_processor( $self->context->{datatype} );
 	}
+
+	$self->{conf} = {};
 
 	return $self;
 }
@@ -73,18 +75,6 @@ sub parse_conf
 	{
 		# error, asked to ORDER BY a field that's not selected!
 		$self->handler->log( "Stats::Data: cannot order by $conf->{order_by} without selecting that field.", 1 );
-	}
-
-	if( $self->has_field( 'datestamp' ) )
-	{
-		my $date_res = $self->conf->{date_resolution};
-		my $valid_date_res = { day => 1, month => 1, year => 1 };
-		if( !defined $date_res || !exists $valid_date_res->{$date_res})
-		{
-			$self->conf->{date_resolution} = 'day';
-		}
-
-		$self->context->date_resolution( $self->conf->{date_resolution} );
 	}
 
 	$self->conf->{render_dates} ||= 0;
@@ -145,30 +135,6 @@ sub select
 		# more complex cases: Sets and/or Groupings
                 $stats = $handler->extract_set_data( $context, $self->conf );
         }
-
-	# fill in potential missing dates (when selecting data from the DB, you're not guaranteed to have a continuous time-line - missing dates need to be added and
-	#  their counts set to 0).
-	if( $self->has_field( 'datestamp' ) )
-	{
-		my $days = EPrints::Plugin::Stats::Utils::get_dates( $handler, $self->context );
-
-		my %groupby_data = map { $_->{datestamp} => $_ } @$stats;
-
-		my $full_stats = [];
-		foreach my $day ( @$days )
-		{
-			if( exists $groupby_data{$day} )
-			{
-				push @$full_stats, $groupby_data{$day};
-			}
-			else
-			{
-				push @$full_stats, { datestamp => $day, count => 0 };	# eeerrr missing object etc right?
-			}
-		}
-
-		$stats = $full_stats;
-	}
 
 	$self->{data} = $stats;
 
@@ -263,7 +229,7 @@ sub render_objects
 
 			if( defined $fieldname )
 			{
-				$row->{$fieldname} = $desc;
+				$row->{$fieldname} = $desc if( !defined $row->{$fieldname} );
 			}
 			else
 			{
@@ -320,11 +286,13 @@ sub sum_all
 # called when an export of the data is requested
 sub export
 {
-	my( $self, $pluginid ) = @_;
+	my( $self, $params ) = @_;
 
-	my $plugin = $self->{session}->plugin( "Stats::Export::$pluginid" ) or return;
-
-	$plugin->export( $self );
+	# the plug-in is instanciated by /cgi/stats/get
+	if( defined $params->{export_plugin} )
+	{
+		$params->{export_plugin}->export( $self );
+	}
 }
 
 1;

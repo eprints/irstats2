@@ -36,18 +36,17 @@ sub render_title
 
 sub get_data
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 	my $session = $self->{session};
 
 	# We need to know the Top <things> we're going to display...
 	if( !EPrints::Utils::is_set( $self->options->{top} ) )
 	{
-		print "Stats::View::Table: missing option 'top'\n";
-		return $session->make_doc_fragment;
+		$self->handler->log( __PACKAGE__.": missing option 'top'" );
+		return undef;
 	}
 
 	# This bit of code tries to map what the user wants to view given the context
-	my $local_context = $context->clone();
 	my $options = $self->options;
 	
 	$options->{do_render} = ( defined $options->{export} ) ? 0 : 1;
@@ -64,41 +63,41 @@ sub get_data
 	if( $top eq 'eprint' )
 	{
 		# we need to fetch eprint objects ie 'eprintid'
-		$local_context->{grouping} = 'eprint';
+		$self->context->{grouping} = 'eprint';
 		$options->{fields} = [ 'eprintid' ];
 	}
-	elsif( $top eq $local_context->{datatype} )
+	elsif( $top eq $self->context->{datatype} )
 	{
-		$local_context->{grouping} = 'value';
+		$self->context->{grouping} = 'value';
 		$options->{fields} = [ 'value' ];
 	}
-	elsif( EPrints::Utils::is_set( $local_context->{set_name} ) )
+	elsif( EPrints::Utils::is_set( $self->context->{set_name} ) )
 	{
-		$local_context->{grouping} = $top;
+		$self->context->{grouping} = $top;
 		$options->{fields} = [ 'set_value' ];
 	}
 	else
 	{
 		# perhaps it's a set then... let's assume so!
-		$local_context->{set_name} = $top;
-		delete $local_context->{grouping};
+		$self->context->{set_name} = $top;
+		delete $self->context->{grouping};
 		$options->{fields} = [ 'set_value' ];
 	}
 
 	$self->{options} = $options;
 
-	return $self->handler->data( $local_context )->select( %$options );
+	return $self->handler->data( $self->context )->select( %$options );
 }
 
 sub render_content_ajax
 {
-        my( $self, $context ) = @_;
+        my( $self ) = @_;
 
 	my $session = $self->{session};
 
-	my $stats = $self->get_data( $context );
+	my $stats = $self->get_data();
 
-	unless( $stats->count )
+	if( !defined $stats || !$stats->count )
 	{
 		return $session->html_phrase( 'lib/irstats2/error:no_data' );
 	}
@@ -114,23 +113,6 @@ sub render_content_ajax
 
 	$table = $frag->appendChild( $session->make_element( 'table', border => '0', cellpadding => '0', cellspacing => '0', class => 'irstats2_table' ) );
 
-=pod
-	$tr = $table->appendChild( $session->make_element( 'tr', class => 'irstats2_table_headings' ) );
-
-	if( $options->{show_order} )
-	{
-		$td = $tr->appendChild( $session->make_element( 'td' ) );
-	}
-
-	$td = $tr->appendChild( $session->make_element( 'td' ) );
-	$td->appendChild( $self->html_phrase( 'label:item' ) );
-
-	if( $options->{show_count} )
-	{
-		$td = $tr->appendChild( $session->make_element( 'td' ) );
-		$td->appendChild( $self->html_phrase( 'label:count' ) );
-	}
-=cut
 	my $data = $stats->data;
 
 	my $c = 0;
@@ -184,7 +166,7 @@ sub render_content_ajax
 			$options->{limit} = $limit;
 			$self->{options} = $options;
 
-			my $json_context = $context->to_json();
+			my $json_context = $self->context->to_json();
 			my $view_options = $self->options_to_json();
 
 			my $link = $table_options->appendChild( $session->make_element( 'a', 

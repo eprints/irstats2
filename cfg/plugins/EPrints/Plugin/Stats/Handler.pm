@@ -225,7 +225,7 @@ sub extract_eprint_data
 
 	my $Q_tablename = $self->{dbh}->quote_identifier( $tablename );
 
-	# Dates are normalised by Stats::Data
+	# Dates are normalised by Stats::Context
 	my $dates = $context->dates;
 	my( $from, $to ) = ( $dates->{from}, $dates->{to} );
 
@@ -794,6 +794,7 @@ sub delete_sets_tables
                 my @values;
                 while( my @r = $sth->fetchrow_array )
                 {
+			next if( $r[0] !~ /^$table_prefix/ );	# may seem redundant but I'll sleep better with this extra test
                         $self->{dbh}->do( "DROP TABLE ".$self->{dbh}->quote_identifier( $r[0] ) );
                         $self->log( "Removed table '$r[0]'" );
                 }

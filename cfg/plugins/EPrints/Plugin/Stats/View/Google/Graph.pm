@@ -13,141 +13,191 @@ use strict;
 # - date_resolution: one of 'day', 'month' or 'year' - the granularity of the graph. Beware that choosing 'day' may pull lots of data
 # - graph_type: one of 'area' of 'column' - 'area' is a line chart, 'column' a bar chart.
 
+sub new
+{
+        my( $class, %params ) = @_;
+
+        my $self = $class->SUPER::new( %params );
+
+	# default options		
+	$self->options->{date_resolution} ||= 'day';
+	$self->options->{graph_type} ||= 'area';
+
+	return $self;
+}
+
 sub mimetype { 'application/json' }
-	
+
+# GoogleChart expects data like this:
+# [ '1 Jan 2012', 1234 ] or [ 'Jan 2012', 1234] or [ '2012', 1234 ]
+#
+# in other words:
+# [ string, int ]
+#
+# so we need to create the JSON, and render the dates properly
+
+# and we need to fill in the missing gaps (days) here - if possible loop only once over the data
+
+# data we get is ordered ASC so the first record is the first date we have data for - however if the user requested
+# a specific FROM date then we can respect it and insert blank data beforehand
 sub get_data
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
-	my $local_context = $context->clone();
-	my $options = $self->options;
+	# the FROM/TO dates might need to be normalised if the date resolution is "month" or "year" (cos it's better to start at the beginning of the month/year for those)
+	my $from = $self->context->dates->{from};
 
-	my $date_res = $options->{date_resolution} || 'day';
-
-	if( $date_res eq 'month' )
+	if( $self->options->{date_resolution} eq 'month' )
 	{
-		my( $from, $to ) = EPrints::Plugin::Stats::Utils::normalise_dates( $self->handler, $local_context );
-
-		if( $from =~ /^(\d{4})(\d{2})(\d{2})$/ )
+		if( defined $from && $from =~ /^(\d{4})(\d{2})(\d{2})$/ )
 		{
 			$from = $1.$2.'01';
-			$local_context->dates( { range => undef, from => $from, to => $to } );	
+			$self->context->dates( { from => $from } );
 		}
 	}
-	elsif( $date_res eq 'year' )
+	elsif( $self->options->{date_resolution} eq 'year' )
 	{
-		my( $from, $to ) = EPrints::Plugin::Stats::Utils::normalise_dates( $self->handler, $local_context );
 		if( $from =~ /^(\d{4})(\d{2})(\d{2})$/ )
 		{
 			$from = $1.'0101';
-			$local_context->dates( { range => undef, from => $from, to => $to } );	
+			$self->context->dates( { from => $from } );
 		}
 	}
 
-	return $self->handler->data( $local_context )->select(
+	# retrieves the data from the DB
+	my $stats = $self->handler->data( $self->context )->select(
 			fields => [ 'datestamp' ],
 			order_by => 'datestamp',
-			order_desc => 1,
+			order_desc => 0,
 	);
-}
 
-sub ajax
-{
-        my( $self, $context ) = @_;
+	# but we still need to group the data by day/month/year depending on options->{date_resolution}
+	# and fill potential gaps in the data
 
-	my $stats = $self->get_data( $context );
-
-	# GoogleChart expects data like this:
-	# [ '1 Jan 2012', 1234 ] or [ 'Jan 2012', 1234] or [ '2012', 1234 ]
-	#
-	# in other words:
-	# [ string, int ]
-	#
-	# so we need to create the JSON, and render the dates properly
-
-	my $google_data = {};
-	my @order_data;
-	my $date_res = $self->options->{date_resolution} || 'day';
-
-	my $find_first = 0;	
-	foreach my $stat ( @{$stats->data} )
+	if( !defined $from && scalar( @{$stats->data} ) )
 	{
-		my ($string, $count) = ( $stat->{datestamp}, $stat->{count} );
-	
-		# discard all the NULL values at the beginning:
-		next if( "$count" eq '0' && !$find_first );
-		$find_first = 1;
-
-		if( $date_res eq 'month' )
-		{	
-			$string =~ s/\d{2}$//g;
-		}
-		elsif( $date_res eq 'year' )
-		{
-			$string =~ s/\d{4}$//g;
-		}
-		if( exists $google_data->{$string} )
-		{
-			$google_data->{$string} += $count;
-		}
-		else
-		{
-			$google_data->{$string} = $count;
-			push @order_data, $string;
-		}
+		$from = $stats->{data}->[0]->{datestamp};
 	}
 
-	my @full_labels;
-	my $month_labels = EPrints::Plugin::Stats::Utils::get_month_labels( $self->{session} );
+	# this returns a continuous list of days/months/years - because there's no guarantee the data-points we retrieved from the DB are time-continuous (there
+	# might be gaps)
+	my $date_sections = EPrints::Plugin::Stats::Utils::get_dates( $from, $self->context->dates->{to}, $self->options->{date_resolution} );
 
+	my $date_res = $self->options->{date_resolution};
+	my $month_labels = EPrints::Plugin::Stats::Utils::get_month_labels( $self->{session} );
+	
+	# variables used to compute the average data points
 	my $show_average = defined $self->options->{show_average} && $self->options->{show_average};
-	my $sum = 0;
-	my $n = 1;
-	foreach my $date ( @order_data )
+	my $avg_sum = 0;
+	my $avg_n = 1;
+
+	my @exports;
+
+	# this builds in one pass: the data-points, the average data-points and the full-labels
+	my $i = 0;
+	foreach my $ds ( @$date_sections )
 	{
+		my $subtotal = 0;
+		for( my $j=$i; $j < scalar(@{$stats->data}); $j++ )
+		{
+			my $datapoint = $stats->data->[$j] or last;
+
+			if( $datapoint->{datestamp} =~ /^$ds/ )
+			{
+				$subtotal += $datapoint->{count} || 0;
+				$i++;
+			}
+			else
+			{
+				# safety measure - not to be stuck on the 1st data point (though this probably means something is wrong in Utils::get_dates
+				$i++ if( $i == 0 );
+
+				last;
+			}
+		}
+	
 		my $desc;
 		if( $date_res eq 'day' )
 		{
 			# 20120101 => 1 Jan 2012
-			$date =~ /^(\d{4})(\d{2})(\d{2})$/;
+			$ds =~ /^(\d{4})(\d{2})(\d{2})$/;
 			$desc = "$3 ".$month_labels->[$2-1]." $1";
 		}
 		elsif( $date_res eq 'month' )
 		{
 			# 201201 => Jan 2012
-			$date =~ /^(\d{4})(\d{2})$/;
+			$ds =~ /^(\d{4})(\d{2})$/;
 			$desc = $month_labels->[$2-1]." $1";
 		}
 		elsif( $date_res eq 'year' )
 		{
 			# 2012 => 2012
-			$desc = $date;
+			$desc = $ds;
 		}
+
+		my $record = { count => $subtotal, datestamp => $ds, description => $desc };
 
 		if( $show_average )
 		{
-			$sum += $google_data->{$date};
-			my $avg = int( $sum / $n++ );
-			push @full_labels, "[ \"$desc\", ".$google_data->{$date}.", $avg ]";
+			$avg_sum += $subtotal;
+			$record->{average} = int( $avg_sum / $avg_n++ );
 		}
-		else
-		{
-			push @full_labels, "[ \"$desc\", ".$google_data->{$date}." ]";
-		}
+
+		push @exports, $record;
 	}
+	
+	# TODO needs new name:
+	$stats->{data} = \@exports;
 
-	my $jsdata = join(",",@full_labels);
+	return $stats;
+}
 
+sub ajax
+{
+        my( $self ) = @_;
+
+	my $stats = $self->get_data;
+
+	# need to generate the JSON from @stats->data
+
+	my $json_data_points = "";
+	foreach (@{$stats->data} )
+	{
+		$json_data_points .= (length $json_data_points) ? ", [ \"$_->{description}\", $_->{count}" : "[ \"$_->{description}\", $_->{count}";
+
+		if( $_->{average} )
+		{
+			$json_data_points .= ", $_->{average}";
+		}
+
+		$json_data_points .= "]",
+	}
+	
 	my $graph_type = $self->options->{graph_type} || 'area';	# or 'column'
 	
-	print STDOUT "{ \"data\": [$jsdata], \"type\": \"$graph_type\", \"show_average\": ".($show_average?'true':'false')." }";
+	print STDOUT "{ \"data\": [$json_data_points], \"type\": \"$graph_type\", \"show_average\": ".($self->options->{show_average}?'true':'false')." }";
 
 	return;
 }
 
+sub export
+{
+        my( $self, $params ) = @_;
+
+	my $stats = $self->get_data;
+	
+	$stats->export( $params );
+
+	return;
+}
+
+
+
 sub render_title
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
+
+	my $context = $self->context;
 
 	my $datatype = defined $context->{datatype} ? $context->{datatype}: "no datatype?";
 

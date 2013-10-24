@@ -15,16 +15,16 @@ sub mimetype { 'application/json' }
 
 sub get_data
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
-	return $self->handler->data( $context )->select( fields => [ 'value' ], do_render => 0 );
+	return $self->handler->data( $self->context )->select( fields => [ 'value' ], do_render => 0 );
 }
 
 sub ajax
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
-	my $stats = $self->get_data( $context );
+	my $stats = $self->get_data;
 	
 	my @data;
         foreach(@{$stats->data})
@@ -44,7 +44,9 @@ sub ajax
 
 sub render_title
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
+
+	my $context = $self->context;
 
 	my $datatype = defined $context->{datatype} ? $context->{datatype}: "no datatype?";
 	return $self->{session}->make_text( $datatype );

@@ -18,9 +18,9 @@ sub javascript_class
 
 sub render_content_ajax
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
-	my $count = $self->handler->data( $context )->select()->sum_all();
+	my $count = $self->handler->data( $self->context )->select()->sum_all();
 
         my $human_display = $self->options->{human_display} || 1;
         $human_display = 1 unless( defined $human_display && $human_display eq '0' );

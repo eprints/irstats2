@@ -19,8 +19,10 @@ sub mimetype
 
 sub render_title
 {
-        my( $self, $context ) = @_;
+        my( $self ) = @_;
 
+	my $context = $self->context;
+	
         my $grouping = defined $context->{grouping} ? ":".$context->{grouping} : "";
 
         return $self->html_phrase( "title$grouping" );
@@ -29,7 +31,7 @@ sub render_title
 # same as Stats::View::Table
 sub get_data
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 	my $session = $self->{session};
 
 	# We need to know the Top <things> we're going to display...
@@ -40,7 +42,6 @@ sub get_data
 	}
 
 	# This bit of code tries to map what the user wants to view given the context
-	my $local_context = $context->clone();
 	my $options = $self->options;
 	
 	$options->{do_render} = ( defined $options->{export} ) ? 0 : 1;
@@ -57,39 +58,39 @@ sub get_data
 	if( $top eq 'eprint' )
 	{
 		# we need to fetch eprint objects ie 'eprintid'
-		$local_context->{grouping} = 'eprint';
+		$self->context->{grouping} = 'eprint';
 		$options->{fields} = [ 'eprintid' ];
 	}
-	elsif( $top eq $local_context->{datatype} )
+	elsif( $top eq $self->context->{datatype} )
 	{
-		$local_context->{grouping} = 'value';
+		$self->context->{grouping} = 'value';
 		$options->{fields} = [ 'value' ];
 	}
-	elsif( EPrints::Utils::is_set( $local_context->{set_name} ) )
+	elsif( EPrints::Utils::is_set( $self->context->{set_name} ) )
 	{
-		$local_context->{grouping} = $top;
+		$self->context->{grouping} = $top;
 		$options->{fields} = [ 'set_value' ];
 	}
 	else
 	{
 		# perhaps it's a set then... let's assume so!
-		$local_context->{set_name} = $top;
-		delete $local_context->{grouping};
+		$self->context->{set_name} = $top;
+		delete $self->context->{grouping};
 		$options->{fields} = [ 'set_value' ];
 	}
 
 	$self->{options} = $options;
 
-	return $self->handler->data( $local_context )->select( %$options );
+	return $self->handler->data( $self->context )->select( %$options );
 }
 
 sub render_content_ajax
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
         my $session = $self->{session};
 
-        my $stats = $self->get_data( $context );
+        my $stats = $self->get_data;
 
 	my $options = $self->options;
 

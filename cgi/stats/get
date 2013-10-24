@@ -31,7 +31,12 @@ unless( defined $view )
 	return;
 }
 
-my $view_plugin = $session->plugin( "Stats::View::$view", handler => $handler, options => $params );
+my $view_plugin = $session->plugin( "Stats::View::$view", 
+		handler => $handler, 
+		options => $params, 
+		context => $context 
+);
+
 unless( defined $view_plugin )
 {
 	print STDOUT "<p>IRStats2: unknown view <strong>$view</strong></p>";
@@ -46,7 +51,7 @@ if( defined $params->{export} )
 	{
 		$params->{export_plugin} = $export_plugin;
 		$session->send_http_header( content_type => $export_plugin->mimetype );
-		$view_plugin->export( $context, $params );	
+		$view_plugin->export( $params );	
 	}
 }
 else

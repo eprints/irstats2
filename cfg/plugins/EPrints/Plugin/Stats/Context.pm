@@ -198,22 +198,13 @@ sub parse_context
 		}
 	}
 
-	# Allow dates to be separated by "/" or "-"
-        if( defined $self->{from} && $self->{from} =~ m#^(\d{2})[/-](\d{2})[/-](\d{4})$# )        #
-        {
-                $self->{from} = $3.$2.$1;
-        }
-        if( defined $self->{to} && $self->{to} =~ m#^(\d{2})[/-](\d{2})[/-](\d{4})$# )    #
-        {
-                $self->{to} = $3.$2.$1;
-        }
-
 	if( !defined $self->{from} && !defined $self->{to} && !defined $self->{range} )
 	{
+		# use default range in this case
 		$self->{range} = $self->default_range;
 	}
 
-	( $self->{from}, $self->{to} ) = EPrints::Plugin::Stats::Utils::normalise_dates( $self->handler, $self );
+	( $self->{from}, $self->{to} ) = EPrints::Plugin::Stats::Utils::normalise_dates( $self );
 }
 
 # if called without $dates -> return current dates

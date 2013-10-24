@@ -28,56 +28,87 @@ use Date::Calc;
 #
 
 
+
 # returns an array of dates, given a range, as used on the Graph plotter
 # this is to force having all the dates defined for a given range (even so there's no data)
+# date_resolution = one of 'day' [default], 'month' or 'year' > expresses the grouping
+# to = optional, default to YESTERDAY
 sub get_dates
 {
-	my( $handler, $context ) = @_;
+	my( $from, $to, $date_resolution ) = @_;
 
-	my( $from, $to ) = EPrints::Plugin::Stats::Utils::normalise_dates( $handler, $context );
+	return [] unless( defined $from );
 
-	return [] unless( defined $from && defined $to );
-        
-	my ($to_y, $to_m, $to_d);
-        my ($from_y, $from_m, $from_d );
-
-	# safety mechanim
-	if( $from !~ /^\d{4}\d{2}\d{2}$/ || $to !~ /^\d{4}\d{2}\d{2}$/ || $from >= $to )
+	if( !defined $to )
 	{
-		# inconsitent request
-		return [];
+		my( $to_y, $to_m, $to_d ) = Date::Calc::Add_Delta_YMD( Date::Calc::Today(), 0, 0, -1 );
+		$to = $to_y * 10000 + $to_m * 100 + $to_d;
 	}
-	else
+
+	# safety
+	return [] if( $from > $to );
+
+
+# depending on date_resolution:
+# - 'day': returns stacks of valid days: 01-01-2001, 02-01-2001 etc
+# - 'month': return stacks of valid months: 01-2001, 02-2001 etc
+# - 'year': return stacks of valid years: 2001, 2002 etc
+#
+# note that only grouping per 'day' is tricky (we then need to use Date::Calc to make sure of leap years etc)
+# 
+
+	my @sections;
+
+	if( $date_resolution eq 'year' )
+	{
+		$from = substr( $from, 0 , 4);
+		$to = substr( $to, 0, 4);
+		my $start = $from;
+		for( $from .. $to )
+		{
+			push @sections, $start++;
+		}
+	}
+	elsif( $date_resolution eq 'month' )
+	{
+		$from =~ /^(\d{4})(\d{2})/;
+		my( $from_y, $from_m ) = ( $1, $2 );
+		
+		$to =~ /^(\d{4})(\d{2})/;
+		my( $to_y, $to_m ) = ( $1, $2 );
+		for( my $y = $from_y; $y <= $to_y; $y++ )
+		{
+			for( my $m = ($y == $from_y ? $from_m : 1); $m <= ( $y == $to_y ? $to_m : 12 ); $m++ )
+			{
+				push @sections, sprintf( "%04d%02d", $y, $m );
+			}
+		}
+	}
+	elsif( $date_resolution eq 'day' )
 	{
 		$from =~ /^(\d{4})(\d{2})(\d{2})$/;
-		($from_y, $from_m, $from_d) = ($1,$2,$3);
-		
-		$to =~ /^(\d{4})(\d{2})(\d{2})$/;
-		($to_y, $to_m, $to_d) = ($1,$2,$3);
-	}
-	
-	my @dates;
-	push @dates, $to;
 
-	my( $cur_y, $cur_m, $cur_d ) = ( $to_y, $to_m, $to_d );
+		my( $cur_y, $cur_m, $cur_d ) = ( $1, $2, $3 );
 
-	while(1)
-	{
-		my( $y, $m, $d ) = Date::Calc::Add_Delta_YMD( $cur_y, $cur_m, $cur_d, 0, 0, -1 );
+		# something went wrong... better not carry on into the while(1) loop :-)
+		return [] if( !defined $cur_y || !defined $cur_m || !defined $cur_d );
 
-		my $fdate = $y*10000 + $m*100 + $d;
+		my $fdate = $from;
 
-		last if( $fdate < $from );
+		while( $fdate <= $to )
+		{
+			push @sections, $fdate;
 
-		push @dates, $fdate;
+			my( $y, $m, $d ) = Date::Calc::Add_Delta_YMD( $cur_y, $cur_m, $cur_d, 0, 0, 1 );
 
-		( $cur_y, $cur_m, $cur_d ) = ( $y, $m, $d );
+			$fdate = $y*10000 + $m*100 + $d;
 
+			( $cur_y, $cur_m, $cur_d ) = ( $y, $m, $d );
+		}
 	}
 
-	# TODO try to compute the @dates in the right order above so the 'reverse' (below) can be removed? 
-	my @rdates = reverse @dates;
-	return \@rdates;
+	return \@sections;
+       
 }
 
 # turns a range string (eg '1m') into a [ year, month, day ] (eg [0,-1,0] as used by Date::Calc)
@@ -103,86 +134,77 @@ sub range_to_offset
 
 }
 
-# Turns a {daterange} structure into a valid (from, to) dates
-# {daterange}->{range} may be defined eg. '1m' to mean last month
-# {daterange}->{from} may be defined to signal the lower limit of the date range
-# {daterange}->{to} may be defined to signal the upper limit of the date range
-#
-# a combinaison of the 3 above might be used hence the parsing/validation below
-#
-# N.B.: Add_Delta_YMD( Today(), 0, 0, -1 ) returns Yesterday - The reason is that we cannot show stats for "today" as they - very likely - haven't been processed yet (so it would
-# always shows a graph going down, not good for spark lines)
+
+# given a context object, returns 
 sub normalise_dates
 {
-	my( $handler, $context ) = @_;
-        
-	my $daterange = {
-		range => $context->{range},
-		from => $context->{from},
-		to => $context->{to},
-	};
+	my( $context ) = @_;
 
-	my ($to_y, $to_m, $to_d);
-        my ($from_y, $from_m, $from_d );
-	my ($to, $from);
+	my( $range, $from, $to ) = @{$context->dates}{qw/ range from to /};
 
-	if( defined $daterange->{range} && $daterange->{range} eq '_ALL_' )
+	# normalise from/to formats (accept YYYYMMDD, YYYY/MM/DD and YYYY-MM-DD) to YYYYMMDD
+
+	if( defined $from && $from =~ m#^(\d{4})[/-]?(\d{2})[/-]?(\d{2})$# )
 	{
-		delete $daterange->{range};
-
-		($to_y, $to_m, $to_d) = Date::Calc::Add_Delta_YMD( Date::Calc::Today(), 0, 0, -1 );
-		$to = $to_y * 10000 + $to_m * 100 + $to_d;
-
-		return( '19000101', $to );
+		$from = "$1$2$3";
 	}
 	
-	if( EPrints::Utils::is_set( $daterange->{range} ) )
+	if( defined $to && $to =~ m#^(\d{4})[/-]?(\d{2})[/-]?(\d{2})$# )
 	{
-		if( $daterange->{range} =~ /^(\d{4})$/ )
+		$to = "$1$2$3";
+	}
+
+	# 'range' has priority over from/to being defined
+	if( EPrints::Utils::is_set( $range ) )
+	{
+		if( $range eq '_ALL_' )
 		{
+			# no date conditions as such - perhaps to = TODAY/YESTERDAY from=first record in data
+			return( undef, undef );
+		}
+		elsif( $range =~ /^(\d{4})$/ )
+		{
+			# $range = a year e.g. 2012
 			return	( $1."0101", $1."1231" );
 		}
-                if( defined $daterange->{to} && $daterange->{to} =~ /^(\d{4})(\d{2})(\d{2})$/ )
+
+		my( $to_y, $to_m, $to_d );
+
+		# if 'range' is defined and we have a upper limit (use YESTERDAY if not)
+                if( defined $to && $to =~ /^(\d{4})(\d{2})(\d{2})$/ )
                 {
-                        $to = $daterange->{to};
                         ($to_y,$to_m,$to_d) = ($1,$2,$3);
                 }
                 else
                 {
+			# to = YESTERDAY
                         ($to_y, $to_m, $to_d) = Date::Calc::Add_Delta_YMD( Date::Calc::Today(), 0, 0, -1 );
                         $to = $to_y * 10000 + $to_m * 100 + $to_d;
                 }
-        	($from_y, $from_m, $from_d ) = Date::Calc::Add_Delta_YMD( $to_y, $to_m, $to_d, @{&range_to_offset($daterange->{range})} );
+
+        	my ($from_y, $from_m, $from_d ) = Date::Calc::Add_Delta_YMD( $to_y, $to_m, $to_d, @{&range_to_offset($range)} );
 		$from = $from_y * 10000 + $from_m * 100 + $from_d;
+
+		return( $from, $to );
 	}
-	elsif( defined $daterange->{from} )
+		
+	# implicit 'else'
+	if( defined $from )
 	{
-		if( defined $daterange->{to} && $daterange->{to} =~ /^(\d{4})(\d{2})(\d{2})$/ )
+		if( defined $to )
 		{
-			$to = $daterange->{to};
-			($to_y,$to_m,$to_d) = ($1,$2,$3);
+			return( $from, $to );
 		}
-		else
-		{
-			($to_y, $to_m, $to_d) = Date::Calc::Add_Delta_YMD( Date::Calc::Today(), 0, 0, -1 );
-			$to = $to_y * 10000 + $to_m * 100 + $to_d;
-		}
-
-		$from = $daterange->{from};
+	
+		my( $to_y, $to_m, $to_d ) = Date::Calc::Add_Delta_YMD( Date::Calc::Today(), 0, 0, -1 );
+		$to = $to_y * 10000 + $to_m * 100 + $to_d;
+		
+		return( $from, $to );
 	}
-
-	if( !defined $from || !defined $to )
-	{
-		return undef;
-	}
-
-        if( $from !~ /^(\d{4})(\d{2})(\d{2})$/ || $to !~ /^(\d{4})(\d{2})(\d{2})$/ || $from >= $to )
-        {
-                # inconsitent request
-                return undef;
-	}
-	return ( $from, $to );
+	
+	return( $from, $to );
 }
+
 
 #####################
 #

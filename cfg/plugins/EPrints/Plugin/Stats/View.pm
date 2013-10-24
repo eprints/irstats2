@@ -23,12 +23,9 @@ sub new
 
 	my $self = $class->SUPER::new( %params );
 
-	if( defined $self->options )
-	{
-		my $view_id = $self->get_id;
-		$view_id =~ s/Stats::View::(.*)$/$1/;
-		$self->options->{view} = $view_id;
-	}
+	my $view_id = $self->get_id;
+	$view_id =~ s/Stats::View::(.*)$/$1/;
+	$self->options->{view} = $view_id;
 
 	# if set to 1, this will add the CSS class "ep_noprint" to the containers, effectively hidding the View when people try to print the page
 	$self->{hide_from_print} = 0;
@@ -41,9 +38,9 @@ sub mimetype { 'text/html' }
 # Called by the Javascript layer via AJAX (see irstats2.js). This method simply calls View::render_content_ajax and prints the result to the page.
 sub ajax
 {
-        my( $self, $context ) = @_;
+        my( $self ) = @_;
 
-	my $frag = $self->render_content_ajax( $context );
+	my $frag = $self->render_content_ajax();
 
 	binmode( STDOUT, ":utf8" );
 
@@ -53,8 +50,19 @@ sub ajax
 }
 
 # Helper methods
-sub options { shift->{options} || {} }
+sub options { 
+	my( $self ) = @_;
+
+	if( !defined $self->{options} )
+	{
+		$self->{options} = {};
+	}
+	
+	return $self->{options};
+}
 sub handler { shift->{handler} }
+sub context { shift->{context} }
+
 
 # Which Javascript class to use (View plugins using AJAX should sub-class this). Javascript classes are defined in irstats2.js.
 sub javascript_class { 'View' }
@@ -62,9 +70,9 @@ sub javascript_class { 'View' }
 # The main data retrieval method. Usually called by View::render_content, View::render_content_ajax or View::export (the methods that require the data)
 sub get_data
 {
-	my( $self, $context, $params ) = @_;
+	my( $self, $params ) = @_;
 
-	return $self->handler->data( $context );
+	return $self->handler->data( $self->context );
 }
 
 
@@ -93,7 +101,7 @@ sub render_title { shift->html_phrase( 'title' ) }
 # But this can be over-riden if you'd rather render the data directly on the page (without going via AJAX). View::KeyFigures provides a good example.
 sub render_content
 {
-        my( $self, $context ) = @_;
+        my( $self ) = @_;
 
         my $session = $self->{session};
 
@@ -104,7 +112,7 @@ sub render_content
 	my $js_class = $self->javascript_class();
 	my $css_class = 'irstats2_'.lc( $js_class );
 
-	my $json_context = $context->to_json();
+	my $json_context = $self->context->to_json();
 	my $view_options = $self->options_to_json();
 
         $frag->appendChild( $session->make_element( "div", id => "$id", class => $css_class ) );
@@ -125,7 +133,7 @@ CODE
 # Method called to render the data (graph etc) when using the AJAX callback.
 sub render_content_ajax
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
 	$self->{session}->log( 'EPrints::Plugin::Stats::View::render_content_ajax must be sub-classed' );
 
@@ -135,7 +143,7 @@ sub render_content_ajax
 # The main rendering method, called by Screen::IRStats2::Report
 sub render
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
 	my $session = $self->{session};
 	my $frag = $session->make_doc_fragment;
@@ -168,7 +176,7 @@ sub render
 			}
 			else
 			{
-				$title->appendChild( $self->render_title( $context ) );
+				$title->appendChild( $self->render_title() );
 			}
 			$container->appendChild( $title );
 		}
@@ -176,7 +184,7 @@ sub render
 	
 	if( $self->can_export() && defined $title )
 	{
-		$container->appendChild( $self->render_export_bar( $title, $context ) );
+		$container->appendChild( $self->render_export_bar( $title ) );
 	}
 
 	my $content = $session->make_element( "div", class => 'irstats2_view_content' );
@@ -185,7 +193,7 @@ sub render
 	my $custom_css = $options->{custom_css};
 	$content->setAttribute( 'style', $custom_css ) if( defined $custom_css );
 
-	$content->appendChild( $self->render_content( $context ) );
+	$content->appendChild( $self->render_content() );
 	
 	return $frag;
 }
@@ -197,7 +205,7 @@ sub can_export { 1 }
 # Renders the Export bar for the View plugins that need it.
 sub render_export_bar
 {
-	my( $self, $target, $context ) = @_;
+	my( $self, $target ) = @_;
 	
 	my $session = $self->{session};
 
@@ -239,7 +247,7 @@ sub render_export_bar
 	}
 
 	$content->appendChild( $session->html_phrase( 'irstats2/view/export_section', 
-			params => $context->render_hidden_bits( $local_options ),
+			params => $self->context->render_hidden_bits( $local_options ),
 			options => $select
 	) );
 
@@ -250,10 +258,11 @@ sub render_export_bar
 # This will actually export the data. No rendering (View::render etc.) is done in this case.
 sub export
 {
-        my( $self, $context, $params ) = @_;
+        my( $self, $params ) = @_;
 
-        my $data = $self->get_data( $context, $params );
-        $data->export( $params->{export} );
+        my $data = $self->get_data( $params );
+
+        $data->export( $params );
 }
 
 sub export_plugins

@@ -15,12 +15,11 @@ sub mimetype { 'application/json' }
 	
 sub get_data
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
-	my $local_context = $context->clone();
-	$local_context->dates( { range => '6m', from => undef, to => undef } );
+	$self->context->dates( { range => '6m', from => undef, to => undef } );
 
-	return $self->handler->data( $local_context )->select(
+	return $self->handler->data( $self->context )->select(
 			fields => [ 'datestamp' ],
 			order_by => 'datestamp',
 			order_desc => 1,
@@ -29,9 +28,9 @@ sub get_data
 
 sub ajax
 {
-        my( $self, $context ) = @_;
+        my( $self ) = @_;
 
-	my $stats = $self->get_data( $context );
+	my $stats = $self->get_data;
 
 	# GoogleChart expects data like this:
 	# [ '1 Jan 2012', 1234 ] or [ 'Jan 2012', 1234] or [ '2012', 1234 ]
@@ -85,7 +84,9 @@ sub ajax
 
 sub render_title
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
+
+	my $context = $self->context;
 
 	my $datatype = defined $context->{datatype} ? $context->{datatype}: "no datatype?";
 

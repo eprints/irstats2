@@ -20,7 +20,7 @@ sub has_title
 
 sub render_content
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
 	my $session = $self->{session};
 
@@ -55,7 +55,7 @@ sub render_content
 
 		$box->appendChild( $session->make_text( "$year" ) );
 
-		$frag->appendChild( $self->render_sub_plugins( $context, $year  ) );
+		$frag->appendChild( $self->render_sub_plugins( $year  ) );
 	}
 
 	return $frag;
@@ -64,16 +64,20 @@ sub render_content
 
 sub render_sub_plugins
 {
-	my( $self, $context, $year ) = @_;
-
-	# to have the same yAxis scale, we'd need to know the max value over the entire dataset
-	my $plugin = $self->{session}->plugin( "Stats::View::Google::Graph", handler => $self->handler, options => { date_resolution => 'month', graph_type => 'column' } );
-
-	my $local_context = $context->clone();
+	my( $self, $year ) = @_;
+	
+	my $local_context = $self->context->clone();
 	$local_context->{datatype} = 'downloads';
 	$local_context->dates( { from => undef, to => undef, range => "$year" } );
 
-	return $plugin->render( $local_context );
+	# to have the same yAxis scale, we'd need to know the max value over the entire dataset
+	my $plugin = $self->{session}->plugin( "Stats::View::Google::Graph", 
+		handler => $self->handler, 
+		options => { date_resolution => 'month', graph_type => 'column' }, 
+		context => $local_context 
+	);
+
+	return $plugin->render;
 }
 
 sub can_export { 0 }

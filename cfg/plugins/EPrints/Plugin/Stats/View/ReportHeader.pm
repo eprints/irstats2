@@ -20,19 +20,19 @@ sub has_title
 
 sub render_breadcrumbs
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
 	# if set_value not set -> 'All items'
 	# if set -> 'All items > <set_name>: <set_value>
 	
-	my $set = $context->set();
+	my $set = $self->context->set();
 
 	my $session = $self->{session};
 	my $bd = $session->make_doc_fragment;
 
 	if( defined $set->{set_value} )
 	{
-		my $report = $context->{context} || '';
+		my $report = $self->context->{irs2report} || '';
 
 		# TODO phrase up the breadcrumbs?
 		# TODO would be nice to have a global method to retrieve the stats url:
@@ -57,10 +57,12 @@ sub render_breadcrumbs
 
 sub render_timeline
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 	
 	my $session = $self->{session};
 	my $tl = $session->make_doc_fragment;
+
+	my $context = $self->context;
 
 	my $tl_frame = $tl->appendChild( $session->make_element( 'div', class => 'irstats2_reportheader_timeline_frame' ) );
 
@@ -77,7 +79,7 @@ sub render_timeline
 
 sub render_filters
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
 	my $session = $self->{session};
 	my $frag = $session->make_doc_fragment;
@@ -86,7 +88,7 @@ sub render_filters
 	$frag->appendChild( $session->make_element( 'input',
 			type => 'submit', 
                         class => 'irstats2_form_action_button',
-                        value => $self->phrase('lib/irstats2/header:filter_items'),
+                        value => 'Filter Items',
 			id => 'irstats2_filters_button',
 			onclick => "return EPJS_Stats_Action_Toggle( 'irstats2_filters_button', 'irstats2_filters', 'irstats2_form_action_button_selected' );",
         ) );
@@ -95,7 +97,7 @@ sub render_filters
 	$frag->appendChild( $session->make_element( 'input',
 			type => 'submit', 
                         class => 'irstats2_form_action_button',
-                        value => $self->phrase('lib/irstats2/header:dates'),
+                        value => 'Dates',
 			id => 'irstats2_dates_button',
 			onclick => "return EPJS_Stats_Action_Toggle( 'irstats2_dates_button', 'irstats2_dates', 'irstats2_form_action_button_selected' );",
         ) );
@@ -104,7 +106,7 @@ sub render_filters
 	$frag->appendChild( $session->make_element( 'input', 
 			type => 'submit',
                         class => 'irstats2_form_action_button',
-                        value => $self->phrase('lib/irstats2/header:available_reports'),
+                        value => 'Available Reports',
 			id => 'irstats2_reports_button',
 			onclick => "return EPJS_Stats_Action_Toggle( 'irstats2_reports_button', 'irstats2_reports', 'irstats2_form_action_button_selected' );",
         ) );
@@ -116,7 +118,7 @@ sub render_filters
         my $local_context = $self->handler->context->from_request( $session );
         my $report = $local_context->{report} || "";
 
-	my $url = $context->current_url;
+	my $url = $self->context->current_url;
 
         my $div = $frag->appendChild( $session->make_element( 'div' ) );
 
@@ -203,7 +205,9 @@ JS
 	my $conf = $session->config( 'irstats2', 'report' );
 
         # as to not display the current_report in the list of ... reports.
-        my $current_report = $context->{report};
+        my $current_report = $self->context->{ir2report};
+
+	my $context = $self->context;
 
         my $reports = {};
 
@@ -303,7 +307,7 @@ sub applies
 
 sub render_content
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
 	my $session = $self->{session};
 
@@ -313,13 +317,13 @@ sub render_content
 	my $content_tr = $content->appendChild( $session->make_element( 'tr' ) );
 
 	my $breadcrumbs = $content_tr->appendChild( $session->make_element( 'td', class => 'irstats2_reportheader_breadcrumbs' ) );
-	$breadcrumbs->appendChild( $self->render_breadcrumbs( $context ) );
+	$breadcrumbs->appendChild( $self->render_breadcrumbs );
 	
 	my $timeline = $content_tr->appendChild( $session->make_element( 'td', class => 'irstats2_reportheader_timeline' ) );
-	$timeline->appendChild( $self->render_timeline( $context ) );
+	$timeline->appendChild( $self->render_timeline );
 	
 	my $options = $frag->appendChild( $session->make_element( 'div', class => 'irstats2_reportheader_options' ) );
-	$options->appendChild( $self->render_filters( $context ) );
+	$options->appendChild( $self->render_filters );
 
 	return $frag;
 }
@@ -327,7 +331,7 @@ sub render_content
 # This renders the set lookups
 sub render_content_ajax
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
 	my @sets = @{$self->handler->sets->get_sets_names()||[]};
 
@@ -337,7 +341,7 @@ sub render_content_ajax
 	my $container_id = "irstats2_container_".int(rand()*100000);
 
 	my $local_context = $self->handler->context->from_request( $self->{session} );
-	my $report = $local_context->{report} || "";
+	my $report = $local_context->{irs2report} || "";
 
 	my $url = "/cgi/stats/report/$report";
 

@@ -197,7 +197,7 @@ sub render_metric_with_progress
 # This plugin doesn't have an AJAX callback - everything is rendered as the plugin is called
 sub render_content
 {
-	my( $self, $context, $params ) = @_;
+	my( $self ) = @_;
 
 	my $session = $self->{session};
 
@@ -221,11 +221,11 @@ sub render_content
 
 		if( $type eq 'spark' )
 		{
-			$section->appendChild( $self->render_metric_with_spark( $context, $name ) );
+			$section->appendChild( $self->render_metric_with_spark( $self->context, $name ) );
 		}
 		elsif( $type eq 'progress' )
 		{
-			$section->appendChild( $self->render_metric_with_progress( $context, $name ) );
+			$section->appendChild( $self->render_metric_with_progress( $self->context, $name ) );
 		}
 
 		if( ( $c % 2 == 1 ) && $c > 0 )

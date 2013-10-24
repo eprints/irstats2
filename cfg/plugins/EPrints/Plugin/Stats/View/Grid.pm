@@ -22,7 +22,7 @@ sub has_title
 
 sub render
 {
-	my( $self, $context ) = @_;
+	my( $self ) = @_;
 
 	my $options = $self->options;
 	my $session = $self->{session};
@@ -46,7 +46,7 @@ sub render
                 my $options = delete $item->{options};
                 $options ||= {};
 
-                my $local_context = $context->clone();
+                my $local_context = $self->context->clone();
 
                 # local context
                 my $done_any = 0;
@@ -57,11 +57,15 @@ sub render
                 }
                 $local_context->parse_context() if( $done_any );
 
-                my $plugin = $session->plugin( "Stats::View::$pluginid", handler => $handler, options => $options );
+                my $plugin = $session->plugin( "Stats::View::$pluginid", 
+			handler => $handler, 
+			options => $options, 
+			context => $local_context 
+		);
                 next unless( defined $plugin ); # an error / warning would be nice...
 
 		$td = $tr->appendChild( $session->make_element( 'td', 'valign' => 'top', width => $cell_width."%" ) );
-		$td->appendChild( $plugin->render( $local_context ) );
+		$td->appendChild( $plugin->render );
         }
 
 	return $table;
