@@ -121,8 +121,12 @@ $c->{irstats2}->{allow} = sub {
 # time-out for the so-called "double-click" filtering - default to 3600 secs = 1 hour
 $c->{plugins}->{"Stats::Filter::Repeat"}->{params}->{timeout} = 3600 * 24;
 
+# prevents EPrints 3.2 from breaking (because that trigger isn't implemented in that versin of EPrints)
+# the value '16' comes from EPrints::Const::EP_TRIGGER_DYNAMIC_TEMPLATE
+$EPrints::Plugin::Stats::EP_TRIGGER_DYNAMIC_TEMPLATE ||= 16;
+
 # Trigger to load the Google Charts library from the template(s)
-$c->add_trigger( EP_TRIGGER_DYNAMIC_TEMPLATE , sub
+$c->add_trigger( $EPrints::Plugin::Stats::EP_TRIGGER_DYNAMIC_TEMPLATE, sub
 {
         my( %args ) = @_;
 
