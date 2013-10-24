@@ -270,6 +270,36 @@ $c->{irstats2}->{report} = {
 		]
 	},
 
+	authors => {
+		items => [ 
+		{ plugin => 'ReportHeader' },
+		{ plugin => 'Google::Graph', 
+			datatype => 'downloads',
+			options => {
+                                date_resolution => 'month',
+                                graph_type => 'column',
+                        },
+		 },
+		{ plugin => 'KeyFigures',
+			options => {
+				metrics => [ 'downloads.spark', 'hits.spark' ],
+		}
+	
+		 },
+		{
+			plugin => 'Table',
+			datatype => 'downloads',
+			options => {
+				limit => 10,
+				top => 'eprint',
+				title => 'Top Publications'
+			},
+		},
+		]
+
+
+	},
+
 # Other custom Reports	
 	most_popular_eprints => {
 		items => [
@@ -374,17 +404,17 @@ $c->{irstats2}->{report} = {
 		items => [
 		{ plugin => 'ReportHeader' },
 		{
-			plugin => 'Google::GeoChart',
+			plugin => 'Table',
 			datatype => 'countries',
-			options => {
-				title => 'Origin of downloads',
-			}
+			options => { top => 'countries', title => 'Origin of downloads' },
 		},
-		# if you'd rather see a table of countries, use this:
+		# if you'd rather see a map, un-comment the following below - however be aware of some Javascript issues: https://github.com/eprints/irstats2/issues/3
 		#{
-		#	plugin => 'Table',
+		#	plugin => 'Google::GeoChart',
 		#	datatype => 'countries',
-		#	options => { top => 'countries', title => 'Countries' },
+		#	options => {
+		#		title => 'Origin of downloads',
+		#	}
 		#},
 		{
 			plugin => 'Grid',
