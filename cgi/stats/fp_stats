@@ -28,7 +28,7 @@ HTML
 my $handler = $session->plugin( "Stats::Handler" );
 return unless(defined $handler);
 
-my $ctx = $handler->context( { datatype => 'eprint_downloads' } )->forever;
+my $ctx = $handler->context( { datatype => 'downloads' } )->forever;
 my $dl_all = EPrints::Plugin::Stats::Utils::human_display( $ctx->select()->sum_all );
 print <<HTML;
 <span style='padding-right:10px;'>$dl_all full-text downloads to date</span>
