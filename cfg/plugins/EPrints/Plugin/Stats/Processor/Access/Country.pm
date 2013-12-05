@@ -18,44 +18,34 @@ use strict;
 sub new
 {
         my( $class, %params ) = @_;
+	
 	my $self = $class->SUPER::new( %params );
+	return $self if( !$self->{session} );
+
+	# if possible, use the GeoIP data file shipped with EPrints
+	my $dat_file = $self->{session}->config( "lib_path").'/geoip/GeoIP.dat';
+	
+	# alternatively use the global one
+	$dat_file = 1 if( !-e $dat_file );	
 
 	#Test Geo::IP first - it's faster!
-	my $geoPackage = "Geo::IP";
+	foreach my $pkg ( 'Geo::IP', 'Geo::IP::PurePerl' )
+	{
+		if( EPrints::Utils::require_if_exists( $pkg ) )
+		{
+			$self->{geoip} = $pkg->new( $dat_file );
+			last if( defined $self->{geoip} );
+		}
+	}
 
-        if( !EPrints::Utils::require_if_exists( $geoPackage ) ){
-        	# no Geo::IP, try Geo::IP::PurePerl 
-                $geoPackage = "Geo::IP::PurePerl";
-                unless( EPrints::Utils::require_if_exists( $geoPackage ) )
-        	{
-        	        $self->{advertise} = 0;
-        	        $self->{disable} = 1;
-        	        $self->{error} = "Failed to load required module for Processor::Access::Country. Country information will not be available.";
-        	        return $self;
-        	}
-        }
+	if( !defined $self->{geoip} )
+	{
+		$self->{advertise} = 0;
+		$self->{disable} = 1;
+		$self->{error} = "Failed to load required module for Processor::Access::Country. Country information will not be available.";
+		return $self;
+	}
 	
-        my $geoipDatFile = $self->{session}->config( "lib_path").'/geoip/GeoIP.dat';
-        
-	if( -e $geoipDatFile )
-	{	
-		# if possible, use the GeoIP data shipped with EPrints
-		$self->{geoip} = $geoPackage->new( $geoipDatFile );
-	}
-	else
-	{
-		# otherwise use the global file
-		$self->{geoip} = $geoPackage->new( 1 );
-	}
-
-	unless( defined $self->{geoip} )
-	{
-                $self->{advertise} = 0;
-                $self->{disable} = 1;
-                $self->{error} = "Failed to load required module for Processor::Access::Country. Country information will not be available.";
-                return $self;
-	}
-
         $self->{disable} = 0;
         $self->{provides} = [ "countries" ];
 
