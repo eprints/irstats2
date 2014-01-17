@@ -60,7 +60,9 @@ $c->{irstats2}->{sets} = [
 
 		'use_ids' => 1,
 #		'id_field' => 'id',		# default value, optional. if the subfield is called 'email' then use 'email'
-
+#		If your set returns too much data when no filter is applied, this forces at least n characters 
+#		to be used for the filter before results are returned.
+#		'minimum_filter_length' => 2, #integer
 	},
 #	# just using creators_name
 #	{
