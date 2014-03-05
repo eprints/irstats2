@@ -32,6 +32,17 @@ unless( defined $set_name )
 	return;
 }
 
+my $sets = $session->config( 'irstats2', 'sets' );
+my $minimum_filter_length = 0;
+foreach my $set ( @$sets )
+{
+        if( ( defined( $set->{name}) && $set->{name} eq $set_name )
+                || ( defined( $set->{field} ) && $set->{field} eq $set_name ) ){
+                $minimum_filter_length = $set->{minimum_filter_length};
+        }
+}
+
+
 my $base_url = $session->param( 'base_url' ) || '/cgi/stats/report';
 $base_url =~ s/\/$//g;
 my $report = '';
@@ -55,6 +66,12 @@ if( $set_name eq 'eprintid' )
 		$session->terminate;
 		return;
 	}
+}
+elsif( length($q) < $minimum_filter_length )
+{
+        print STDOUT $session->phrase( "cgi/stats/set_finder:minimum_filter_length", characters => $minimum_filter_length );
+        $session->terminate;
+        return;
 }
 else
 {
@@ -86,11 +103,14 @@ if( $done_any )
 }
 else
 {
-	$html = "<span>No match</span>";
+	if ( length($q) > 0 ) {
+                $html = $session->phrase( "cgi/stats/set_finder:no_match" );
+        } else {
+                $html = $session->phrase( "cgi/stats/set_finder:no_filter" );
+        }
 }
 
 print STDOUT $html;
 
 $session->terminate;
 return;
-

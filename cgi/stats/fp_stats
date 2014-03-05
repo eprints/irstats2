@@ -21,24 +21,20 @@ my $docs_count = EPrints::Plugin::Stats::Utils::human_display( $session->dataset
                 }] )->count 
 );
 
-print <<HTML;
-<span style='padding-right:10px;'>$docs_count full-texts to date</span>
-HTML
+print $session->phrase( "cgi/stats/fp_stats:full_texts_all", count => $docs_count );
 
 my $handler = $session->plugin( "Stats::Handler" );
 return unless(defined $handler);
 
 my $ctx = $handler->context( { datatype => 'downloads' } )->forever;
 my $dl_all = EPrints::Plugin::Stats::Utils::human_display( $ctx->select()->sum_all );
-print <<HTML;
-<span style='padding-right:10px;'>$dl_all full-text downloads to date</span>
-HTML
+
+print $session->phrase( "cgi/stats/fp_stats:full_text_downloads_all", count => $dl_all );
+
 
 $ctx->dates( { range => '1y' } );
 my $dl_year = EPrints::Plugin::Stats::Utils::human_display( $ctx->select()->sum_all );
 
-print <<HTML;
-<span style='padding-right:10px;'>$dl_year full-text downloads in the past year</span>
-HTML
+print $session->phrase( "cgi/stats/fp_stats:full_text_downloads_year", count => $dl_year );
 
 return;
