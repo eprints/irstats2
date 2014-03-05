@@ -247,10 +247,12 @@ sub render_single_object
 {
 	my( $self, $conf, $value ) = @_;
 
+	my $citestyle = $self->conf->{citestyle} || 'brief';
+
 	if( $conf->{type} eq 'eprint' )
 	{
 		my $eprint = $self->{session}->dataset( 'archive' )->dataobj( $value );
-		return (defined $eprint) ? $eprint->render_citation_link( 'brief' ) : $self->{session}->html_phrase( 'lib/irstats2/unknown:eprint', id => $self->{session}->make_text( $value ) );
+		return (defined $eprint) ? $eprint->render_citation_link( $citestyle ) : $self->{session}->html_phrase( 'lib/irstats2/unknown:eprint', id => $self->{session}->make_text( $value ) );
 	}
 	elsif( $conf->{type} eq 'phrase' )
 	{
