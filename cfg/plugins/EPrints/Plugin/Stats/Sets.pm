@@ -54,12 +54,18 @@ sub load_conf
 
 		my $type = $field->get_type;
 
-		# default
+		# defaults
 		my $set_properties = {
 			type => $type,
 			field => $fieldname,
 			anon => ( defined $set->{anon} && $set->{anon} ) ? 1 : 0,
 		};
+		
+		if( $type eq 'subject' && defined $set->{whitelist} && ref( $set->{whitelist} ) eq 'ARRAY' )
+		{
+			my %whitelist = map { $_ => 1 } @{ $set->{whitelist} || [] };
+			$set_properties->{whitelist} = \%whitelist;
+		}
 
 		if( $type eq 'compound' )
 		{
@@ -349,7 +355,7 @@ sub normalise_set_values
 		{
 			my $subject = $self->{session}->dataset( 'subject' )->dataobj( $raw_value );
 			return [] unless( defined $subject );
-			my $ancestors = $self->get_subject_ancestors( $subject );
+			my $ancestors = $self->get_subject_ancestors( $set, $subject );
 			$self->{subject_cache}->{$set}->{$raw_value} = $ancestors;
 			$all_values = $ancestors;
 		}
@@ -401,7 +407,7 @@ sub normalise_set_values
 # get_subject_ancestors: return the list of ancestors for a given subject.
 sub get_subject_ancestors
 {
-	my( $self, $subject ) = @_;
+	my( $self, $set, $subject ) = @_;
 
 	return [] unless( defined $subject );
 
@@ -410,7 +416,15 @@ sub get_subject_ancestors
 	foreach my $a ( $subject->_get_ancestors() )
 	{
 		my $s = EPrints::DataObj::Subject->new( $self->{session}, $a );
-		next unless( defined $s && $s->can_post );
+		next unless( defined $s );
+
+		if( !$s->can_post )
+		{
+			# is it in the white-list of non-depositable subjects?
+			my $whitelist = $self->get_property( $set, 'whitelist' );
+			next if( !defined $whitelist || !exists $whitelist->{$s->value( 'subjectid' )} );
+		}
+
 		push @ancestors, $a;
 	}
 
