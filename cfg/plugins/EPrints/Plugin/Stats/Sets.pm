@@ -443,8 +443,88 @@ sub normalise_name
 		$_ =~ s/\s+$//g;
 	}
 
-        return EPrints::Utils::is_set( $g ) ? (ucfirst( lc( $f ) ) ).", ".ucfirst( lc( $g ) ) : ucfirst( lc( $f ) );
+	my $name = EPrints::Utils::is_set( $g ) ? "$f, $g" : "$f";
+
+	return nc( $name );
 }
+
+# From http://search.cpan.org/dist/Lingua-EN-NameCase/NameCase.pm
+# Copyright (c) Mark Summerfield 1998-2008. All Rights Reserved.
+sub nc
+{
+        my( $name ) = @_;
+
+        return if !EPrints::Utils::is_set( $name );
+
+        # TODO-sf2: need a way to set this globally? disabled for now
+        my $SPANISH = 0;
+
+        $name = lc( $name );                           # Lowercase the lot.
+
+        $name =~ s{ \b (\w)   }{\u$1}gox ;           # Uppercase first letter of every word.
+        $name =~ s{ (\'\w) \b }{\L$1}gox ;           # Lowercase 's.
+
+        # Name case Mcs and Macs - taken straight from NameParse.pm incl. comments.
+        # Exclude names with 1-2 letters after prefix like Mack, Macky, Mace
+        # Exclude names ending in a,c,i,o, or j are typically Polish or Italian
+        if ( $name =~ /\bMac[A-Za-z]{2,}[^aciozj]\b/o || $name =~ /\bMc/o )
+        {
+                $name =~ s/\b(Ma?c)([A-Za-z]+)/$1\u$2/go;
+
+                # Now correct for "Mac" exceptions
+                $name =~ s/\bMacEvicius/Macevicius/go ;  # Lithuanian
+                $name =~ s/\bMacHado/Machado/go ;        # Portuguese
+                $name =~ s/\bMacHar/Machar/go ;
+                $name =~ s/\bMacHin/Machin/go ;
+                $name =~ s/\bMacHlin/Machlin/go ;
+                $name =~ s/\bMacIas/Macias/go ;
+                $name =~ s/\bMacIulis/Maciulis/go ;
+                $name =~ s/\bMacKie/Mackie/go ;
+                $name =~ s/\bMacKle/Mackle/go ;
+                $name =~ s/\bMacKlin/Macklin/go ;
+                $name =~ s/\bMacQuarie/Macquarie/go ;
+                $name =~ s/\bMacOmber/Macomber/go ;
+                $name =~ s/\bMacIn/Macin/go ;
+                $name =~ s/\bMacKintosh/Mackintosh/go ;
+                $name =~ s/\bMacKen/Macken/go ;
+                $name =~ s/\bMacHen/Machen/go ;
+                $name =~ s/\bMacisaac/MacIsaac/go ;
+                $name =~ s/\bMacHiel/Machiel/go ;
+                $name =~ s/\bMacIol/Maciol/go ;
+                $name =~ s/\bMacKell/Mackell/go ;
+                $name =~ s/\bMacKlem/Macklem/go ;
+                $name =~ s/\bMacKrell/Mackrell/go ;
+                $name =~ s/\bMacLin/Maclin/go ;
+                $name =~ s/\bMacKey/Mackey/go ;
+                $name =~ s/\bMacKley/Mackley/go ;
+                $name =~ s/\bMacHell/Machell/go ;
+                $name =~ s/\bMacHon/Machon/go ;
+        }
+        $name =~ s/Macmurdo/MacMurdo/go ;
+
+        # Fixes for "son (daughter) of" etc. in various languages.
+        $name =~ s{ \b Al(?=\s+\w)  }{al}gox ;       # al Arabic or forename Al.
+        $name =~ s{ \b Ap        \b }{ap}gox ;       # ap Welsh.
+        $name =~ s{ \b Ben(?=\s+\w) }{ben}gox ;      # ben Hebrew or forename Ben.
+        $name =~ s{ \b Dell([ae])\b }{dell$1}gox ;   # della and delle Italian.
+        $name =~ s{ \b D([aeiu]) \b }{d$1}gox ;      # da, de, di Italian; du French.
+        $name =~ s{ \b De([lr])  \b }{de$1}gox ;     # del Italian; der Dutch/Flemish.
+        $name =~ s{ \b El        \b }{el}gox unless $SPANISH ;   # el Greek or El Spanish.
+        $name =~ s{ \b La        \b }{la}gox unless $SPANISH ;   # la French or La Spanish.
+        $name =~ s{ \b L([eo])   \b }{l$1}gox ;      # lo Italian; le French.
+        $name =~ s{ \b Van(?=\s+\w) }{van}gox ;      # van German or forename Van.
+        $name =~ s{ \b Von       \b }{von}gox ;      # von Dutch/Flemish
+
+        # Fixes for roman numeral names, e.g. Henry VIII, up to 89, LXXXIX
+        $name =~ s{ \b ( (?: [Xx]{1,3} | [Xx][Ll]   | [Ll][Xx]{0,3} )?
+            (?: [Ii]{1,3} | [Ii][VvXx] | [Vv][Ii]{0,3} )? ) \b }{\U$1}gox ;
+
+        utf8::encode( $name );
+
+        return $name;
+}
+
+
 
 sub render_set_name
 {
