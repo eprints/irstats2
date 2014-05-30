@@ -443,9 +443,7 @@ sub normalise_name
 		$_ =~ s/\s+$//g;
 	}
 
-	my $name = EPrints::Utils::is_set( $g ) ? "$f, $g" : "$f";
-
-	return nc( $name );
+	return nc( EPrints::Utils::is_set( $g ) ? "$f, $g" : "$f" );
 }
 
 # From http://search.cpan.org/dist/Lingua-EN-NameCase/NameCase.pm
