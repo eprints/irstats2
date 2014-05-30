@@ -71,7 +71,7 @@ sub get_data
 		$self->context->{grouping} = 'value';
 		$options->{fields} = [ 'value' ];
 	}
-	elsif( EPrints::Utils::is_set( $self->context->{set_name} ) )
+	elsif( EPrints::Utils::is_set( $self->context->{set_name} ) && $self->context->{set_name} ne $top )
 	{
 		$self->context->{grouping} = $top;
 		$options->{fields} = [ 'set_value' ];
