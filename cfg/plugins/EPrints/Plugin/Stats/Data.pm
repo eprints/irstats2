@@ -123,6 +123,20 @@ sub select
 
 	my( $context, $handler ) = ( $self->context, $self->handler );
 
+        # optimisation? hack? pick one. This uses the "internal" table "irstats2_downloads_totals" which keeps a cumulative
+	# sum of the downloads per eprint - this can be used instead of the main table "irstats2_downloads" if 
+	# there are no dates filters and if we're not requesting the daily download counts (as on a download graph for instance)
+        if( $context->{datatype} eq 'downloads' && $handler->{dbh}->has_table( 'irstats2_downloads_totals' ) )
+        {
+                my $from = $context->{from};
+                my $to = $context->{to};
+
+                if( !defined $from && !defined $to && !$self->has_field( 'datestamp' ) )
+                {
+                        $context->{datatype} = 'downloads_cache';
+                }
+        }
+
         my $stats;
         if( !EPrints::Utils::is_set( $context->{set_name} ) || $context->{set_name} eq 'eprint' )
         {

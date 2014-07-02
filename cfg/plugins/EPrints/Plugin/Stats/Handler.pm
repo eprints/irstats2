@@ -432,23 +432,9 @@ sub extract_set_data
 			}
 		}
 
-		# hack:
-		# when only one row/field is selected and the SUM( count ) and we have a JOIN then it is MUCH quicker to do the SUM in PERL than doing it in MySQL - this is 
-		# especially used by View::Table. Original run-time were ~1400secs down to ~2secs hence the hack.
-		# if you'd rather let MySQL do the SUM, then set $use_internal_sum to '0'
-		my $use_internal_sum = scalar( @valid_fields ) == 1 && !EPrints::Utils::is_set( $order_by );	
-
 		my $Q_count = $self->{dbh}->quote_identifier( "count" );
 
-		if( $use_internal_sum )
-		{
-			# don't select the SUM since PERL will do this for us
-			$select .= "$Q_data_tablename.$Q_count";
-		}
-		else
-		{
-			$select .= "SUM( $Q_data_tablename.$Q_count )";
-		}
+		$select .= "SUM( $Q_data_tablename.$Q_count )";
 
 		my $Q_eprintid = $self->{dbh}->quote_identifier( 'eprintid' );
 		my $Q_set_eprintid = $self->{dbh}->quote_identifier( 'set_eprintid' );
@@ -485,9 +471,8 @@ sub extract_set_data
 			$sql .= " WHERE ".join( " AND ", @conditions );
 		}
 	
-		if( length( $group_by ) && !$use_internal_sum )
+		if( length( $group_by ) )
 		{
-			# cannot have a GROUP BY if we do the SUM ourselves (won't return the correct number of rows)
 			$sql .= " GROUP BY $group_by";
 		}
 
@@ -498,14 +483,8 @@ sub extract_set_data
 		}
 		else
 		{
-			if( !$use_internal_sum )
-			{
-				$sql .= " ORDER BY SUM($Q_data_tablename.$Q_count) $order_desc";
-			}
+			$sql .= " ORDER BY SUM($Q_data_tablename.$Q_count) $order_desc";
 		}
-
-		# if we do the SUM in PERL, then we must also do the LIMIT in PERL
-		my $internal_count_limit = delete $conf->{limit} if( $use_internal_sum );
 
 		# LIMIT, OFFSET 
 		my $sth = $self->prepare_select( $sql, limit => $conf->{limit}, offset => $conf->{offset} );
@@ -516,28 +495,6 @@ sub extract_set_data
 
 		my @results;
 
-		# here's the hack
-		if( $use_internal_sum )
-		{
-			my %counts;
-			while( my @row = $sth->fetchrow_array )
-			{
-				# $row[0] = selected field - $row[1] = the count
-				$counts{$row[0]} += $row[1];
-			}
-
-			foreach my $k ( reverse sort { $counts{$a} <=> $counts{$b} } keys %counts )
-			{
-				push @results, { $valid_fields[0] => $k, count => $counts{$k} };
-			}
-
-			if( EPrints::Utils::is_set( $internal_count_limit ) )
-			{
-				@results = @results[0..($internal_count_limit-1)];
-			}
-
-			return \@results;
-		}
 
 		while( my @row = $sth->fetchrow_array )
 		{
@@ -960,7 +917,7 @@ sub get_stat_plugins
         foreach my $id ( $self->{session}->plugin_list( type => "Stats" ) )
 	{
 		next unless( $id =~ /^Stats::$classname/ );
-		my $p = $self->{session}->plugin( "$id" );
+		my $p = $self->{session}->plugin( "$id", handler => $self );
 		push @plugins, $p if( !$p->{disable} );
 	}
 
