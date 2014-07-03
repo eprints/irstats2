@@ -123,18 +123,19 @@ sub select
 
 	my( $context, $handler ) = ( $self->context, $self->handler );
 
+	my $datatype = $context->{datatype};
+	
         # optimisation? hack? pick one. This uses the "internal" table "irstats2_downloads_totals" which keeps a cumulative
 	# sum of the downloads per eprint - this can be used instead of the main table "irstats2_downloads" if 
 	# there are no dates filters and if we're not requesting the daily download counts (as on a download graph for instance)
-        if( $context->{datatype} eq 'downloads' && $handler->{dbh}->has_table( 'irstats2_downloads_totals' ) )
-        {
-                my $from = $context->{from};
-                my $to = $context->{to};
-
-                if( !defined $from && !defined $to && !$self->has_field( 'datestamp' ) )
-                {
-                        $context->{datatype} = 'downloads_cache';
-                }
+	#
+	# note that we don't check if "range" is set - because at this stage "range" has already been normalised to its "from" and "to" counterparts
+	if( !defined $context->{from} && !defined $context->{to} && !$self->has_field( 'datestamp' ) )
+	{
+		if( $handler->{dbh}->has_table( "irstats2_cache_$datatype" ) )
+		{
+                        $context->{datatype} = "cache_$datatype";
+		}
         }
 
         my $stats;
@@ -149,6 +150,9 @@ sub select
 		# more complex cases: Sets and/or Groupings
                 $stats = $handler->extract_set_data( $context, $self->conf );
         }
+
+	# in case we used the cache version (cf. above) - restore the "actual" datatype
+	$context->{datatype} = $datatype;
 
 	$self->{data} = $stats;
 
