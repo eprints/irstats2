@@ -125,8 +125,8 @@ sub select
 
 	my $datatype = $context->{datatype};
 	
-        # optimisation? hack? pick one. This uses the "internal" table "irstats2_downloads_totals" which keeps a cumulative
-	# sum of the downloads per eprint - this can be used instead of the main table "irstats2_downloads" if 
+        # optimisation? hack? pick one. This uses an "internal" table "irstats2_cache_$datatype" which keeps a cumulative
+	# sum of the downloads (say) per eprint - this can be used instead of the main table "irstats2_$datatype" if 
 	# there are no dates filters and if we're not requesting the daily download counts (as on a download graph for instance)
 	#
 	# note that we don't check if "range" is set - because at this stage "range" has already been normalised to its "from" and "to" counterparts
