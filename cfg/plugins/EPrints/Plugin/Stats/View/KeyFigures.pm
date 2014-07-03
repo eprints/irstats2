@@ -120,7 +120,7 @@ DLSPARK
 	my $div = $frag->appendChild( $self->{session}->make_element( 'span', class => 'irstats2_keyfigures_metric' ) );
 
 	my $span = $div->appendChild( $self->{session}->make_element( 'span', class => 'irstats2_keyfigures_metric_figure' ) );
-	$span->appendChild( $self->{session}->make_text( EPrints::Plugin::Stats::Utils::human_display( $count ) ) );
+	$span->appendChild( $self->{session}->make_text( EPrints::Plugin::Stats::Utils::human_display( $self->{session}, $count ) ) );
 
 	$span = $div->appendChild( $self->{session}->make_element( 'span', class => 'irstats2_keyfigures_metric_text' ) );
 

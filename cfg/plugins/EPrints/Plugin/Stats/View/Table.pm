@@ -144,7 +144,7 @@ sub render_content_ajax
 			}
 
 			my $cur_width = int( ($count / $reference)*$ref_width );
-			$count = EPrints::Plugin::Stats::Utils::human_display( $count ) if( $options->{human_display} );
+			$count = EPrints::Plugin::Stats::Utils::human_display( $session, $count ) if( $options->{human_display} );
 
 			$td = $tr->appendChild( $session->make_element( 'td', class => 'irstats2_table_cell_count' ) );
 			my $ref_box = $td->appendChild( $session->make_element( 'div', class => 'irstats2_progress_wrapper', style => "width: $ref_width"."px" ) );

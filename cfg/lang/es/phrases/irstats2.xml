@@ -11,6 +11,7 @@
 <epp:phrase id="lib/irstats2/header:filter_items">Filtrar elementos</epp:phrase>
 <epp:phrase id="lib/irstats2/header:dates">Fechas</epp:phrase>
 <epp:phrase id="lib/irstats2/header:available_reports">Reportes disponibles</epp:phrase>
+<epp:phrase id="lib/irstats2/decimal_separator">.</epp:phrase>
 
 <!-- Dates -->
 <epp:phrase id="lib/irstats2/dates:separator"><span class='irstats2_date_separator'>-</span></epp:phrase>

@@ -215,10 +215,17 @@ sub normalise_dates
 # turns a number eg. 1234567 into a more human-readable form: 1,234,567
 sub human_display
 {
-        my( $data ) = @_;
+        my( $repo, $data ) = @_;
         
 	my $display = $data || 0;
 	return $display if( $display lt 1000 );
+
+	my $decimal;
+	if( $repo->get_lang->has_phrase( "lib/irstats2/decimal_separator" ) )
+	{
+		$decimal = $repo->phrase( "lib/irstats2/decimal_separator" );
+	}
+	$decimal ||= ",";	# in English
 
         if( $data =~ /^\d+$/ )
         {
@@ -226,7 +233,7 @@ sub human_display
                 my $human = "";
                 while( $d =~ s/(\d{3})$// )
                 {
-                        $human = ( $d ? ",$1" : "$1" ).$human;
+                        $human = ( $d ? "$decimal"."$1" : "$1" ).$human;
                 }
 
                 $human = $d.$human if( $d );
