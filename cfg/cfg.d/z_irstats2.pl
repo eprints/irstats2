@@ -460,6 +460,9 @@ $c->{irstats2}->{report} = {
 
 };
 
+# must be enabled manually
+$c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{disable} = 1;
+
 # Bazaar config
 
 $c->{plugins}{"Stats::Context"}{params}{disable} = 0;

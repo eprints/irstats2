@@ -22,8 +22,6 @@ unless(defined $handler)
         return;
 }
 
-##$handler->{noise}++;
-
 my $set_name = $session->param( 'set_name' );
 
 unless( defined $set_name )
@@ -37,7 +35,8 @@ my $minimum_filter_length = 0;
 foreach my $set ( @$sets )
 {
         if( ( defined( $set->{name}) && $set->{name} eq $set_name )
-                || ( defined( $set->{field} ) && $set->{field} eq $set_name ) ){
+                || ( defined( $set->{field} ) && $set->{field} eq $set_name ) )
+	{
                 $minimum_filter_length = $set->{minimum_filter_length};
         }
 }
