@@ -20,7 +20,7 @@ unless(defined $handler)
         return;
 }
 
-my ($context, $params) = &_get_context( $session, $handler );
+my ($context, $params) = &get_context( $session, $handler );
 
 my $view = $params->{view};
 
@@ -63,22 +63,13 @@ else
 $session->terminate;
 return;
 
-sub _get_context
+sub get_context
 {
 	my( $session, $handler ) = @_;
 
-	my $context_fields = {
-		set_name => 1,
-		set_value => 1,
-		from => 1,
-		to => 1,
-		range => 1,
-		datatype => 1,
-		datafilter => 1,
-		grouping => 1
-	};
-
 	my $context = $handler->context->from_request( $session );
+	
+	my %context_fields = map { $_ => 1 } @{ $context->fields || [] };
 
 	my %params;
 
@@ -86,7 +77,7 @@ sub _get_context
 	foreach( @sparams )
 	{
 		my $val = $session->param( $_ );
-		next if( !EPrints::Utils::is_set( $val ) || $context_fields->{$_} );
+		next if( !EPrints::Utils::is_set( $val ) || $context_fields{$_} );
 		$params{$_} = $val;
 	}
 	return ( $context, \%params );

@@ -208,6 +208,11 @@ sub parse_context
 	( $self->{from}, $self->{to} ) = EPrints::Plugin::Stats::Utils::normalise_dates( $self );
 }
 
+sub fields
+{
+	return \@FIELDS;
+}
+
 # if called without $dates -> return current dates
 # if called with $dates -> set values
 sub dates
