@@ -296,7 +296,7 @@ sub render_date
 			$frag->appendChild( $session->make_text( " $day," ) );
 			$frag->appendChild( $session->make_text( " $1" ) );
 		
-			if( defined $context->{to} && $context->{to} =~ /^(\d{4})(\d{2})(\d{2})$/ )
+			if( defined $context->{to} && $context->{to} =~ /^(\d{4})(\d{2})(\d{2})$/ && $context->{to} > $context->{from} )
 			{
 				$frag->appendChild( $session->html_phrase( 'lib/irstats2/dates:join_dates' ) );
 				my $day = sprintf( "%01d", $3 );

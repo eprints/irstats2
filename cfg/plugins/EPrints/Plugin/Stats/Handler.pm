@@ -22,7 +22,7 @@ sub new
 
         my $self = $class->SUPER::new( %params );
 	
-	$self->{noise} ||= 0;
+	$self->{noise} ||= $DEBUG_SQL;
 
 	if( defined $self->{session} )
 	{
@@ -291,12 +291,20 @@ sub extract_eprint_data
 	my @conditions;	
 
 	# time/datestamp conditions
-	if( defined $from && defined $to && $from < $to )
+	if( defined $from && defined $to )
 	{
 		my $Q_datestamp = $self->{dbh}->quote_identifier( 'datestamp' );
 		my $Q_from = $self->{dbh}->quote_int( $from );
-		my $Q_to = $self->{dbh}->quote_int( $to );
-		push @conditions, "$Q_datestamp >= $Q_from AND $Q_datestamp <= $Q_to";
+
+		if( $from < $to )
+		{
+			my $Q_to = $self->{dbh}->quote_int( $to );
+			push @conditions, "$Q_datestamp >= $Q_from AND $Q_datestamp <= $Q_to";
+		}
+		elsif( "$from" eq "$to" )
+		{
+			push @conditions, "$Q_datestamp = $Q_from";
+		}
 	}
 
 	# eprintid defined ?
@@ -445,13 +453,24 @@ sub extract_set_data
 		# then time to build up the conditions (WHERE ...):
 		my @conditions;	
 
+		my $from = $context->{from};
+		my $to = $context->{to};
+
 		# time/datestamp conditions
-		if( defined $context->{from} && defined $context->{to} && $context->{from} < $context->{to} )
+		if( defined $from && defined $to )
 		{
 			my $Q_datestamp = $self->{dbh}->quote_identifier( 'datestamp' );
-			my $Q_from = $self->{dbh}->quote_int( $context->{from} );
-			my $Q_to = $self->{dbh}->quote_int( $context->{to} );
-			push @conditions, "$Q_data_tablename.$Q_datestamp >= $Q_from AND $Q_data_tablename.$Q_datestamp <= $Q_to";
+			my $Q_from = $self->{dbh}->quote_int( $from );
+
+			if( $from < $to )
+			{
+				my $Q_to = $self->{dbh}->quote_int( $to );
+				push @conditions, "$Q_datestamp >= $Q_from AND $Q_datestamp <= $Q_to";
+			}
+			elsif( "$from" eq "$to" )
+			{
+				push @conditions, "$Q_datestamp = $Q_from";
+			}
 		}
 
 		# set_value defined?
