@@ -332,7 +332,7 @@ sub normalise_set_values
 		return [] unless( defined $id_field && EPrints::Utils::is_set( $raw_value->{$id_field} ) );
 
 		# e.g. md5( creators_id ) || creators_id
-		$value->{key} = $self->generate_key( $set, $raw_value->{$id_field} );
+		$value->{key} = $self->generate_key( $set, lc( $raw_value->{$id_field} ) );
 		$value->{display} = $self->normalise_name( $raw_value->{name} ) if( $do_display );
 
 		push @extracted_values, $value;
