@@ -132,7 +132,7 @@ sub select
 	# note that we don't check if "range" is set - because at this stage "range" has already been normalised to its "from" and "to" counterparts
 	if( !defined $context->{from} && !defined $context->{to} && !$self->has_field( 'datestamp' ) )
 	{
-		if( $handler->{dbh}->has_table( "irstats2_cache_$datatype" ) )
+                if( $handler->{dbh}->has_table( "irstats2_cache_$datatype" ) && ( !defined $context->{cache} || $context->{cache} ) )
 		{
                         $context->{datatype} = "cache_$datatype";
 		}

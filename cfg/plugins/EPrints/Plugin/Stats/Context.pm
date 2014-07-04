@@ -21,6 +21,7 @@ range
 datatype
 datafilter
 grouping
+cache
 /);
 
 my %FIELDSMAP = map { $_ => 1 } @FIELDS;
