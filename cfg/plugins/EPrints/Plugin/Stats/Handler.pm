@@ -9,6 +9,7 @@ my $INTERNAL_TABLE = 'irstats2_internal';
 my $SET_TABLE_PREFIX = 'irstats2_sets';
 my $GROUPING_TABLE_PREFIX = 'irstats2_groupings';
 my $RENDERED_SET_TABLE = 'irstats2_cache_set_values';
+my $DEBUG_SQL = 0;
 
 # Stats::Handler
 #
@@ -335,7 +336,7 @@ sub extract_eprint_data
 	# LIMIT, OFFSET 
 	my $sth = $self->prepare_select( $sql, limit => $conf->{limit}, offset => $conf->{offset} );
 
-	$self->log( "SQL IS '$sql'" );
+	$self->log( "SQL IS '$sql'" ) if( $DEBUG_SQL );
 
 	$self->{dbh}->execute( $sth, $sql );
 
@@ -489,7 +490,7 @@ sub extract_set_data
 		# LIMIT, OFFSET 
 		my $sth = $self->prepare_select( $sql, limit => $conf->{limit}, offset => $conf->{offset} );
 		
-		$self->log( "SQL IS '$sql'" );
+		$self->log( "SQL IS '$sql'" ) if( $DEBUG_SQL );
 
 		$self->{dbh}->execute( $sth, $sql );
 
@@ -572,7 +573,7 @@ sub extract_set_data
 
 	my $sth = $self->prepare_select( $sql, limit => $conf->{limit}, offset => $conf->{offset} );
 	
-	$self->log( "SQL IS '$sql'" );
+	$self->log( "SQL IS '$sql'" ) if( $DEBUG_SQL );
 	
 	$self->{dbh}->execute( $sth, $sql );
 
@@ -667,7 +668,7 @@ sub get_all_rendered_set_values
 	}
 	my $sth = $self->prepare_select( $sql );
 			
-	$self->log( "SQL IS '$sql'" );
+	$self->log( "SQL IS '$sql'" ) if( $DEBUG_SQL );
 
 	$self->{dbh}->execute( $sth, $sql );
 
@@ -700,7 +701,7 @@ sub get_rendered_set_value
 
 	my $sth = $self->prepare_select( $sql );
 			
-	$self->log( "SQL IS '$sql'" );
+	$self->log( "SQL IS '$sql'" ) if( $DEBUG_SQL );
 
 	$self->{dbh}->execute( $sth, $sql );
 
@@ -891,7 +892,7 @@ sub valid_set_value
         my $sql = "SELECT 1 FROM $Q_set_table WHERE $Q_set_value_field = $Q_set_value";
         my $sth = $self->prepare_select( $sql, limit => 1 );
 
-        $self->log( "SQL IS '$sql'" );
+        $self->log( "SQL IS '$sql'" ) if( $DEBUG_SQL );
 
         $self->{dbh}->execute( $sth, $sql );
 
