@@ -60,7 +60,19 @@ sub load_conf
 			field => $fieldname,
 			anon => ( defined $set->{anon} && $set->{anon} ) ? 1 : 0,
 		};
-		
+	
+		if( EPrints::Utils::is_set( $set->{render_single_value} ) )
+		{
+			if( ref( $set->{render_single_value} ) eq 'CODE' )
+			{
+				$set_properties->{render_single_value} = $set->{render_single_value};
+			}
+			else
+			{
+				printf STDERR "Error: 'render_single_value' should be a CODE reference for set %s\n", $set_name;
+			}
+		}
+	
 		if( $type eq 'subject' && defined $set->{whitelist} && ref( $set->{whitelist} ) eq 'ARRAY' )
 		{
 			my %whitelist = map { $_ => 1 } @{ $set->{whitelist} || [] };
@@ -547,6 +559,19 @@ sub render_set
 	{
 		return $session->html_phrase( "lib/irstats2/sets:$setname" );
 	}	
+
+	my $render_fn = $self->get_property( $setname, "render_single_value" );
+	if( defined $render_fn && ref( $render_fn ) eq 'CODE' )
+	{
+		my $ret = eval { return &$render_fn( $session, $setname, $setvalue ) };
+		if( $@ )
+		{
+			$session->log( "Stats::Sets: error in local render_single_function for '$setname': $@" );
+			return $session->make_doc_fragment;
+		}
+
+		return $ret;
+	}
 
 	if( $setname eq 'eprint' )
 	{
