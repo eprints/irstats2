@@ -91,6 +91,9 @@ sub get_data
 	my $avg_sum = 0;
 	my $avg_n = 1;
 
+	# if !$has_data then we can display a friendly message to our users rather than an empty graph
+	my $has_data = 0;
+
 	my @exports;
 
 	# this builds in one pass: the data-points, the average data-points and the full-labels
@@ -101,6 +104,11 @@ sub get_data
 		for( my $j=$i; $j < scalar(@{$stats->data}); $j++ )
 		{
 			my $datapoint = $stats->data->[$j] or last;
+
+			if( defined $datapoint->{count} && $datapoint->{count} > 0 && !$has_data )
+			{
+				$has_data = 1;
+			}
 
 			if( $datapoint->{datestamp} =~ /^$ds/ )
 			{
@@ -149,6 +157,9 @@ sub get_data
 	# TODO needs new name:
 	$stats->{data} = \@exports;
 
+	# "has_data" in the sense that: has at least one non-zero data point
+	$stats->{has_data} = $has_data;
+
 	return $stats;
 }
 
@@ -174,8 +185,17 @@ sub ajax
 	}
 	
 	my $graph_type = $self->options->{graph_type} || 'area';	# or 'column'
-	
-	print STDOUT "{ \"data\": [$json_data_points], \"type\": \"$graph_type\", \"show_average\": ".($self->options->{show_average}?'true':'false')." }";
+
+	print STDOUT "{ \"data\": [$json_data_points], \"type\": \"$graph_type\", \"show_average\": ".($self->options->{show_average}?'true':'false');
+
+	if( exists $stats->{has_data} && !$stats->{has_data} )
+	{
+		my $msg = $self->phrase( 'no_data_point' );
+		$msg =~ s/"/\\"/g;
+		print STDOUT ", \"msg\": \"$msg\"";
+	}
+
+	print STDOUT "}";
 
 	return;
 }

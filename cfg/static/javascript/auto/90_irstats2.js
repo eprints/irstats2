@@ -240,6 +240,23 @@ var EPJS_Stats_GoogleGraph = Class.create(EPJS_Stats, {
 		$super();
 
 		var json = response.responseText.evalJSON();
+		
+		var container = $( this.container_id );
+
+		// potential error message (eg. no data points)
+		var msg = json.msg
+	
+		if( msg != null )
+		{
+			// for summary page
+			var elparent = container.up( "div[class=ep_summary_box_body]" );
+
+			if( elparent != null )
+			{
+				elparent.update( "<p>" + msg + "</p>" );
+				return;
+			}
+		}
 
 		var jsdata = json.data;
 
@@ -252,7 +269,6 @@ var EPJS_Stats_GoogleGraph = Class.create(EPJS_Stats, {
 
 		data.addRows( jsdata );
 
-		var container = $( this.container_id );
 		var w = container.getWidth() - 20;
 		var h = container.getHeight() - 10;
 
