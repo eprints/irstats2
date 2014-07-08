@@ -29,6 +29,240 @@
       <section id="main_content" class="inner">
         <h2><a name="irstats2-api" class="anchor" href="#irstats2-api"><span class="octicon octicon-link"></span></a>API</h2>
 
+<p>This section presents a few examples on how to get data out of IRStats2 for embedding data on pages or for re-use in analysis scripts (for instance).</p>
+
+<p>There are two ways to get data out: 
+<ul>
+<li>From a script: this is the real API, using PERL</li>
+<li>From an Ajax request: this is usually to embed data on pages</li>
+</ul>
+</p>
+
+<h3>Core concepts</h3>
+
+<h4>Datatype</h4>
+
+<p>Which data to provide: IRStats2 also the processing of any data on your repository. The typical use of IRStats2 is however for usage statistics so this is the main dataset. But data on deposits, open access, full text (etc) are also processed. Some repositories even include data from scopus (citation counts).</p>
+
+<p>Main datatypes:
+<ul>
+<li>downloads: good old download statistics - downloads of full-text documents</li>
+<li>views: number of hits on the summary page (of a publication)</li>
+<li>deposits: number of publications deposited</li>
+<li>doc_access: provides 4 metrics (full_text, no_full_text, open_access and no_open_access) used for computing percentages of Open Access and Full-Text documents in the repository</li>
+<li>doc_format: MIME type of full-texts</li>
+<li>history: analysis of the "history" dataset - this provides information on when publications were created, edited, made live, deleted etc.</li>
+<li>referrer: information on how site visitors got to the repository (eg. from Google, internal uni pages, etc)</li>
+<li>search_terms: if coming from a search site (or the internal EPrints search) which words were used to get to the publicaiton</li>
+<li>browser: which browser visitors used on the repository</li>
+</ul>
+</p>
+
+<h4>Sets</h4>
+
+<p>By default, IRStats2 returns data over the entire repository ie. the entire set of eprints is assumed. You can however restrict which "set" to use: the publications of an author, of a university division, of a subject, etc.</p>
+
+<h4>Dates and ranges</h4>
+
+<p>You can also restrict by dates or by a range. By default, all the stats are returned without any dates restrictions.</p>
+
+<p>Dates can be set as YYYYMMDD or YYYY-MM-DD or YYYY/MM/DD (eg. 20140101, 2013-11-04 etc). Dates is a hash containing two keys: from and to (either can be omitted to say: from that particular date, or up to that particular date).</p>
+
+<p>Ranges follow a %d%c format and the upper limit is "now" or "today", for instance:
+<ul>
+<li>6m: over the past 6 months</li>
+<li>12d: over the past 12 days</li>
+<li>3y: over the past 3 years</li>
+</ul>
+<br/>
+Only "m" (months), "d" (days) or "y" (years) may be used. You can see that 12m is the same as 1y.</p>
+
+<h4>Groupings</h4>
+
+<p>This tells IRStats2 how to group data and is generally only used for things like "give me the TOP eprints", "give me the TOP authors".</p>
+
+<p>So having a "grouping" set to "eprint" means the top eprints. If set to "authors", the top authors etc. The grouping must be a valid set except for when it equals to "eprint".</p>
+
+<h4>Misc</h4>
+
+<p>It is possible to limit the amount of records being returned (for when this is relevant: if you want the top downloads, since the beginning of time, then you'd only get one data row back, which is that count). But for queries which ask for, say, the top authors, it is then interesting to be able to get only the first 10 authors. 10 here is the limit.</p>
+
+<p>It is also possible to ask IRStats2 to return certain data field in queries. For top eprints, you generally want the "eprintid" field. To draw timeline graphs (eg. evolution of downloads over-time), you'd want the "datestamp" field. More examples are illustrated below.</p>
+
+<h3>Data from scripts</h3>
+
+<h4>Main API</h4>
+
+<code>
+
+# get the IRStats2 handler, required to query IRStats2
+my $handler = $repo-&gt;plugin( "Stats::Handler" );
+
+# ask IRStats2 to show debug statements (SQL queries)
+$handler-&gt;debug(1);
+
+# Create a Context object
+my $ctx = $handler-&gt;context( { datatype: "downloads" } );
+
+# Retrieve data rows
+my $data = $handler-&gt;data( $ctx )-&gt;select();
+
+# How many rows returned:
+printf "I got %d data rows back\n", $data-&gt;count;
+
+# Get stats for divisions "uos-ecs":
+$ctx-&gt;set( { set_name =&gt; 'divisions', set_value =&gt; 'uos-ecs' } );
+
+# Get stats over the last 6 months:
+$ctx-&gt;dates( { range =&gt; '6m' } );
+
+# Get stats between 1st January 2012 and 31st March 2012:
+$ctx-&gt;dates( { from =&gt; '20120101', to =&gt; '20120331' } );
+
+# Data may be exported (see Stats/Export/ for a list of currently supported plug-ins):
+my $export = $repo-&gt;plugin( "Stats::Export::CSV" );
+$data-&gt;export( { export_plugin =&gt; $export } );
+
+</code>
+
+<h4>Full Examples</h4>
+
+<p>Actually those are not really full examples. They assume you can write the beginning of a PERL script and that you have already instantiated the Stats Handler (cf. above) as $handler.</p>
+
+<code>
+# How many downloads in total over the entire repository
+
+my $ctx = $handler-&gt;context( { datatype =&gt; "downloads" } );
+printf "I got %d downloads\n", $handler-&gt;data( $ctx )-&gt;select-&gt;sum_all;
+</code>
+
+<code>
+# How many downloads in 2013 over the entire repository
+
+my $ctx = $handler-&gt;context( { datatype =&gt; "downloads", range =&gt; "2013" } );
+printf "I got %d downloads\n", $handler-&gt;data( $ctx )-&gt;select-&gt;sum_all;
+</code>
+
+<code>
+# The top 5 EPrints over the entire repository
+
+my $ctx = $handler-&gt;context( { grouping =&gt; "eprint", datatype =&gt; "downloads" } );
+
+my $stats = $handler-&gt;data( $ctx )-&gt;select( fields =&gt; ["eprintid"], limit =&gt; 5 );
+
+foreach( @{ $stats-&gt;data } )
+{
+        printf "EPrint %d got %d downloads\n", $_-&gt;{eprintid}, $_-&gt;{count};
+}
+</code>
+
+<code>
+# The top 10 Subjects (let's assume LoC) for deposits (not downloads!!)
+
+my $ctx = $handler-&gt;context( { set_name =&gt; "subjects", datatype =&gt; "deposits" } );
+
+my $stats = $handler-&gt;data( $ctx )-&gt;select( fields =&gt; ["set_value"], limit =&gt; 10 );
+
+my $i = 1;
+foreach( @{ $stats-&gt;data } )
+{
+        printf "%d) %s with %d items deposited\n", $i++, $_-&gt;{set_value}, $_-&gt;{count};
+}
+</code>
+
+<code>
+# The top 5 downloaded EPrints for LoC Subject "D1"
+
+my $ctx = $handler-&gt;context( { set_name =&gt; "subjects", set_value =&gt; 'D1', datatype =&gt; "downloads" } );
+
+my $stats = $handler-&gt;data( $ctx )-&gt;select( fields =&gt; ["eprintid"], limit =&gt; 5 );
+
+my $i = 1;
+foreach( @{ $stats-&gt;data } )
+{
+        printf "%d) EPrintd %d with %d downloads\n", $i++, $_-&gt;{eprintid}, $_-&gt;{count};
+}
+</code>
+
+<h3>Embedding data</h3>
+
+<p>This is similar to retrieving data from scripts (cf. section above) but with a few extra options:
+<ul>
+<li>"view": the name of the Stats::View plug-in which will draw the requested stuff (a Table? a Graph? etc.)</li>
+<li>"container_id": the DOM element "id", where the drawn stuff will be inserted on the page (if the Ajax callback is successful)</li>
+</ul>
+</p>
+<p>Then there exists a number of options proper to each View plug-in. See the provided examples below.</p>
+
+<h4>Graphs</h4>
+
+<p>The typical example is to embed the global downloads graph. This is usually the first displayed item on the IRStats2 main report page (/cgi/stats/report).</p>
+
+<code>
+This will basically insert the downloads graph into the "mygraph" div element. Note that it's using the supplied
+     "irstats2_googlegraph" CSS class.
+      
+      Graph options:
+      - graph_type: either "column" or "area"
+      - show_average: either 1 or 0 - displays the average graph
+      - date_resolution: either "year", "month" or "day" - groups data by year, month or day (be careful: selecting day may genearate LOTS of data points)
+
+
+&lt;div id="mygraph" class="irstats2_googlegraph"/&gt;
+
+&lt;script type="text/javascript"&gt;
+document.observe("dom:loaded",function(){
+         new EPJS_Stats_GoogleGraph( { 
+                'context': { 'datatype': 'downloads' }, 
+                'options': { 'graph_type': 'column', 'container_id': 'mygraph', 'view': 'Google::Graph', 'show_average': '1', 'date_resolution': 'month' } 
+        });
+});
+&lt;/script&gt;
+</code>
+
+<h4>Tables</h4>
+
+<p>The example below displays the top 10 downloaded eprints in the repository.</p>
+
+<code>
+This will insert the top table into the "mytable" div element. Note that it's using the supplied
+     "irstats2_table" CSS class.
+      
+      Table options:
+      - top: the top "thing" to display - similar to the "grouping" parameter when using scripts
+      - limit: the max number of items to retrieve
+      - show_count: 1 or 0 - display the counts or not
+      - show_order: 1 or 0 - display the ordering (1,2,3...) or not
+      - show_more: 1 or 0 - shows the "show more" options or not (to retrieve more results)
+      - human_display: 1 or 0 - separate 1000 with a comma (as done in English): 10000 becomes 10,000
+
+&lt;div id="mytable" class="irstats_table"/&gt;
+
+&lt;script type="text/javascript"&gt;
+document.observe( "dom:loaded", function() {
+
+        new EPJS_Stats_Table( {
+                'context': { 'datatype': 'downloads' },
+                'options': { 'container_id': 'mytable', 'top': 'eprint', 'view': 'Table', 'limit': '5' }   
+        } );
+
+});
+&lt;/script&gt;
+
+</code>
+
+<h4>Misc</h4>
+
+<p>Graphs and Tables are the most common displays - but there exists a few other ones which I let you explore. The javascript classes are in 90_irstats2.js and the associated PERL Class in Stats/View/</p>
+
+<ul>
+<li>GoogleSpark: similar to GoogleGraph but shows a sparkline instead (which is essentially a tiny graph).</li>
+<li>GoogleGeoChart: country map</li>
+<li>GooglePieChart: a pie chart</li>
+<li>Counter: a simple counter (for instance to show the download count for your repository).</li>
+</ul>
+
+<p>The View prefixed by "Google" means that they are rendered by the Google Chart Javascript library. Important note: no data is sent to Google!! The data is, instead, drawn by the browser client using SVG.</p>
 
       </section>
     </div>
