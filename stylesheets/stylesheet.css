@@ -313,7 +313,7 @@ Full-Width Styles
   text-shadow: #111 0px 0px 10px;
 }
 
-#topmenu, #downloads {
+#downloads {
   position: absolute;
   width: 210px;
   z-index: 10;
@@ -322,7 +322,14 @@ Full-Width Styles
   height: 70px;
   background: url('../images/icon_download.png') no-repeat 0% 90%;
 }
-
+#topmenu {
+  position: absolute;
+  width: 210px;
+  z-index: 10;
+  bottom: -40px;
+  right: 0;
+  height: 70px;
+}
 .zip_download_link {
   display: block;
   float: right;
