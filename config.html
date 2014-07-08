@@ -29,6 +29,120 @@
       <section id="main_content" class="inner">
         <h2><a name="irstats2-configuration" class="anchor" href="#irstats2-configuration"><span class="octicon octicon-link"></span></a>Configuration</h2>
 
+<p>This section details how to configure IRStats2 and mostly relates to the file cfg/cfg.d/z_irstats2.pl.</p>
+
+<p>I recommend that you edit your changes in a separate file (eg. zz_irstats2_local.pl - must be loaded AFTER z_irstats2.pl) as this will make Bazaar updates easier to apply.</p>
+
+<h3>Datasets/Datatypes</h3>
+
+<p>Since IRStats2 can handle any EPrints datasets (not just the 'access' dataset which records downloads), you can declare in the configuration which EPrints datasets to process. For each EPrints dataset configured, IRStats2 will pass on the records from the Database to each processing module. This is coupled to the Stats::Processor modules and you will see that, by default, IRStats2 processes:
+<ul>
+<li>The "access" dataset with the associated Stats::Processor::Access modules</li>
+<li>The "eprint" dataset with the associated Stats::Processor::EPrint modules</li>
+<li>The "history" dataset with, as you have guessed, the Stats::Processor::History modules</li>
+<li></li>
+</ul>
+</p>
+
+<p>Each module will provide specific datum, which is declared in the module itself. For instance, Stats::Processor::Access::Downloads provides us with the "downloads" and "views" data-types.</p>
+
+<h4>Configuration example and options</h4>
+
+<pre>
+access =&gt; { 
+	filters =&gt; [ 'Robots', 'Repeat' ], 
+	incremental =&gt; 1 
+}
+</pre>
+
+<p>The only two options which can be used are:
+<ul>
+<li><strong>incremental</strong>: 1 or 0 (default 1) - tells IRStats2 to incrementally process the DB records. Since IRStats2 data must be processed daily, this indicates whether you should reprocess the entire dataset every day. For downloads (ie. the "access" dataset), you only need to reprocess the daily downloads, there is no need to restart from 0. However, some metrics used for the "eprint" dataset needs that the entire dataset is re-processed daily, which is OK as the "eprint" dataset is usually much smaller than the "access" one.</li>
+<li><strong>filters</strong>: an array of Filters (default []) - tells IRStats2 to apply filters before processing the records. This is especially useful for "access" records where hits by robots/crawlers are usually removed. Filters are very similar to Processor modules, except that they must return a boolean to indicate whether to keep or to discard the record. If the record is kept then it is passed on to the related Processor modules.</li>
+</ul>
+</p>
+
+<p>Remember that if you want to process new datasets (e.g. "user") then you must write the associated Stats::Processor modules, otherwise nothing would happen.</p>
+
+<h3>Sets</h3>
+
+<p>A Set tells IRStats2 how to group data points and it is done via an existing ("eprint") meta-field. Each value of that set (in essence, the distinct values of the field) will become a set value you can use in IRStats2 to give you statistics on the value. For instance, you can get download stats by author or by item type. Both "author" and "item type" are sets. Most Set definitions are straight-forward to declare, with the exception of "creators" (a.k.a. "authors").</p>
+
+<h4>Configuration example and options</h4>
+
+<pre>
+        {
+                'field' =&gt; 'divisions',
+                'groupings' =&gt; [ 'authors' ]
+        },
+</pre>
+<p>This defines the Set "divisions" - if the divisions field reflects the hierarchical structure of your institution (as it should) then you can get stats per division/school/faculty. You can also get "Top publications" per division.</p>
+
+<p>Here are all the options you may use when defining a Set:
+<ul>
+<li><strong>name</strong>: (optional - default to 'field') - the name of the set</li>
+<li><strong>field</strong>: the "eprint" field to use to generate set values</li>
+<li><strong>groupings</strong>:</li> (optional - default to []) - an ARRAY of set names to use as groupings. A new grouping, withing a set, fills in the statement: "I want to be able to see Top Y per set". For instance for the set 'divisions' and the grouping 'authors': "I want to be able to see Top Authors per Divisions".
+<li><strong>anon</strong>: (optional - default to ) - whether to make the set values anonymous (and hex MD5 is used instead). This is particularly useful when using authors' ID which is usually their email address (and you don't want to make these public).</li>
+<li><strong>use_ids</strong>: For compound fields only (especially for creators). Tell IRStats2 to use the "id" part to generate distinct set values. This is more accurate that using the "name" part only.</li>
+<li><strong>id_field</strong>: For compound fields only. The name of the "id" field - usually it is just "id", as in "creators_id".</li>
+<li><strong>minimum_filter_length</strong>: Used by the Set Finder on the Reports. If set, this only start searching for set values after the user has entered minimum_filter_length characters. Some sets can be large (esp. creators) and we do not really want to preload the potential 100's of thousands of authors names on the UI. Instead we ask the user to <em>search</em> for author's names.</li>
+<li><strong>render_single_value</strong>: A COREREF that must returns a DOM element. This will tell how to render a set value, if you do not wish to use the default renderers. The function will receive three variables: $repo, $setname and $setvalue.</li>
+</ul>
+</p>
+
+<p>Note that "eprint" is a built-in Set and should not be defined in the configuration. The "eprint" Set is the collection of all the eprints (or "publications") of your repository. It is the assumed Set when no set is declared, as for the scenario "show me the top publications [among the entire repository]".</p>
+
+<h3>Reports</h3>
+
+<p>Reports are single pages which group different metrics together. The main report page (http://yourrepo.url/cgi/stats/report) is such an example. If you create a new report, "my_report", it will be available at the URL: http://yourepo.url/cgi/stats/report/my_report.</p>
+
+<p>In the configuration, Reports can be seen as a top-to-bottom stack of Stats::View modules. Such modules know how to draw certain stats such as graphs, tables or pie charts, they just need to be position on the report. The module handling the generation of reports (Screen::IRStats2::Report) takes care of passing on the correct context to each Stats::View module. Such contexts include any date filters or set values selected by a visiting user.</p>
+
+<pre>
+A basic report showing the monthly downloads graph and the top downloaded publications:
+
+my_report =&gt; {
+	items =&gt; [
+		{ 
+			plugin =&gt; 'ReportHeader'
+		},
+		{
+			plugin =&gt; 'Google::Graph',
+                        datatype =&gt; 'downloads',
+                        options =&gt; {
+                                date_resolution =&gt; 'month',
+                                graph_type =&gt; 'column',
+                        },
+		},
+                {
+                        plugin =&gt; 'Table',
+                        datatype =&gt; 'downloads',
+                        options =&gt; {
+                                limit =&gt; 10,
+                                top =&gt; 'eprint',
+                                title_phrase =&gt; 'top_downloads'
+                        },
+                },
+
+	],
+};
+</pre>
+
+<p>The <strong>options</strong> are detailed on the <a href="./api.html">API</a> section.</p>
+
+
+<h3>Security aspects</h3>
+
+<p>Users must have the following two roles to view stats:
+<ul>
+<li>+irstats2/view</li>
+<li>+irstats2/export</li>
+</ul>
+</p>
+
+<p>However these two roles are given to the "public" by default, meaning that anyone can view and/or export the stats. You can comment out these lines in the configuration to prevent that behaviour.</p>
+
 
       </section>
     </div>

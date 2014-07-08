@@ -135,13 +135,14 @@ $data-&gt;export( { export_plugin =&gt; $export } );
 my $ctx = $handler-&gt;context( { datatype =&gt; "downloads" } );
 printf "I got %d downloads\n", $handler-&gt;data( $ctx )-&gt;select-&gt;sum_all;
 </pre>
-
+<br/>
 <pre>
 # How many downloads in 2013 over the entire repository
 
 my $ctx = $handler-&gt;context( { datatype =&gt; "downloads", range =&gt; "2013" } );
 printf "I got %d downloads\n", $handler-&gt;data( $ctx )-&gt;select-&gt;sum_all;
 </pre>
+<br/>
 
 <pre>
 # The top 5 EPrints over the entire repository
@@ -155,6 +156,7 @@ foreach( @{ $stats-&gt;data } )
         printf "EPrint %d got %d downloads\n", $_-&gt;{eprintid}, $_-&gt;{count};
 }
 </pre>
+<br/>
 
 <pre>
 # The top 10 Subjects (let's assume LoC) for deposits (not downloads!!)
@@ -169,6 +171,7 @@ foreach( @{ $stats-&gt;data } )
         printf "%d) %s with %d items deposited\n", $i++, $_-&gt;{set_value}, $_-&gt;{count};
 }
 </pre>
+<br/>
 
 <pre>
 # The top 5 downloaded EPrints for LoC Subject "D1"
@@ -183,6 +186,7 @@ foreach( @{ $stats-&gt;data } )
         printf "%d) EPrintd %d with %d downloads\n", $i++, $_-&gt;{eprintid}, $_-&gt;{count};
 }
 </pre>
+<br/>
 
 <h3>Embedding data</h3>
 
