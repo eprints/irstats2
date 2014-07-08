@@ -324,12 +324,15 @@ Full-Width Styles
 }
 #topmenu {
   position: absolute;
-  width: 210px;
   z-index: 10;
   bottom: -40px;
   right: 0;
   height: 70px;
 }
+#topmenu > a {
+	margin-right: 20px;
+}
+
 .zip_download_link {
   display: block;
   float: right;
