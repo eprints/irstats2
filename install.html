@@ -33,7 +33,61 @@
       <section id="main_content" class="inner">
         <h3><a name="irstats2-installation" class="anchor" href="#irstats2-information"><span class="octicon octicon-link"></span></a>Installation</h3>
 
-<p>TODO</p>
+<h4>EPrints 3.3</h4>
+
+<p>IRStats2 can be installed directly via the Bazaar on EPrints 3.3 which makes the installation much simpler than with EPrints 3.2. Note that this section is about installing the modules needed for IRStats2 to run. On how to generate statistics please read the <a href="./config.html">configuration</a> section.</p>
+
+<h5>EPrints 3.3.11 onwards</h5>
+
+<p>Installing IRStats2 from the Bazaar is all you need to do. I recommend that you restart Apache after doing so.</p>
+
+<h5>EPrints 3.3.1 to 3.3.10</h5>
+
+<p>You need to install IRStats2 from the Bazaar as above but you need to apply a few patches. Note that you only really need these patches to have the Google "map of the world" working. Everything else should work as normal without the patches.</p>
+
+<p>The patches relate to an incompatibility between the Prototype JS library (used by EPrints) and Google Charts (used by IRStats2). The two patches you need to apply are:
+<ul>
+<li><a href="https://github.com/eprints/eprints/commit/f7a9088aae29b8732cb5d8edd83d17e94f069e63">Upgrade Prototype</a></li>
+<li><a href="https://github.com/eprints/eprints/issues/130">Fix auto-completers</a></li>
+</ul>
+</p>
+
+<h5>EPrints 3.2.x</h5>
+
+<p>On EPrints 3.2 you will have to manually copy the required files to your EPrints installation path. It is a low-risk operation since IRStats2 is a true add-on to EPrints and it does not interact with the core software. You may want to back-up your EPrints files and your database but again, this should not be necessary.</p>
+
+<ol>
+<li>Get the files from GitHub or by following this <a href="https://github.com/eprints/irstats2/tarball/master">direct link</a> [tar.gz]</li>
+<li>Copy the modules and various configuration files to your local archive:
+<pre>
+cp bin/* /opt/eprints3/archives/<ID>/bin/
+cp cfg/* /opt/eprints3/archives/<ID>/cfg/
+cp cgi/* /opt/eprints3/archives/<ID>/cgi/
+
+(create the bin and cgi directories if they don't exist).
+</pre>
+</li>
+
+<li>Test everything is OK: 
+<pre>
+/opt/eprints3/bin/epadmin test
+</pre>
+</li>
+
+<li>Add in the &lt;head&gt; sections of your template files (usually located in /opt/eprints3/archives/<id>/cfg/lang/en/templates/) the following:
+
+<code>
+<!-- IRStats2 -->
+<script type="text/javascript" src="http://www.google.com/jsapi">// <!-- No script --></script>
+<script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart", "geochart"]});
+</script>
+</code>
+
+</li>
+
+<li>Restart the web server</li>
+</ol>
 
       </section>
     </div>
@@ -41,12 +95,10 @@
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">IRStats2 maintained by <a href="https://github.com/eprints">eprints</a></p>
+        <p class="copyright">IRStats2 maintained by <a href="https://github.com/eprints">EPrints</a></p>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-
-    
 
   </body>
 </html>
