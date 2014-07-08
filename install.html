@@ -34,9 +34,18 @@
       <section id="main_content" class="inner">
         <h2><a name="irstats2-installation" class="anchor" href="#irstats2-installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
+<h3>Dependencies</h3>
+
+<ul>
+<li>Geo::IP or Geo::IP::PurePerl</li>
+<li>Date::Calc</li>
+</ul>
+
+<p>Both can usually be installed via your Linux package managers (apt-get, yum, ...) or via CPAN if you must.</p>
+
 <h3>EPrints 3.3</h3>
 
-<p>IRStats2 can be installed directly via the Bazaar on EPrints 3.3 which makes the installation much simpler than with EPrints 3.2. Note that this section is about installing the modules needed for IRStats2 to run. On how to generate statistics please read the <a href="./config.html">configuration</a> section.</p>
+<p>IRStats2 can be installed directly via the Bazaar on EPrints 3.3 which makes the installation much simpler than with EPrints 3.2.</p>
 
 <h4>EPrints 3.3.11 onwards</h4>
 
@@ -89,6 +98,26 @@ cp cgi/* /opt/eprints3/archives/<ID>/cgi/
 
 <li>Restart the web server</li>
 </ol>
+
+<h3>Processing</h3>
+
+<p>Processing works in two steps: the initial processing and then a daily incremental processing. Because the initial processing will take care of all your legacy "download" data, this can take a long time. I do mean: a loooooong time. It can take a few days if your repository is very large. More likely it will take a few hours.</p>
+
+<p>For the initial processing, run, as the "eprints" user, the above command. And remember this may take a long time to complete. So if you are running it from an SSH session, you may want to use the "screen" Linux utility to make sure your SSH session will persist.</p>
+
+<pre>
+/opt/eprints3/archives/REPO_ID/bin/stats/process_stats REPO_ID --setup --verbose
+</pre>
+
+<p>For the daily incremental processing, add the above line in cron. I let you the liberty of deciding when that cron job should run but it is a good idea to do over-night when there is less traffic to your repository.</p>
+
+<pre>
+/opt/eprints3/archives/REPO_ID/bin/stats/process_stats REPO_ID 1&gt;/dev/null 2&gt;/dev/null
+</pre>
+
+<p>The two redirections to /dev/null forces the process to not output anything.</p>
+
+<p>When the initial processing has completed, you may point your browser to http://yourrepo.url/cgi/stats/report to look at some stats!</p>
 
       </section>
     </div>
