@@ -93,7 +93,7 @@ Only "m" (months), "d" (days) or "y" (years) may be used. You can see that 12m i
 
 <h4>Main API</h4>
 
-<code>
+<pre>
 
 # get the IRStats2 handler, required to query IRStats2
 my $handler = $repo-&gt;plugin( "Stats::Handler" );
@@ -123,27 +123,27 @@ $ctx-&gt;dates( { from =&gt; '20120101', to =&gt; '20120331' } );
 my $export = $repo-&gt;plugin( "Stats::Export::CSV" );
 $data-&gt;export( { export_plugin =&gt; $export } );
 
-</code>
+</pre>
 
 <h4>Full Examples</h4>
 
 <p>Actually those are not really full examples. They assume you can write the beginning of a PERL script and that you have already instantiated the Stats Handler (cf. above) as $handler.</p>
 
-<code>
+<pre>
 # How many downloads in total over the entire repository
 
 my $ctx = $handler-&gt;context( { datatype =&gt; "downloads" } );
 printf "I got %d downloads\n", $handler-&gt;data( $ctx )-&gt;select-&gt;sum_all;
-</code>
+</pre>
 
-<code>
+<pre>
 # How many downloads in 2013 over the entire repository
 
 my $ctx = $handler-&gt;context( { datatype =&gt; "downloads", range =&gt; "2013" } );
 printf "I got %d downloads\n", $handler-&gt;data( $ctx )-&gt;select-&gt;sum_all;
-</code>
+</pre>
 
-<code>
+<pre>
 # The top 5 EPrints over the entire repository
 
 my $ctx = $handler-&gt;context( { grouping =&gt; "eprint", datatype =&gt; "downloads" } );
@@ -154,9 +154,9 @@ foreach( @{ $stats-&gt;data } )
 {
         printf "EPrint %d got %d downloads\n", $_-&gt;{eprintid}, $_-&gt;{count};
 }
-</code>
+</pre>
 
-<code>
+<pre>
 # The top 10 Subjects (let's assume LoC) for deposits (not downloads!!)
 
 my $ctx = $handler-&gt;context( { set_name =&gt; "subjects", datatype =&gt; "deposits" } );
@@ -168,9 +168,9 @@ foreach( @{ $stats-&gt;data } )
 {
         printf "%d) %s with %d items deposited\n", $i++, $_-&gt;{set_value}, $_-&gt;{count};
 }
-</code>
+</pre>
 
-<code>
+<pre>
 # The top 5 downloaded EPrints for LoC Subject "D1"
 
 my $ctx = $handler-&gt;context( { set_name =&gt; "subjects", set_value =&gt; 'D1', datatype =&gt; "downloads" } );
@@ -182,7 +182,7 @@ foreach( @{ $stats-&gt;data } )
 {
         printf "%d) EPrintd %d with %d downloads\n", $i++, $_-&gt;{eprintid}, $_-&gt;{count};
 }
-</code>
+</pre>
 
 <h3>Embedding data</h3>
 
@@ -198,7 +198,7 @@ foreach( @{ $stats-&gt;data } )
 
 <p>The typical example is to embed the global downloads graph. This is usually the first displayed item on the IRStats2 main report page (/cgi/stats/report).</p>
 
-<code>
+<pre>
 This will basically insert the downloads graph into the "mygraph" div element. Note that it's using the supplied
      "irstats2_googlegraph" CSS class.
       
@@ -218,13 +218,13 @@ document.observe("dom:loaded",function(){
         });
 });
 &lt;/script&gt;
-</code>
+</pre>
 
 <h4>Tables</h4>
 
 <p>The example below displays the top 10 downloaded eprints in the repository.</p>
 
-<code>
+<pre>
 This will insert the top table into the "mytable" div element. Note that it's using the supplied
      "irstats2_table" CSS class.
       
@@ -249,7 +249,7 @@ document.observe( "dom:loaded", function() {
 });
 &lt;/script&gt;
 
-</code>
+</pre>
 
 <h4>Misc</h4>
 
