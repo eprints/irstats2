@@ -92,7 +92,7 @@ access =&gt; {
 <li><strong>use_ids</strong>: For compound fields only (especially for creators). Tell IRStats2 to use the "id" part to generate distinct set values. This is more accurate that using the "name" part only.</li>
 <li><strong>id_field</strong>: For compound fields only. The name of the "id" field - usually it is just "id", as in "creators_id".</li>
 <li><strong>minimum_filter_length</strong>: Used by the Set Finder on the Reports. If set, this only start searching for set values after the user has entered minimum_filter_length characters. Some sets can be large (esp. creators) and we do not really want to preload the potential 100's of thousands of authors names on the UI. Instead we ask the user to <em>search</em> for author's names.</li>
-<li><strong>render_single_value</strong>: A COREREF that must returns a DOM element. This will tell how to render a set value, if you do not wish to use the default renderers. The function will receive three variables: $repo, $setname and $setvalue.</li>
+<li><strong>render_single_value</strong>: A CODEREF that must return a DOM element. This will tell how to render a set value, if you do not wish to use the default renderers. The function will receive three variables: $repo, $setname and $setvalue.</li>
 </ul>
 </p>
 
