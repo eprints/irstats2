@@ -194,6 +194,30 @@ sub render_metric_with_progress
 	return $table;
 }
 
+sub render_metric
+{
+	my( $self, $context, $name ) = @_;
+
+	my $frag = $self->{session}->make_doc_fragment;
+
+	my $local_context = $self->apply_metric_context( $context, $name );
+
+	my $count = $self->get_metric( $local_context, $name );
+
+	my $div = $frag->appendChild( $self->{session}->make_element( 'span', class => 'irstats2_keyfigures_metric_simple' ) );
+
+	my $span = $div->appendChild( $self->{session}->make_element( 'span', class => 'irstats2_keyfigures_metric_figure' ) );
+	$span->appendChild( $self->{session}->make_text( EPrints::Plugin::Stats::Utils::human_display( $self->{session}, $count ) ) );
+
+	$span = $div->appendChild( $self->{session}->make_element( 'span', class => 'irstats2_keyfigures_metric_text' ) );
+
+	my $phraseid = (defined $count && "$count" ne "1") ? "metric:plural:$name" : "metric:singular:$name";
+
+	$span->appendChild( $self->html_phrase( $phraseid ) );
+
+	return $frag;
+}
+
 # This plugin doesn't have an AJAX callback - everything is rendered as the plugin is called
 sub render_content
 {
@@ -215,7 +239,7 @@ sub render_content
 	{
 		my ($name, $type) = split( /\./, $metric );
 		next unless( defined $name );
-		$type = 'spark' if( !defined $type || !( $type eq 'spark' || $type eq 'progress' ) );
+		$type = 'spark' if( !defined $type || !( $type eq 'spark' || $type eq 'progress' || $type eq 'figure' ) );
 
 		my $section = $frag->appendChild( $session->make_element( 'div', class => 'irstats2_keyfigures_section' ) );
 
@@ -226,6 +250,10 @@ sub render_content
 		elsif( $type eq 'progress' )
 		{
 			$section->appendChild( $self->render_metric_with_progress( $self->context, $name ) );
+		}
+		elsif( $type eq 'figure' )
+		{
+			$section->appendChild( $self->render_metric( $self->context, $name ) );
 		}
 
 		if( ( $c % 2 == 1 ) && $c > 0 )
