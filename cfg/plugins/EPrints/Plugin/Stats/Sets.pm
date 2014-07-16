@@ -45,7 +45,12 @@ sub load_conf
 	foreach my $set ( @$sets )
 	{
 		my $fieldname = $set->{field};
-		next unless( defined $fieldname && $epds->has_field( $fieldname ) );
+
+		if( !defined $fieldname || !$epds->has_field( $fieldname ) )
+		{
+			printf STDERR "Warning: field '%s' does not exist on dataset 'eprint'\n", "$fieldname";
+			next;
+		}
 
 		# custom name?
 		my $set_name = $set->{name} || $fieldname;
@@ -70,6 +75,19 @@ sub load_conf
 			else
 			{
 				printf STDERR "Error: 'render_single_value' should be a CODE reference for set %s\n", $set_name;
+			}
+		}
+		
+		if( EPrints::Utils::is_set( $set->{blacklist} ) )
+		{
+			if( ref( $set->{blacklist} ) eq 'ARRAY' )
+			{
+				my %bl = map { $_ => 1 } @{ $set->{blacklist} || [] };
+				$set_properties->{blacklist} = \%bl;
+			}
+			else
+			{
+				printf STDERR "Error: 'blacklist' should be an ARRAY reference for set %s\n", $set_name;
 			}
 		}
 	
@@ -265,9 +283,11 @@ sub get_set_values
 	$raw_values = [$raw_values] if( ref( $raw_values ) ne 'ARRAY' );
 	my @values;
 
+	my $blacklist = $self->get_property( $set, "blacklist" ) || {};
+
 	foreach my $raw_value ( @$raw_values )
 	{
-		next if( !EPrints::Utils::is_set( $raw_value ) );
+		next if( !EPrints::Utils::is_set( $raw_value ) || $blacklist->{$raw_value} );
 		foreach( @{$self->normalise_set_values( $set, $raw_value ) || []} )
 		{
 			push @values, $_;
@@ -282,12 +302,16 @@ sub get_set_values
 		my $gr_values = $eprint->get_value( $gr_fieldname );
 		next unless( EPrints::Utils::is_set( $gr_values ) );
 		$gr_values = [$gr_values] if( ref($gr_values) eq '' );
+	
+		my $blacklist = $self->get_property( $grouping, "blacklist" ) || {};
 
 		my @actual_gr_values;
 		foreach my $gr_value ( @$gr_values )
 		{
+			next if( !EPrints::Utils::is_set( $gr_value ) || $blacklist->{$gr_value} );
 			my $norm_gr_values = $self->normalise_set_values( $grouping, $gr_value, 0 );
-			next unless( EPrints::Utils::is_set( $norm_gr_values ) );
+			next if( !EPrints::Utils::is_set( $norm_gr_values ) );
+
 			push @actual_gr_values, $_->{key} for( @$norm_gr_values );
 
 			$groupings{$grouping} = \@actual_gr_values;
@@ -559,6 +583,14 @@ sub render_set
 	{
 		return $session->html_phrase( "lib/irstats2/sets:$setname" );
 	}	
+	
+	# use cache by default...
+	if( !defined $use_cache || $use_cache )
+	{
+		my $cache_value = $self->handler->get_rendered_set_value( $setname, $setvalue );
+		HTML::Entities::decode_entities( $cache_value );	# to be safe
+		return $session->make_text( $cache_value );
+	}
 
 	my $render_fn = $self->get_property( $setname, "render_single_value" );
 	if( defined $render_fn && ref( $render_fn ) eq 'CODE' )
@@ -581,14 +613,6 @@ sub render_set
 			return $eprint->render_citation( 'brief' );
 		}
 		return $session->html_phrase( 'lib/irstats2/unknown:eprint', id => $session->make_text( $setvalue ) );
-	}
-
-	# use cache by default...
-	if( !defined $use_cache || $use_cache )
-	{
-		my $cache_value = $self->handler->get_rendered_set_value( $setname, $setvalue );
-		HTML::Entities::decode_entities( $cache_value );	# to be safe
-		return $session->make_text( $cache_value );
 	}
 
 	my $type = $self->get_field_type( $setname );
