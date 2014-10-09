@@ -452,7 +452,7 @@ $c->{irstats2}->{report} = {
 
 	compare_years => {
 		items => [ 
-		{ plugin => 'SetDesc' },
+		{ plugin => 'ReportHeader' },
 		{ plugin => 'Compare' }, 
 		],
 		category => 'general',
