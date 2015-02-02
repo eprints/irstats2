@@ -40,7 +40,19 @@ sub export
         return;
 }
 
-# TODO: any print'ed values should be XML escape'd
+sub appendTextNode
+{
+        my( $doc, $parent, $name, $value) = @_;
+
+        my $element = $doc->createElement($name);
+        $element->appendText($value);
+
+        $parent->addChild($element);
+
+        return $parent;
+}
+
+
 sub print_context
 {
 	my( $self, $stats ) = @_;
@@ -48,34 +60,45 @@ sub print_context
 	my $context = $self->get_export_context( $stats );
 
 	my $origin = $context->{origin};
-	print STDOUT <<ORIGIN;
-<origin>
-	<name>$origin->{name}</name>
-	<url>$origin->{url}</url>
-</origin>
-ORIGIN
 
-	if( my $timescale = $context->{timescale} )
-	{
-		print STDOUT <<TIMESCALE;
-<timescale>
-	<format>$timescale->{format}</format>
-	<from>$timescale->{from}</from>
-	<to>$timescale->{to}</to>
-</timescale>
-TIMESCALE
-	}
+	#construct XML to properly escape special characters
+	my $doc = XML::LibXML::Document->new('1.0', 'utf-8');
 
-	if( my $set = $context->{set} )
-	{
-		print STDOUT <<SET;
-<set>
-	<name>$set->{name}</name>
-	<value>$set->{value}</value>
-	<description>$set->{description}</description>
-</set>
-SET
-	}
+	#construct origin XML
+        my $originElement = $doc->createElement('origin');
+
+        $originElement = appendTextNode($doc, $originElement, 'name', $origin->{name});
+        $originElement = appendTextNode($doc, $originElement, 'url', $origin->{url});
+
+        my $originFragment = $originElement->toString();
+        print STDOUT $originFragment;
+
+	#construct timescale XML if required
+        if( my $timescale = $context->{timescale} )
+        {
+                my $timescaleElement = $doc->createElement('timescale');
+
+                $timescaleElement = appendTextNode($doc, $timescaleElement, 'format', $timescale->{format});
+                $timescaleElement = appendTextNode($doc, $timescaleElement, 'from', $timescale->{from});
+                $timescaleElement = appendTextNode($doc, $timescaleElement, 'to', $timescale->{to});
+
+                my $timescaleFragment = $timescaleElement->toString();
+                print STDOUT $timescaleFragment;
+        }
+
+	#construct set XML if required
+        if( my $set = $context->{set} )
+        {
+                my $setElement = $doc->createElement('set');
+
+                $setElement = appendTextNode($doc, $setElement, 'name', $set->{name});
+                $setElement = appendTextNode($doc, $setElement, 'value', $set->{value});
+                $setElement = appendTextNode($doc, $setElement, 'description', $set->{description});
+
+                my $setFragment = $setElement->toString();
+                print STDOUT $setFragment;
+        }
+
 }
 
 1;
