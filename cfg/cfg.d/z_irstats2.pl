@@ -458,10 +458,12 @@ $c->{irstats2}->{report} = {
 		category => 'general',
 	},
 
+	summary_page => {
+		items => [ 
+		{ plugin => 'Google::Graph', datatype => 'downloads', range => '1y', options => { date_resolution => 'month', graph_type => 'column', title => 'Downloads per month over past year' } },
+		],
+	},
 };
-
-# must be enabled manually
-$c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{disable} = 1;
 
 # Bazaar config
 
@@ -509,3 +511,4 @@ $c->{plugins}{"Stats::View::Table"}{params}{disable} = 0;
 
 $c->{plugins}{"Screen::IRStats2::Report"}{params}{disable} = 0;
 
+$c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{disable} = 0;

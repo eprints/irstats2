@@ -322,7 +322,7 @@ document.observe("dom:loaded",function(){
 <epp:phrase id="Plugin/Screen/Public/Stats/Repository:title">Repository Statistics</epp:phrase>
 
 <!-- Summary Page -->
-<epp:phrase id="Plugin/Screen/EPrint/Box/Stats:title">Download Statistics</epp:phrase>
+<epp:phrase id="Plugin/Screen/EPrint/Box/Stats:title">Statistics</epp:phrase>
 
 <!-- objects -->
 
