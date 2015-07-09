@@ -458,10 +458,12 @@ $c->{irstats2}->{report} = {
 		category => 'general',
 	},
 
+	summary_page => {
+		items => [ 
+		{ plugin => 'Google::Graph', datatype => 'downloads', range => '1y', options => { date_resolution => 'month', graph_type => 'column', title => 'Downloads per month over past year' } },
+		],
+	},
 };
-
-# must be enabled manually
-$c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{disable} = 1;
 
 # Bazaar config
 
@@ -509,3 +511,9 @@ $c->{plugins}{"Stats::View::Table"}{params}{disable} = 0;
 
 $c->{plugins}{"Screen::IRStats2::Report"}{params}{disable} = 0;
 
+# Display download stats for an EPrints on it's summary page?
+# Confusingly, set this to '0' to make them appear, or 1 to not show them
+$c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{disable} = 1;
+# Where on the summary page should they appear?
+# Valid options are 'summary_left', 'summary_right', 'summary_bottom', 'summary_top'.
+$c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{appears}{place} = 'summary_bottom';
