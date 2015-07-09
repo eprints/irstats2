@@ -516,4 +516,7 @@ $c->{plugins}{"Screen::IRStats2::Report"}{params}{disable} = 0;
 $c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{disable} = 1;
 # Where on the summary page should they appear?
 # Valid options are 'summary_left', 'summary_right', 'summary_bottom', 'summary_top'.
-$c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{appears}{place} = 'summary_bottom';
+# The default is 'summary_bottom' - the following 2 lines demonstrate how to move it
+# somewhere else
+#$c->{plugins}{"Screen::EPrint::Box::Stats"}{appears}{summary_bottom} = undef;
+#$c->{plugins}{"Screen::EPrint::Box::Stats"}{appears}{summary_right} = 1000;
