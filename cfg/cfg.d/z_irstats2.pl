@@ -238,7 +238,8 @@ $c->{irstats2}->{report} = {
 					options => {
 						limit => 5,
 						top => 'eprint',
-						title_phrase => 'top_downloads'
+						title_phrase => 'top_downloads',
+						#citestyle => 'default', # defaults to brief
 					},
 				},
 				{
@@ -297,7 +298,8 @@ $c->{irstats2}->{report} = {
 			options => {
 				limit => 10,
 				top => 'eprint',
-				title_phrase => 'top_downloads'
+				title_phrase => 'top_downloads',
+				#citestyle => 'default', # defaults to brief
 			},
 		},
 		]
@@ -316,6 +318,7 @@ $c->{irstats2}->{report} = {
 				limit => 10,
 				top => 'eprint',
 				title_phrase => 'top_downloads',
+				#citestyle => 'default', # defaults to brief
 			},
 		},
 		],
