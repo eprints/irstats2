@@ -58,10 +58,6 @@ sub render
 	} );
 
 	my $conf = EPrints::Utils::clone( $repo->config( qw( irstats2 report ), $report ) )
-	unless( defined $conf )
-	{
-		return $session->render_message( 'error', $self->html_phrase( "invalid_report" ) );
-	}
 
 	my $frag = $repo->make_doc_fragment;
 
