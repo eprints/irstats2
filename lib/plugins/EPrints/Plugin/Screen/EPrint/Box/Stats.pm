@@ -57,7 +57,7 @@ sub render
 		datatype => 'downloads',
 	} );
 
-	my $conf = EPrints::Utils::clone( $repo->config( qw( irstats2 report ), $report ) )
+	my $conf = EPrints::Utils::clone( $repo->config( qw( irstats2 report ), $report ) );
 
 	my $frag = $repo->make_doc_fragment;
 
