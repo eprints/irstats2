@@ -588,8 +588,11 @@ sub render_set
 	if( !defined $use_cache || $use_cache )
 	{
 		my $cache_value = $self->handler->get_rendered_set_value( $setname, $setvalue );
-		HTML::Entities::decode_entities( $cache_value );	# to be safe
-		return $session->make_text( $cache_value );
+		if( defined $cache_value )
+		{
+			HTML::Entities::decode_entities( $cache_value );	# to be safe
+			return $session->make_text( $cache_value );
+		}
 	}
 
 	my $render_fn = $self->get_property( $setname, "render_single_value" );
