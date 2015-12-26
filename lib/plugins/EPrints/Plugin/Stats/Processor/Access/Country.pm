@@ -29,11 +29,16 @@ sub new
 	$dat_file = 1 if( !-e $dat_file );	
 
 	#Test Geo::IP first - it's faster!
+	#RM: If dat_file is not the global one and Geo::IP is available, then we need to call open($dat_file) not new($dat_file)
 	foreach my $pkg ( 'Geo::IP', 'Geo::IP::PurePerl' )
 	{
 		if( EPrints::Utils::require_if_exists( $pkg ) )
 		{
-			$self->{geoip} = $pkg->new( $dat_file );
+			if($pkg !~ /PurePerl/){
+				$self->{geoip} = $pkg->open( $dat_file, GEOIP_MEMORY_CACHE);
+			}else{
+				$self->{geoip} = $pkg->new( $dat_file );
+			}
 			last if( defined $self->{geoip} );
 		}
 	}
