@@ -35,7 +35,7 @@ sub new
 		if( EPrints::Utils::require_if_exists( $pkg ) )
 		{
 			if($pkg !~ /PurePerl/){
-				$self->{geoip} = $pkg->open( $dat_file, GEOIP_MEMORY_CACHE);
+				$self->{geoip} = $pkg->open( $dat_file );
 			}else{
 				$self->{geoip} = $pkg->new( $dat_file );
 			}
