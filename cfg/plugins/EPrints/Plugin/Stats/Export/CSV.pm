@@ -10,7 +10,7 @@ use strict;
 # Export data to the CSV format. Note that numbers are output in a way that prevents MS Excel from formatting the value ($number -> ="$number")
 # 
 
-sub mimetype { 'text/plain' }
+sub mimetype { 'text/csv' }
 
 sub export
 {
@@ -23,14 +23,14 @@ sub export
 	my $header = $stats->data->[0];
 	if( defined $header )
 	{
-		print STDOUT join( ",", keys %$header )."\n";
+		print STDOUT join( ",", sort keys %$header )."\n";
 	}
 
         my @records;
         foreach my $data (@{$stats->data})
         {
                 my @record;
-                foreach my $k (keys %$data)
+                foreach my $k (sort keys %$data)
                 {
 			push @record, $self->escape_value( $data->{$k} );
                 }
