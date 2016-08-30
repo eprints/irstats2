@@ -1,6 +1,7 @@
 use strict;
 
 use EPrints;
+require HTML::Entities;
 
 # format is:
 # /cgi/stats/export/<ExportPluginId>/...
@@ -37,7 +38,7 @@ unless(defined $dbh)
 my $export_plugin = $session->plugin( "Stats::Export::$export" );
 unless( defined $export_plugin )
 {
-	print STDOUT "<p>IRStats2: unknown export <strong>$export</strong></p>";
+	print STDOUT "<p>IRStats2: unknown export <strong>".HTML::Entities::encode( $export )."</strong></p>";
 	$session->terminate;
 	return;
 }
