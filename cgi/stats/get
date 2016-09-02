@@ -1,6 +1,7 @@
 use strict;
 
 use EPrints;
+require HTML::Entities;
 
 my $session = new EPrints::Session;
 return unless( defined $session );
@@ -39,7 +40,7 @@ my $view_plugin = $session->plugin( "Stats::View::$view",
 
 unless( defined $view_plugin )
 {
-	print STDOUT "<p>IRStats2: unknown view <strong>$view</strong></p>";
+	print STDOUT "<p>IRStats2: unknown view <strong>".HTML::Entities::encode( $view )."</strong></p>";
 	$session->terminate;
 	return;
 }
