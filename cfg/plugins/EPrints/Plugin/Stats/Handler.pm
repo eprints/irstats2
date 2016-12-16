@@ -637,7 +637,7 @@ sub save_data_values
         {
                 foreach my $epid ( keys %{$data->{$date}} )
                 {
-						$self->{dbh}->begin; #start transaction if DB engine supports it
+						$self->{dbh}->begin;
 						
                         foreach my $value ( keys %{$data->{$date}->{$epid}} )
                         {
@@ -647,7 +647,7 @@ sub save_data_values
                                 $counter++;
                         }
 						
-						$self->{dbh}->commit; #end transaction
+						$self->{dbh}->commit;
                 }
         }
 

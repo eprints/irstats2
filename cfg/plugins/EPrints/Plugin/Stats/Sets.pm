@@ -230,7 +230,7 @@ sub populate_tables
 
 		my $eprintid = $eprint->get_id;
 
-		$self->handler->{dbh}->begin; #make all changes in one transaction if DB engine supports them
+		$self->handler->{dbh}->begin;
 		
 		foreach my $set_name ( @$sets_names )
 		{
@@ -260,7 +260,7 @@ sub populate_tables
 			}
 		}
 		
-		$self->handler->{dbh}->commit; #end transaction
+		$self->handler->{dbh}->commit;
 	};
 
 	my $info = {};
