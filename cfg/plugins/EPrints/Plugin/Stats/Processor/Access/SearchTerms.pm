@@ -63,7 +63,13 @@ sub new
 	$self->{conf} = {
 		render => 'string',
 	};
-
+	if ($self->{session}->config( "index") eq '1') {
+		%IGNORE_LIST=();
+		$self->{'indexing'}=$self->{session}->config( 'indexing' );
+		foreach (keys %{$self->{'indexing'}{'freetext_stop_words'}}) {
+			$IGNORE_LIST{$_}=$self->{'indexing'}{'freetext_stop_words'}{$_};
+		}
+	}
 	return $self;
 }
 
@@ -180,8 +186,12 @@ sub normalize_word
 	
 	$w = lc($w);
 	return undef if( $IGNORE_LIST{$w} );
-
-	return undef if( length $w < 2 );
+	if ($self->{'indexing'}) {
+		return undef if( length $w < $self->{'indexing'}{'freetext_min_word_size'} && ! exists $self->{'indexing'}{'freetext_always_words'}{$w});
+	}
+	else {
+		return undef if( length $w < 2 );
+	}
 	
 	return $w;
 }
