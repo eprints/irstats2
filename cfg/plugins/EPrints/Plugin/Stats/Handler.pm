@@ -637,13 +637,17 @@ sub save_data_values
         {
                 foreach my $epid ( keys %{$data->{$date}} )
                 {
+						$self->{dbh}->begin;
+						
                         foreach my $value ( keys %{$data->{$date}->{$epid}} )
                         {
                                 $i = 0;
                                 $sth->bind_param( ++$i, $_ ) for( ( $counter, $epid, $date, $value, ($data->{$date}->{$epid}->{$value}) ) );
                                 $rc &&= $sth->execute();
-				$counter++;
+                                $counter++;
                         }
+						
+						$self->{dbh}->commit;
                 }
         }
 
