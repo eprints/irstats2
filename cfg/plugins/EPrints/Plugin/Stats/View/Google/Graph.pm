@@ -118,7 +118,9 @@ sub get_data
 			else
 			{
 				# safety measure - not to be stuck on the 1st data point (though this probably means something is wrong in Utils::get_dates
-				$i++ if( $i == 0 );
+
+#               commented out the following line: This line seem to cause stats discrepancies. https://github.com/eprints/irstats2/issues/69
+#                $i++ if( $i == 0 );
 
 				last;
 			}
