@@ -321,6 +321,13 @@ sub extract_eprint_data
 		push @conditions, $self->{dbh}->quote_identifier( 'value' )." = ".$self->{dbh}->quote_value( $datafilter );
 	}
 
+	my $show_archive_only = $self->{session}->config( 'irstats2', 'show_archive_only' ) || 0;
+	if ($show_archive_only)
+	{
+		push @conditions, "eprintid in (select eprintid from eprint where eprint_status='archive')";
+	}
+
+
 	if( scalar( @conditions ) )
 	{
 		$sql .= " WHERE ".join( " AND ", @conditions );
