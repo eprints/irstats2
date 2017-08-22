@@ -51,15 +51,24 @@ sub process_record
 	my $ua = $record->{requester_user_agent};
 	return unless( EPrints::Utils::is_set( $ua ) );
 
-	foreach( keys %$BROWSERS_SIGNATURES )
+	my $found = 0;
+	my $date = $record->{datestamp}->{cache};
+	foreach( sort keys %$BROWSERS_SIGNATURES )
 	{
 		if( $ua =~ $_ )
 		{
-			my $date = $record->{datestamp}->{cache};
 			$self->{cache}->{"$date"}->{$epid}->{$BROWSERS_SIGNATURES->{$_}}++;
+			$found = 1;
 			last;
 		}
 	}
+
+	if (not $found)
+	{
+		$self->{cache}->{"$date"}->{$epid}->{Other}++;
+	}
+
+
 }
 
 1;
