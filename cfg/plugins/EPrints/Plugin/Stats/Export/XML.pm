@@ -17,6 +17,13 @@ sub export
 
 	# should be set by something else:
 	binmode( STDOUT, ":utf8" );
+
+	my $filename = "report_" . EPrints::Time::iso_date() . ".xml";
+	EPrints::Apache::AnApache::header_out(
+	$self->{session}->get_request,
+	"Content-Disposition" => "attachment; filename=$filename"
+	);
+
 	print STDOUT "<?xml version='1.0'?>\n<statistics>\n";
 
 	$self->print_context( $stats );

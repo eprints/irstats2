@@ -14,23 +14,29 @@ sub mimetype { 'text/csv' }
 
 sub export
 {
-        my( $self, $stats ) = @_;
+	my( $self, $stats ) = @_;
 
 	binmode( STDOUT, ":utf8" );
- 	$stats->render_objects( 'description', 1 );
 
-	my @header_columns;
+	my $filename = "report_" . EPrints::Time::iso_date() . ".csv"; 
+	EPrints::Apache::AnApache::header_out( 
+	$self->{session}->get_request, 
+	"Content-Disposition" => "attachment; filename=$filename" 
+	);  
+    
+	$stats->render_objects( 'description', 1 );
+
 	my $header = $stats->data->[0];
+	my @header_columns = keys %$header;
 	if( defined $header )
 	{
-		print STDOUT join( ",", sort keys %$header )."\n";
+		print STDOUT join( ",", @header_columns )."\n";
 	}
-
         my @records;
         foreach my $data (@{$stats->data})
         {
                 my @record;
-                foreach my $k (sort keys %$data)
+                foreach my $k (@header_columns)
                 {
 			push @record, $self->escape_value( $data->{$k} );
                 }
