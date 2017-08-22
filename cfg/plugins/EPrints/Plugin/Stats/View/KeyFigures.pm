@@ -241,7 +241,8 @@ sub render_content
 		next unless( defined $name );
 		$type = 'spark' if( !defined $type || !( $type eq 'spark' || $type eq 'progress' || $type eq 'figure' ) );
 
-		my $section = $frag->appendChild( $session->make_element( 'div', class => 'irstats2_keyfigures_section' ) );
+		my $tooltip = $self->phrase($name);
+		my $section = $frag->appendChild( $session->make_element( 'div', class => 'irstats2_keyfigures_section','title'=>$tooltip ) );
 
 		if( $type eq 'spark' )
 		{
