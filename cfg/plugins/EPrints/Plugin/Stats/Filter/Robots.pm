@@ -1,1001 +1,136 @@
 package EPrints::Plugin::Stats::Filter::Robots;
 
 use EPrints::Plugin::Stats::Processor;
+use LWP::Simple;
+use File::Basename;
 
 our @ISA = qw/ EPrints::Plugin::Stats::Processor /;
 
 use strict;
 
-our @ROBOTS = map { s/\s+//g; qr/$_/i } <DATA>;
+our (@ROBOTS_UA, @ROBOTS_IP);
+
+
+sub get_robots
+{
+    
+    my $robots_ua_href = "http://www.eprints.org/resource/bad_robots/robots_ua.txt";
+    my $robots_ip_href = "http://www.eprints.org/resource/bad_robots/robots_ip.txt";
+    
+    my $conf = $EPrints::SystemSettings::conf;
+    
+    my $dirname = dirname(__FILE__);
+
+    my $robots_ua_file = $conf->{base_path} . "/var/robots_ua.txt";
+    if  (not ( (-e $robots_ua_file) && (-C $robots_ua_file) < 7 ))  
+    {
+	my $datestring = localtime();
+        print  "[$datestring|$robots_ua_file] file does not exist or too old. Downloading new...";
+        getstore($robots_ua_href, $robots_ua_file);
+	print  "done\n";
+    }
+
+
+    ## a normal robot file should have size larger than 10000 byte.
+    ## revert to use the default if it is not.
+    my $size = -s $robots_ua_file || 0;
+    if ( $size <10000 )
+    {
+        $robots_ua_file = $dirname . "/default_robots_ua.txt";
+        print STDERR "Downloaded robot file appear to be incorrect. Reverting to use the default ($robots_ua_file).\n";
+    };
+    open( my $fh, $robots_ua_file ) || EPrints::abort( "Could not read $robots_ua_file\n" );
+    @ROBOTS_UA = map { s/\s+//g; qr/$_/i if $_ } <$fh>;
+    close($fh);
+
+    my $robots_ip_file = $conf->{base_path} . "/var/robots_ip.txt";
+    if  (not ( (-e $robots_ip_file) && (-C $robots_ip_file) < 7 ))  
+    {
+	my $datestring = localtime();
+        print  "[$datestring|$robots_ip_file] file does not exist or too old. Downloading new...";
+        getstore($robots_ip_href, $robots_ip_file);
+	print  "done\n";
+    }
+
+    $size = -s $robots_ip_file || 0;
+    if ($size <120)
+    {
+        $robots_ip_file = $dirname . "/default_robots_ip.txt";
+        print STDERR "Downloaded robot IP file appear to be incorrect. Reverting to use the default ($robots_ip_file).\n";
+    };
+    open( $fh, $robots_ip_file ) || EPrints::abort( "Could not read $robots_ip_file\n" );
+    
+    while (my $line = <$fh>)
+    {
+        chomp $line;
+        next if not $line;
+        next if $line =~ m/^\#/;
+        push @ROBOTS_IP, $line  if not ($_ ~~ @ROBOTS_IP);
+    }
+    close($fh);
+}
+
 
 sub new
 {
         my( $class, %params ) = @_;
-	my $self = $class->SUPER::new( %params );
-
+    	my $self = $class->SUPER::new( %params );
+ 
         $self->{disable} = 0;
 
-	return $self;
+    	return $self;
 }
 
 sub filter_record
 {
 	my ($self, $record) = @_;
+    if (not (@ROBOTS_IP && @ROBOTS_UA)) ## only need to get robots once.
+    {
+        $self->get_robots;
+    }
 
 	my $ua = $record->{requester_user_agent};
 	return 0 unless( defined $ua );
 
-	my $is_robot = 0;
-	
-	for( @ROBOTS )
+    my $is_robot = 0;
+
+	for( @ROBOTS_UA )
 	{
 		$is_robot = 1, last if $ua =~ $_;
 	}
+    
+    return $is_robot if $is_robot; 
 
-	return $is_robot;
+    ##
+    #to use this feature, define in z_irstats2.pl
+    #$c->{irstats2}->{robot_ips} = [
+    #        "180.76.15",
+    #        "123.125.71",
+    #        ];
+    #
+
+    ##adding locally configed robot IPs:
+    my $robots_ip_cfg = $self->{session}->config( 'irstats2', 'robots_ip' ) || [];
+    foreach (@{$robots_ip_cfg})
+    {
+        push @ROBOTS_IP, $_ if not ($_ ~~ @ROBOTS_IP) ;
+    }
+
+    my $ip = $record->{requester_id} || "";
+    return $is_robot if $ip eq "";
+
+    for(@ROBOTS_IP)
+    {	
+        next if not $_;
+        my $robot_ip = $_;
+        my $num_dots = () = $_ =~ /\./g;
+        $robot_ip .= "." if ($num_dots < 3 && substr($robot_ip, -1) ne '.');
+        $robot_ip =~ s/\./\\\./g;
+        $is_robot = 1, last if $ip =~ /^$robot_ip/i ;
+    }
+
+    return $is_robot;
 }
 
 
 1;
-
-__DATA__
-alexandria(\s|\+)prototype(\s|\+)project
-allentrack
-appie
-arachmo
-architext
-bingpreview
-bjaaland
-brutus\/aet
-china\slocal\sbrowse\s2\.6
-code\ssample\sweb\sclient
-contentmatch
-contentsmartz
-dsurf
-datacha0s\/2\.0
-demo\sbot
-emailsiphon
-emailwolf
-fdm(\s|\+)1
-ferret
-fetch(\s|\+)api(\s|\+)request
-getright
-goldfire(\s|\+)server
-googlebot
-google\-sitemaps
-google[_+ ]web[_+ ]preview
-gulliver
-harvest
-htdig
-httrack
-jeeves
-linkwalker
-lilina
-lockss
-lwp\:\:simple
-lycos[_+ ]
-msnbot
-microsoft(\s|\+)url(\s|\+)control
-milbot
-moget
-muscatferre
-myweb
-nabot
-naverbot
-nomad
-offline(\s|\+)navigator
-ourbrowser
-python\-urllib
-readpaper
-scooter
-slurp
-strider
-t\-h\-u\-n\-d\-e\-r\-s\-t\-o\-n\-e
-teleport(\s|\+)pro
-teoma
-virus[_+ ]detector
-^voyager\/
-wanadoo
-web(\s|\+)downloader
-webcloner
-webcopier
-weblayers
-webreaper
-webstripper
-webzip
-webinator
-webmetrics
-wget
-xenu(\s|\+)link(\s|\+)sleuth
-[^a]fish
-^voyager\/
-acme\.spider
-alexa
-almaden
-appie
-architext
-archive\.org_bot
-arks
-asterias
-atomz
-autoemailspider
-awbot
-baiduspider
-bbot
-biadu
-biglotron
-bjaaland
-blaiz\-bee
-bloglines
-blogpulse
-boitho\.com\-dc
-bookmark\-manager
-bspider
-bwh3_user_agent
-celestial
-cfnetwork|checkbot
-charlotte\/
-combine
-commons\-httpclient
-contentmatch
-core
-crawl
-crawler
-cursor
-custo
-daumoa
-docomo
-dtsearchspider
-dumbot
-easydl
-exabot
-fast-webcrawler
-favorg
-feedburner
-feedfetcher\-google
-ferret
-findlinks
-gaisbot
-geturl
-gigabot
-girafabot
-gnodspider
-google
-grub
-gulliver
-harvest
-heritrix
-hl_ftien_spider
-holmes
-htdig
-htmlparser
-httpget\-5\.2\.2
-httpget\?5\.2\.2
-httrack
-isilox
-ia_archiver
-ichiro
-iktomi
-ilse
-internetseer
-intute
-java
-java\/
-jeeves
-jobo
-kyluka
-larbin
-libwww
-libwww\-perl
-lilina
-linkbot
-linkcheck
-linkchecker
-linkscan
-linkwalker
-livejournal\.com
-lmspider
-lwp
-lwp\-request
-lwp\-tivial
-lwp\-trivial
-lycos[_+]
-mail.ru
-mediapartners\-google
-megite
-milbot
-mimas
-mj12bot
-mnogosearch
-moget
-mojeekbot
-momspider
-motor
-msiecrawler
-msnbot
-myweb
-nagios
-netcraft
-netluchs
-ng\/2\.
-no_user_agent
-nomad
-nutch
-ocelli
-onetszukaj
-perman
-pioneer
-playmusic\.com
-playstarmusic\.com
-powermarks
-psbot
-python
-qihoobot
-rambler
-redalert|robozilla
-robot
-robots
-rss
-scan4mail
-scientificcommons
-scirus
-scooter
-seekbot
-seznambot
-shoutcast
-slurp
-sogou
-speedy
-spider
-spiderman
-spiderview
-sunrise
-superbot
-surveybot
-tailrank
-technoratibot
-titan
-turnitinbot
-twiceler
-ucsd
-ultraseek
-urlaliasbuilder
-urllib
-virus[_+]detector
-voila
-w3c\-checklink
-webcollage
-weblayers
-webmirror
-webreaper
-wordpress
-worm
-xenu
-y!j
-yacy
-yahoo
-yahoo\-mmcrawler
-yahoofeedseeker
-yahooseeker
-yandex
-yodaobot
-zealbot
-zeus
-zyborg
-antibot
-bruinbot
-digout4u
-echo!
-fast\-webcrawler
-ia_archiver\-web\.archive\.org
-ia_archiver
-jennybot
-mercator
-netcraft
-msnbot\-media
-msnbot
-petersnews
-relevantnoise\.com
-unlost_web_crawler
-voila
-webbase
-webcollage
-cfetch
-zyborg
-wisenutbot
-[+:,\.\;\/\-]bot
-bot[+:,\.\;\/\-]
-bot
-[^a]fish
-abcdatos
-acme\.spider
-ahoythehomepagefinder
-alkaline
-anthill
-arachnophilia
-arale
-araneo
-aretha
-ariadne
-powermarks
-arks
-aspider
-atn\.txt
-atomz
-auresys
-backrub
-bbot
-bigbrother
-blackwidow
-blindekuh
-bloodhound
-borg\-bot
-brightnet
-bspider
-cactvschemistryspider
-calif[^r]
-cassandra
-cgireader
-checkbot
-christcrawler
-churl
-cienciaficcion
-collective
-combine
-conceptbot
-coolbot
-core
-cosmos
-cruiser
-cusco
-cyberspyder
-desertrealm
-deweb
-dienstspider
-digger
-diibot
-direct_hit
-dnabot
-download_express
-dragonbot
-dwcp
-e\-collector
-ebiness
-elfinbot
-emacs
-emcspider
-esther
-evliyacelebi
-fastcrawler
-feedcrawl
-fdse
-felix
-fetchrover
-fido
-finnish
-fireball
-fouineur
-francoroute
-freecrawl
-funnelback
-funnelweb
-gama
-gazz
-gcreep
-getbot
-geturl
-golem
-gougou
-grapnel
-griffon
-gromit
-gulperbot
-hambot
-havindex
-hometown
-htmlgobble
-hyperdecontextualizer
-iajabot
-iaskspider
-hl_ftien_spider
-sogou
-iconoclast
-ilse
-imagelock
-incywincy
-informant
-infoseek
-infoseeksidewinder
-infospider
-inspectorwww
-intelliagent
-irobot
-iron33
-israelisearch
-javabee
-jbot
-jcrawler
-jobo
-jobot
-joebot
-jubii
-jumpstation
-kapsi
-katipo
-kilroy
-ko[_+ ]yappo[_+ ]robot
-kummhttp
-labelgrabber\.txt
-larbin
-legs
-linkidator
-linkscan
-lockon
-logo_gif
-macworm
-magpie
-marvin
-mattie
-mediafox
-merzscope
-meshexplorer
-mindcrawler
-mnogosearch
-momspider
-monster
-motor
-muncher
-mwdsearch
-ndspider
-nederland\.zoek
-netcarta
-netmechanic
-netscoop
-newscan\-online
-nhse
-northstar
-nzexplorer
-objectssearch
-occam
-octopus
-openfind
-orb_search
-packrat
-pageboy
-parasite
-patric
-pegasus
-perignator
-perlcrawler
-phantom
-phpdig
-piltdownman
-pimptrain
-pioneer
-pitkow
-pjspider
-plumtreewebaccessor
-poppi
-portalb
-psbot
-python
-raven
-rbse
-resumerobot
-rhcs
-road_runner
-robbie
-robi
-robocrawl
-robofox
-robozilla
-roverbot
-rules
-safetynetrobot
-search\-info
-search_au
-searchprocess
-senrigan
-sgscout
-shaggy
-shaihulud
-sift
-simbot
-site\-valet
-sitetech
-skymob
-slcrawler
-smartspider
-snooper
-solbot
-speedy
-spider[_+ ]monkey
-spiderbot
-spiderline
-spiderman
-spiderview
-spry
-sqworm
-ssearcher
-suke
-sunrise
-suntek
-sven
-tach_bw
-tagyu_agent
-tailrank
-tarantula
-tarspider
-techbot
-templeton
-titan
-titin
-tkwww
-tlspider
-ucsd
-udmsearch
-universalfeedparser
-urlck
-valkyrie
-verticrawl
-victoria
-visionsearch
-voidbot
-vwbot
-w3index
-w3m2
-wallpaper
-wanderer
-wapspIRLider
-webbandit
-webcatcher
-webcopy
-webfetcher
-webfoot
-webinator
-weblinker
-webmirror
-webmoose
-webquest
-webreader
-webreaper
-websnarf
-webspider
-webvac
-webwalk
-webwalker
-webwatch
-whatuseek
-whowhere
-wired\-digital
-wmir
-wolp
-wombat
-wordpress
-worm
-woozweb
-wwwc
-wz101
-xget
-1\-more_scanner
-accoona\-ai\-agent
-activebookmark
-adamm_bot
-almaden
-aipbot
-aleadsoftbot
-alpha_search_agent
-allrati
-aport
-archive\.org_bot
-argus
-arianna\.libero\.it
-aspseek
-asterias
-awbot
-baiduspider
-becomebot
-bender
-betabot
-biglotron
-bittorrent_bot
-biz360[_+ ]spider
-blogbridge[_+ ]service
-bloglines
-blogpulse
-blogsearch
-blogshares
-blogslive
-blogssay
-bncf\.firenze\.sbn\.it\/raccolta\.txt
-bobby
-boitho\.com\-dc
-bookmark\-manager
-boris
-bumblebee
-candlelight[_+ ]favorites[_+ ]inspector
-cbn00glebot
-cerberian_drtrs
-cfnetwork
-cipinetbot
-checkweb_link_validator
-commons\-httpclient
-computer_and_automation_research_institute_crawler
-converamultimediacrawler
-converacrawler
-cscrawler
-cse_html_validator_lite_online
-cuasarbot
-cursor
-custo
-datafountains\/dmoz_downloader
-daviesbot
-daypopbot
-deepindex
-dipsie\.bot
-dnsgroup
-domainchecker
-domainsdb\.net
-dulance
-dumbot
-dumm\.de\-bot
-earthcom\.info
-easydl
-edgeio\-retriever
-ets_v
-exactseek
-extreme[_+ ]picture[_+ ]finder
-eventax
-everbeecrawler
-everest\-vulcan
-ezresult
-enteprise
-facebook
-fast_enterprise_crawler.*crawleradmin\.t\-info@telekom\.de
-fast_enterprise_crawler.*t\-info_bi_cluster_crawleradmin\.t\-info@telekom\.de
-matrix_s\.p\.a\._\-_fast_enterprise_crawler
-fast_enterprise_crawler
-fast\-search\-engine
-favicon
-favorg
-favorites_sweeper
-feedburner
-feedfetcher\-google
-feedflow
-feedster
-feedsky
-feedvalidator
-filmkamerabot
-findlinks
-findexa_crawler
-fooky\.com\/ScorpionBot
-g2crawler
-gaisbot
-geniebot
-gigabot
-girafabot
-global_fetch
-gnodspider
-goforit\.com
-goforitbot
-gonzo
-grub
-gpu_p2p_crawler
-henrythemiragorobot
-heritrix
-holmes
-hoowwwer
-hpprint
-htmlparser
-html[_+ ]link[_+ ]validator
-httrack
-hundesuche\.com\-bot
-ichiro
-iltrovatore\-setaccio
-infobot
-infociousbot
-infomine
-insurancobot
-internet[_+ ]ninja
-internetarchive
-internetseer
-internetsupervision
-irlbot
-isearch2006
-iupui_research_bot
-jrtwine[_+ ]software[_+ ]check[_+ ]favorites[_+ ]utility
-justview
-kalambot
-kamano\.de_newsfeedverzeichnis
-kazoombot
-kevin
-keyoshid
-kinjabot
-kinja\-imagebot
-knowitall
-knowledge\.com
-kouaa_krawler
-krugle
-ksibot
-kurzor
-lanshanbot
-letscrawl\.com
-libcrawl
-linkbot
-link_valet_online
-metager\-linkchecker
-linkchecker
-livejournal\.com
-lmspider
-lwp\-request
-lwp\-trivial
-magpierss
-mail\.ru
-mapoftheinternet\.com
-mediapartners\-google
-megite
-metaspinner
-microsoft[_+ ]url[_+ ]control
-mini\-reptile
-minirank
-missigua_locator
-misterbot
-miva
-mizzu_labs
-mj12bot
-mojeekbot
-msiecrawler
-ms_search_4\.0_robot
-msrabot
-msrbot
-mt::telegraph::agent
-nagios
-nasa_search
-mydoyouhike
-netluchs
-netsprint
-newsgatoronline
-nicebot
-nimblecrawler
-noxtrumbot
-npbot
-nutchcvs
-nutchosu\-vlib
-nutch
-ocelli
-octora_beta_bot
-omniexplorer[_+ ]bot
-onet\.pl[_+ ]sa
-onfolio
-opentaggerbot
-openwebspider
-oracle_ultra_search
-orbiter
-yodaobot
-qihoobot
-passwordmaker\.org
-pear_http_request_class
-peerbot
-perman
-php[_+ ]version[_+ ]tracker
-pictureofinternet
-ping\.blo\.gs
-plinki
-pluckfeedcrawler
-pogodak
-pompos
-popdexter
-port_huron_labs
-postfavorites
-projectwf\-java\-test\-crawler
-proodlebot
-pyquery
-rambler
-redalert
-rojo
-rssimagesbot
-ruffle
-rufusbot
-sandcrawler
-sbider
-schizozilla
-scumbot
-searchguild[_+ ]dmoz[_+ ]experiment
-seekbot
-sensis_web_crawler
-seznambot
-shim\-crawler
-shoutcast
-slysearch
-snap\.com_beta_crawler
-sohu\-search
-sohu
-snappy
-sphere_scout
-spip
-sproose_crawler
-steeler
-steroid__download
-suchfin\-bot
-superbot
-surveybot
-susie
-syndic8
-syndicapi
-synoobot
-tcl_http_client_package
-technoratibot
-teragramcrawlersurf
-test_crawler
-testbot
-t\-h\-u\-n\-d\-e\-r\-s\-t\-o\-n\-e
-topicblogs
-turnitinbot
-turtlescanner
-turtle
-tutorgigbot
-twiceler
-ubicrawler
-ultraseek
-unchaos_bot_hybrid_web_search_engine
-unido\-bot
-updated
-ustc\-semantic\-group
-vagabondo\-wap
-vagabondo
-vermut
-versus_crawler_from_eda\.baykan@epfl\.ch
-vespa_crawler
-vortex
-vse\/
-w3c\-checklink
-w3c[_+ ]css[_+ ]validator[_+ ]jfouffa
-w3c_validator
-watchmouse
-wavefire
-webclipping\.com
-webcompass
-webcrawl\.net
-web_downloader
-webdup
-webfilter
-webindexer
-webminer
-website[_+ ]monitoring[_+ ]bot
-webvulncrawl
-wells_search
-wonderer
-wume_crawler
-wwweasel
-xenu's_link_sleuth
-xenu_link_sleuth
-xirq
-y!j
-yacy
-yahoo\-blogs
-yahoo\-verticalcrawler
-yahoofeedseeker
-yahooseeker\-testing
-yahooseeker
-yahoo\-mmcrawler
-yahoo!_mindset
-yandex
-flexum
-yanga
-yooglifetchagent
-z\-add_link_checker
-zealbot
-zhuaxia
-zspider
-zeus
-ng\/1\.
-ng\/2\.
-exabot
-^[1-3]$
-alltop
-applesyndication
-asynchttpclient
-bingbot
-blogged_crawl
-bloglovin
-butterfly
-buzztracker
-carpathia
-catbot
-chattertrap
-check_http
-coldfusion
-covario
-daylifefeedfetcher
-discobot
-dlvr\.it
-dreamwidth
-drupal
-ezoom
-feedmyinbox
-feedroll\.com
-feedzira
-fever\/
-freenews
-geohasher
-hanrss
-inagist
-jacobin club
-jakarta
-js\-kit
-largesmall crawler
-linkedinbot
-longurl
-metauri
-microsoft\-webdav\-miniredir
-^motorola$
-movabletype
-^mozilla\/3\.0 \(compatible$
-^mozilla\/4\.0$
-^mozilla\/4\.0 \(compatible;\)$
-^mozilla\/5\.0$
-^mozilla\/5\.0 \(compatible;$
-^mozilla\/5\.0 \(en\-us\)$
-^mozilla\/5\.0 firefox\/3\.0\.5$
-^msie
-netnewswire
- netseer 
-netvibes
-newrelicpinger
-newsfox
-nextgensearchbot
-ning
-pingdom
-pita
-postpost
-postrank
-printfulbot
-protopage
-proximic
-quipply
-r6\_
-ratingburner
-regator
-rome client
-rpt\-httpclient
-rssgraffiti
-sage\+\+
-scoutjet
-simplepie
-sitebot
-summify\.com
-superfeedr
-synthesio
-teoma
-topblogsinfo
-topix\.net
-trapit
-trileet
-tweetedtimes
-twisted pagegetter
-twitterbot
-twitterfeed
-unwindfetchor
-wazzup
-windows\-rss\-platform
-wiumi
-xydo
-yahoo! slurp
-yahoo pipes
-yahoo\-newscrawler
-yahoocachesystem
-yahooexternalcache
-yahoo! searchmonkey
-yahooysmcm
-yammer
-yandexbot
-yeti
-yie8
-youdao
-yourls
-zemanta
-zend_http_client
-wget
-libwww
-^java\/[0-9]
-/metadata_scraper
