@@ -8,7 +8,7 @@ our @ISA = qw/ EPrints::Plugin::Stats::Processor /;
 
 use strict;
 
-our (@ROBOTS_UA, @ROBOTS_IP);
+our (@ROBOTS_UA, %ROBOTS_IP);
 
 
 sub get_robots
@@ -31,8 +31,7 @@ sub get_robots
     }
 
 
-    ## a normal robot file should have size larger than 10000 byte.
-    ## revert to use the default if it is not.
+    ## Basic sanity check on the downloaded file
     my $size = -s $robots_ua_file || 0;
     if ( $size <10000 )
     {
@@ -52,6 +51,7 @@ sub get_robots
 	print  "done\n";
     }
 
+    ## Basic sanity check on the downloaded file
     $size = -s $robots_ip_file || 0;
     if ($size <120)
     {
@@ -65,7 +65,7 @@ sub get_robots
         chomp $line;
         next if not $line;
         next if $line =~ m/^\#/;
-        push @ROBOTS_IP, $line  if not ($_ ~~ @ROBOTS_IP);
+	$ROBOTS_IP{$line}=1;	
     }
     close($fh);
 }
@@ -84,7 +84,7 @@ sub new
 sub filter_record
 {
 	my ($self, $record) = @_;
-    if (not (@ROBOTS_IP && @ROBOTS_UA)) ## only need to get robots once.
+    if (not (%ROBOTS_IP && @ROBOTS_UA)) ## only need to get robots once.
     {
         $self->get_robots;
     }
@@ -104,22 +104,20 @@ sub filter_record
     ##
     #to use this feature, define in z_irstats2.pl
     #$c->{irstats2}->{robot_ips} = [
-    #        "180.76.15",
+    #        "180.76.15.34",
     #        "123.125.71",
     #        ];
     #
-
     ##adding locally configed robot IPs:
     my $robots_ip_cfg = $self->{session}->config( 'irstats2', 'robots_ip' ) || [];
     foreach (@{$robots_ip_cfg})
     {
-        push @ROBOTS_IP, $_ if not ($_ ~~ @ROBOTS_IP) ;
+	$ROBOTS_IP{$_}=1;
     }
 
     my $ip = $record->{requester_id} || "";
     return $is_robot if $ip eq "";
-
-    for(@ROBOTS_IP)
+    for(keys %ROBOTS_IP)
     {	
         next if not $_;
         my $robot_ip = $_;
