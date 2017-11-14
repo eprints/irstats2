@@ -4,6 +4,7 @@ use EPrints::Plugin::Stats::View;
 @ISA = ('EPrints::Plugin::Stats::View');
 
 use strict;
+require HTML::Entities;
 
 # Stats::View::Google::Graph
 #
@@ -186,7 +187,7 @@ sub ajax
 		$json_data_points .= "]",
 	}
 	
-	my $graph_type = $self->options->{graph_type} || 'area';	# or 'column'
+	my $graph_type = HTML::Entities::encode( $self->options->{graph_type} || 'area' );	# or 'column'
 
 	print STDOUT "{ \"data\": [$json_data_points], \"type\": \"$graph_type\", \"show_average\": ".($self->options->{show_average}?'true':'false');
 
