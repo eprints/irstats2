@@ -130,7 +130,6 @@ sub filter_record
 
     if( EPrints::Utils::is_set($record->{referring_entity_id}) && $self->{session}->can_call('irstats2', 'smutty_referrers')){
         $is_robot = $self->{session}->call(['irstats2','smutty_referrers'], $self->{session}, $record->{referring_entity_id});
-        if($is_robot){ print $record->{referring_entity_id}." IS FILTH\n";}
     }
     return $is_robot; 
 }
