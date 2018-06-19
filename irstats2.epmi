@@ -2,7 +2,7 @@
 <epm xmlns='http://eprints.org/ep2/data/2.0' id='http://192.168.23.142/id/epm/irstats2'>
   <epmid>irstats2</epmid>
   <eprintid>365</eprintid>
-  <uri>http://pok.pok.com/id/epm/irstats2</uri>
+  <uri>http://192.168.23.142/id/epm/irstats2</uri>
   <documents>
     <document>
       <files>
@@ -10,9 +10,9 @@
           <datasetid>document</datasetid>
           <filename>lang/en/phrases/irstats2.xml</filename>
           <mime_type>application/xml</mime_type>
-          <hash>ac70f948f9bb27ae5d74092929429df8</hash>
+          <hash>59eace1b9a816320e270674f8f1ff56f</hash>
           <hash_type>MD5</hash_type>
-          <filesize>60041</filesize>
+          <filesize>60050</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -2266,9 +2266,9 @@
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Stats/Filter/Robots.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>c647e3c865247707e52718d3e574f407</hash>
+          <hash>757c0b10fc51c09803c06b952ed1d4c6</hash>
           <hash_type>MD5</hash_type>
-          <filesize>11448</filesize>
+          <filesize>3527</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -2599,7 +2599,7 @@
       <id>sf2@ecs.soton.ac.uk</id>
     </item>
   </creators>
-  <datestamp>2018-06-19 01:53:57</datestamp>
+  <datestamp>2018-06-19 06:04:23</datestamp>
   <title>IRStats2 (EPrints UG)</title>
   <description>Statistical tools for EPrints</description>
   <requirements>Geo::IP or Geo::IP::PurePERL, Date::Calc</requirements>
