@@ -27,7 +27,7 @@ sub get_robots
 	my $datestring = localtime();
         print  "[$datestring|$robots_ua_file] file does not exist or too old. Downloading new...";
         getstore($robots_ua_href, $robots_ua_file);
-	print  "done\n";
+	    print  "done\n";
     }
 
 
@@ -48,7 +48,7 @@ sub get_robots
 	my $datestring = localtime();
         print  "[$datestring|$robots_ip_file] file does not exist or too old. Downloading new...";
         getstore($robots_ip_href, $robots_ip_file);
-	print  "done\n";
+	    print  "done\n";
     }
 
     ## Basic sanity check on the downloaded file
@@ -65,7 +65,7 @@ sub get_robots
         chomp $line;
         next if not $line;
         next if $line =~ m/^\#/;
-	$ROBOTS_IP{$line}=1;	
+    	$ROBOTS_IP{$line}=1;	
     }
     close($fh);
 }
@@ -126,8 +126,13 @@ sub filter_record
         $robot_ip =~ s/\./\\\./g;
         $is_robot = 1, last if $ip =~ /^$robot_ip/i ;
     }
+    return $is_robot if $is_robot;
 
-    return $is_robot;
+    if( EPrints::Utils::is_set($record->{referring_entity_id}) && $self->{session}->can_call('irstats2', 'smutty_referrers')){
+        $is_robot = $self->{session}->call(['irstats2','smutty_referrers'], $self->{session}, $record->{referring_entity_id});
+        if($is_robot){ print $record->{referring_entity_id}." IS FILTH\n";}
+    }
+    return $is_robot; 
 }
 
 
