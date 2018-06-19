@@ -521,3 +521,7 @@ div.irstats2_options_dates, div.irstats2_options_filters, div.irstats2_options_r
 table.irstats2_view_Grid div.irstats2_view {
 	width: 97%;
 }
+.report_title {
+	text-align: center;
+	margin-top: 0px;
+}

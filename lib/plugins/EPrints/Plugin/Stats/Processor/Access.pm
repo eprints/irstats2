@@ -39,19 +39,21 @@ sub process_dataset
 
 	my $current_accessid = 0;
 	
-	my $ds = $session->dataset( 'access' );
-	my $ds_size = $handler->get_dataset_size( $ds ) || 0;
-	unless( $ds_size > 0 )
-	{
-		$handler->log( "Access: nothing to do" );
-		return;
-	}
+        my $access_max_sql = "SELECT MAX(accessid) FROM access;";
+        my $access_max_sth = $handler->{dbh}->prepare( $access_max_sql );
+        $handler->{dbh}->execute( $access_max_sth, $access_max_sql );
+        my @access_max = $access_max_sth->fetchrow_array;
+
+        unless( EPrints::Utils::is_set($access_max[0]) )
+        {
+                $handler->log( "Access: nothing to do" );
+                return;
+        }
 
 	if( !exists $params->{incremental} || $params->{incremental} )
 	{
 	 	$current_accessid = $handler->get_internal_value( 'current_accessid' ) || 0;
-		# note: $ds_size is an estimation, there are no guarantees that the accessid's are continuous
-		$handler->log( "Access: accessid to process: from $current_accessid to $ds_size" );
+		$handler->log( "Access: accessid to process: from $current_accessid to " . $access_max[0] );
 	}
 
 	# Locking the dataset (so that no other stats process can write to the DB at the same time)

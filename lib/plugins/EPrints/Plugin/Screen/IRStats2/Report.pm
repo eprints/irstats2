@@ -68,23 +68,6 @@ sub from
 	$processor->{stats}->{conf} = EPrints::Utils::clone( $conf );
 }
 
-sub render_title
-{
-	my( $self ) = @_;
-
-	my $processor = $self->{processor};
-
-	if( !defined $self->{processor}->{stats}->{handler} )
-	{
-		$self->from;
-	}
-
-	my $handler = $self->{processor}->{stats}->{handler} || $self->{session}->plugin( 'Stats::Handler' );
-
-	my $report = $processor->{context}->current_report;
-	return $self->{session}->html_phrase( "lib/irstats2:report:$report" );
-}
-
 sub render
 {
 	my( $self ) = @_;
@@ -107,7 +90,11 @@ sub render
 	{
 		return $self->html_phrase( 'invalid_set_value' );
 	}
-
+	my $report = $context->current_report;
+	my $divrep=$self->{session}->make_element('h2', class=>'ep_tm_pagetitle report_title');
+	$frag->appendChild($divrep);
+	$divrep->appendChild($self->{session}->html_phrase( "lib/irstats2:report:$report" ));
+	
 	foreach my $item ( @{$conf->{items} || []} )
 	{
 		my $pluginid = delete $item->{plugin};

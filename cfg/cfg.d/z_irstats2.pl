@@ -78,6 +78,9 @@ $c->{irstats2}->{sets} = [
 ###############
 # Misc Options
 ###############
+##only show live items in the stats
+$c->{irstats2}->{show_archive_only} = 1;
+
 
 # by default, anyone can view the stats. Comment out to enable only users with the special '+irstats2/view' role to view stats.
 push @{$c->{public_roles}}, "+irstats2/view";

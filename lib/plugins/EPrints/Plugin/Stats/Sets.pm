@@ -230,6 +230,8 @@ sub populate_tables
 
 		my $eprintid = $eprint->get_id;
 
+		$self->handler->{dbh}->begin;
+		
 		foreach my $set_name ( @$sets_names )
 		{
 			# $values = ARRAY, $groupings = HASH
@@ -257,6 +259,8 @@ sub populate_tables
 				$display_cache->{$set_name}->{$raw_value} = 1;
 			}
 		}
+		
+		$self->handler->{dbh}->commit;
 	};
 
 	my $info = {};

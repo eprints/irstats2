@@ -39,11 +39,17 @@ sub export
 		push @data, $fields;
 	}
 
+	my $filename = "report_" . EPrints::Time::iso_date() . ".json";
+	EPrints::Apache::AnApache::header_out(
+	$self->{session}->get_request,
+	"Content-Disposition" => "attachment; filename=$filename"
+	);
+
 	$statistics->{records} = \@data;
 
 	print STDOUT $self->to_json( $statistics );
 
-        return;
+	return;
 }
 
 sub to_json
