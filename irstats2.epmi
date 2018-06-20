@@ -2266,9 +2266,9 @@
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Stats/Filter/Robots.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>99e0f1769725266848e6c493db644491</hash>
+          <hash>b3a1d0710480e03eacd226246d4df225</hash>
           <hash_type>MD5</hash_type>
-          <filesize>3835</filesize>
+          <filesize>3858</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -2554,9 +2554,9 @@
           <datasetid>document</datasetid>
           <filename>epm/irstats2/cfg/cfg.d/z_irstats2.pl</filename>
           <mime_type>text/plain</mime_type>
-          <hash>06af897c638f46543642ed0b6bac549d</hash>
+          <hash>c8cb96b48866b8d90b53a3186730cc47</hash>
           <hash_type>MD5</hash_type>
-          <filesize>14282</filesize>
+          <filesize>14555</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -2599,7 +2599,7 @@
       <id>sf2@ecs.soton.ac.uk</id>
     </item>
   </creators>
-  <datestamp>2018-06-19 07:24:15</datestamp>
+  <datestamp>2018-06-20 05:29:59</datestamp>
   <title>IRStats2 (EPrints UG)</title>
   <description>Statistical tools for EPrints</description>
   <requirements>Geo::IP or Geo::IP::PurePERL, Date::Calc</requirements>

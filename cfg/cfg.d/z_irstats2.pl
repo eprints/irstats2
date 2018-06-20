@@ -123,6 +123,13 @@ $c->{irstats2}->{allow} = sub {
 # For example:
 # $c->{irstats2}->{local_domains} = { "ECS Intranet" => "\\.ecs\\.soton\\.ac\\.uk", "University Intranet" => "\\.soton\\.ac\\.uk" };
 
+#IPs additional to http://www.eprints.org/resource/bad_robots/robots_ip.txt to not include in stats
+#$c->{irstats2}->{robot_ip} = [ ];
+
+#UAs additional to http://www.eprints.org/resource/bad_robots/robots_ua.txt to not include in stats
+#$c->{irstats2}->{robot_ua} = [ ];
+
+
 # time-out for the so-called "double-click" filtering - default to 3600 secs = 1 hour
 $c->{plugins}->{"Stats::Filter::Repeat"}->{params}->{timeout} = 3600 * 24;
 

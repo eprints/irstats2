@@ -94,6 +94,13 @@ sub filter_record
 
     my $is_robot = 0;
 
+    my $robots_ua_cfg = $self->{session}->config( 'irstats2', 'robots_ua' ) || [];
+    ##adding locally configed robot UAs:
+    foreach (@{$robots_ua_cfg})
+    {
+	    push @ROBOTS_UA, $_;
+    }
+
 	for( @ROBOTS_UA )
 	{
 		$is_robot = 1, last if $ua =~ $_;
@@ -101,13 +108,6 @@ sub filter_record
     
     return $is_robot if $is_robot; 
 
-    ##
-    #to use this feature, define in z_irstats2.pl
-    #$c->{irstats2}->{robot_ips} = [
-    #        "180.76.15.34",
-    #        "123.125.71",
-    #        ];
-    #
     ##adding locally configed robot IPs:
     my $robots_ip_cfg = $self->{session}->config( 'irstats2', 'robots_ip' ) || [];
     foreach (@{$robots_ip_cfg})
