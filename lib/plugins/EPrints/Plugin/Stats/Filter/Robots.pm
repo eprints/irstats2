@@ -14,8 +14,10 @@ our (@ROBOTS_UA, %ROBOTS_IP);
 sub get_robots
 {
     
-    my $robots_ua_href = "http://www.eprints.org/resource/bad_robots/robots_ua.txt";
-    my $robots_ip_href = "http://www.eprints.org/resource/bad_robots/robots_ip.txt";
+    my ($self) = @_;
+
+    my $robots_ua_href = "https://www.eprints.org/resource/bad_robots/robots_ua.txt";
+    my $robots_ip_href = "https://www.eprints.org/resource/bad_robots/robots_ip.txt";
     
     my $conf = $EPrints::SystemSettings::conf;
     
@@ -26,8 +28,12 @@ sub get_robots
     {
 	my $datestring = localtime();
         print  "[$datestring|$robots_ua_file] file does not exist or too old. Downloading new...";
-        getstore($robots_ua_href, $robots_ua_file);
-	    print  "done\n";
+        my $rc = getstore($robots_ua_href, $robots_ua_file);
+	if(is_error($rc)){
+		print STDERR "There was an issue updating the robots_ua file ($rc), will continue to use the old one\n";
+	}else{
+	    print STDERR "done\n";
+	}
     }
 
 
@@ -42,13 +48,25 @@ sub get_robots
     @ROBOTS_UA = map { s/\s+//g; qr/$_/i if $_ } <$fh>;
     close($fh);
 
+    #add extra robot uas for config
+    my $robots_ua_cfg = $self->{session}->config('irstats2','robots_ua') || [];
+    ##adding locally configed robot UAs:
+    foreach (@{$robots_ua_cfg})
+    {
+	    push @ROBOTS_UA, $_;
+    }
+
     my $robots_ip_file = $conf->{base_path} . "/var/robots_ip.txt";
     if  (not ( (-e $robots_ip_file) && (-C $robots_ip_file) < 7 ))  
     {
 	my $datestring = localtime();
         print  "[$datestring|$robots_ip_file] file does not exist or too old. Downloading new...";
-        getstore($robots_ip_href, $robots_ip_file);
-	    print  "done\n";
+        my $rc = getstore($robots_ip_href, $robots_ip_file);
+	if(is_error($rc)){
+		print STDERR "There was an issue updating the robots_ip file ($rc), will continue to use the old one\n";
+	}else{
+	    print STDERR "done\n";
+	}
     }
 
     ## Basic sanity check on the downloaded file
@@ -68,6 +86,14 @@ sub get_robots
     	$ROBOTS_IP{$line}=1;	
     }
     close($fh);
+
+    #adding locally configed robot IPs:
+    my $robots_ip_cfg = $self->{session}->config('irstats2','robots_ip') || [];
+    foreach (@{$robots_ip_cfg})
+    {
+	$ROBOTS_IP{$_}=1;
+    }
+
 }
 
 
@@ -94,12 +120,6 @@ sub filter_record
 
     my $is_robot = 0;
 
-    my $robots_ua_cfg = $self->{session}->config( 'irstats2', 'robots_ua' ) || [];
-    ##adding locally configed robot UAs:
-    foreach (@{$robots_ua_cfg})
-    {
-	    push @ROBOTS_UA, $_;
-    }
 
 	for( @ROBOTS_UA )
 	{
@@ -108,12 +128,6 @@ sub filter_record
     
     return $is_robot if $is_robot; 
 
-    ##adding locally configed robot IPs:
-    my $robots_ip_cfg = $self->{session}->config( 'irstats2', 'robots_ip' ) || [];
-    foreach (@{$robots_ip_cfg})
-    {
-	$ROBOTS_IP{$_}=1;
-    }
 
     my $ip = $record->{requester_id} || "";
     return $is_robot if $ip eq "";

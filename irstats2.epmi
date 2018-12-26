@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<epm xmlns='http://eprints.org/ep2/data/2.0' id='http://192.168.23.142/id/epm/irstats2'>
+<epm xmlns='http://eprints.org/ep2/data/2.0' id='http://template.ulcc.ac.uk/id/epm/irstats2'>
   <epmid>irstats2</epmid>
   <eprintid>365</eprintid>
   <uri>http://192.168.23.142/id/epm/irstats2</uri>
@@ -2266,9 +2266,9 @@
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Stats/Filter/Robots.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>b3a1d0710480e03eacd226246d4df225</hash>
+          <hash>70a7d7fa9bdeecf163fb83f17866f0d3</hash>
           <hash_type>MD5</hash_type>
-          <filesize>3858</filesize>
+          <filesize>4220</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -2599,7 +2599,7 @@
       <id>sf2@ecs.soton.ac.uk</id>
     </item>
   </creators>
-  <datestamp>2018-06-20 05:29:59</datestamp>
+  <datestamp>2018-12-26 02:51:18</datestamp>
   <title>IRStats2 (EPrints UG)</title>
   <description>Statistical tools for EPrints</description>
   <requirements>Geo::IP or Geo::IP::PurePERL, Date::Calc</requirements>
