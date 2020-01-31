@@ -205,7 +205,7 @@ JS
 	my $conf = $session->config( 'irstats2', 'report' );
 
         # as to not display the current_report in the list of ... reports.
-        my $current_report = $self->context->{ir2report};
+        my $current_report = $self->context->{irs2report};
 
 	my $context = $self->context;
 
