@@ -26,14 +26,19 @@ sub get_robots
     my $robots_ua_file = $conf->{base_path} . "/var/robots_ua.txt";
     if  (not ( (-e $robots_ua_file) && (-C $robots_ua_file) < 7 ))  
     {
-	my $datestring = localtime();
+    	my $datestring = localtime();
         print  "[$datestring|$robots_ua_file] file does not exist or too old. Downloading new...";
         my $rc = getstore($robots_ua_href, $robots_ua_file);
-	if(is_error($rc)){
-		print STDERR "There was an issue updating the robots_ua file ($rc), will continue to use the old one\n";
-	}else{
-	    print STDERR "done\n";
-	}
+	    if(is_error($rc)){
+		    print STDERR "There was an issue updating the robots_ua file ($rc), will try curl...\n";
+            if(system("curl $robots_ua_href > $robots_ua_file 2> /dev/null") == 0){
+                print "Done\n";
+            }else{
+                print STDERR "There was an issue updating the robots_ua file (".$_."), will continue to use the old one\n";
+            }
+	    }else{
+	        print STDERR "done\n";
+	    }
     }
 
 
@@ -62,11 +67,16 @@ sub get_robots
 	my $datestring = localtime();
         print  "[$datestring|$robots_ip_file] file does not exist or too old. Downloading new...";
         my $rc = getstore($robots_ip_href, $robots_ip_file);
-	if(is_error($rc)){
-		print STDERR "There was an issue updating the robots_ip file ($rc), will continue to use the old one\n";
-	}else{
-	    print STDERR "done\n";
-	}
+	    if(is_error($rc)){
+		    print STDERR "There was an issue updating the robots_ip file ($rc), will try curl...\n";
+            if(system("curl $robots_ip_href > $robots_ip_file 2> /dev/null") == 0){
+                print "Done\n";
+            }else{
+                print STDERR "There was an issue updating the robots_ip file (".$_."), will continue to use the old one\n";
+            }
+	    }else{
+	        print STDERR "done\n";
+	    }
     }
 
     ## Basic sanity check on the downloaded file
