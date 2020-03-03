@@ -11,7 +11,7 @@ $c->{irstats2}->{datasets} = {
 
 	eprint => { incremental => 0 },
 	
-	access => { filters => [ 'Robots', 'Repeat' ] },
+	access => { filters => [ 'Robots', 'Repeat'] },
 
 	history => { incremental => 1 },
 
@@ -122,6 +122,13 @@ $c->{irstats2}->{allow} = sub {
 # STRING => REGEX_PATTERN
 # For example:
 # $c->{irstats2}->{local_domains} = { "ECS Intranet" => "\\.ecs\\.soton\\.ac\\.uk", "University Intranet" => "\\.soton\\.ac\\.uk" };
+
+#IPs additional to http://www.eprints.org/resource/bad_robots/robots_ip.txt to not include in stats
+#$c->{irstats2}->{robot_ip} = [ ];
+
+#UAs additional to http://www.eprints.org/resource/bad_robots/robots_ua.txt to not include in stats
+#$c->{irstats2}->{robot_ua} = [ ];
+
 
 # time-out for the so-called "double-click" filtering - default to 3600 secs = 1 hour
 $c->{plugins}->{"Stats::Filter::Repeat"}->{params}->{timeout} = 3600 * 24;
@@ -241,7 +248,8 @@ $c->{irstats2}->{report} = {
 					options => {
 						limit => 5,
 						top => 'eprint',
-						title_phrase => 'top_downloads'
+						title_phrase => 'top_downloads',
+						#citestyle => 'default', # defaults to brief
 					},
 				},
 				{
@@ -300,7 +308,8 @@ $c->{irstats2}->{report} = {
 			options => {
 				limit => 10,
 				top => 'eprint',
-				title_phrase => 'top_downloads'
+				title_phrase => 'top_downloads',
+				#citestyle => 'default', # defaults to brief
 			},
 		},
 		]
@@ -319,6 +328,7 @@ $c->{irstats2}->{report} = {
 				limit => 10,
 				top => 'eprint',
 				title_phrase => 'top_downloads',
+				#citestyle => 'default', # defaults to brief
 			},
 		},
 		],
@@ -461,10 +471,12 @@ $c->{irstats2}->{report} = {
 		category => 'general',
 	},
 
+	summary_page => {
+		items => [ 
+		{ plugin => 'Google::Graph', datatype => 'downloads', range => '1y', options => { date_resolution => 'month', graph_type => 'column', title => 'Downloads per month over past year' } },
+		],
+	},
 };
-
-# must be enabled manually
-$c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{disable} = 1;
 
 # Bazaar config
 
@@ -483,6 +495,9 @@ $c->{plugins}{"Stats::Export::XML"}{params}{disable} = 0;
 
 $c->{plugins}{"Stats::Filter::Robots"}{params}{disable} = 0;
 $c->{plugins}{"Stats::Filter::Repeat"}{params}{disable} = 0;
+#MM 04/05/2017 - New filter for IP addresses
+$c->{plugins}{"Stats::Filter::LocalIP"}{params}{disable} = 0;
+
 
 $c->{plugins}{"Stats::Processor::Access"}{params}{disable} = 0;
 $c->{plugins}{"Stats::Processor::Access::Browsers"}{params}{disable} = 0;
@@ -512,3 +527,12 @@ $c->{plugins}{"Stats::View::Table"}{params}{disable} = 0;
 
 $c->{plugins}{"Screen::IRStats2::Report"}{params}{disable} = 0;
 
+# Display download stats for an EPrints on it's summary page?
+# Confusingly, set this to '0' to make them appear, or 1 to not show them
+$c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{disable} = 1;
+# Where on the summary page should they appear?
+# Valid options are 'summary_left', 'summary_right', 'summary_bottom', 'summary_top'.
+# The default is 'summary_bottom' - the following 2 lines demonstrate how to move it
+# somewhere else
+#$c->{plugins}{"Screen::EPrint::Box::Stats"}{appears}{summary_bottom} = undef;
+#$c->{plugins}{"Screen::EPrint::Box::Stats"}{appears}{summary_right} = 1000;
