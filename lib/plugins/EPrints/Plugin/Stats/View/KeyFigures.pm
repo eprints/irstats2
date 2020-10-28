@@ -110,11 +110,11 @@ sub render_metric_with_spark
 
 	my $js_context = $local_context->to_json();
 
-       	$frag->appendChild( $self->{session}->make_element( "div", id => $name, class => "irstats2_googlespark" ) );
-        $frag->appendChild( $self->{session}->make_javascript( <<DLSPARK ) );
-document.observe("dom:loaded",function(){
-	new EPJS_Stats_GoogleSpark( { 'context': $js_context, 'options': { 'container_id': '$name' } } );
-});
+    $frag->appendChild( $self->{session}->make_element( "div", id => $name, class => "irstats2_googlespark" ) );
+    $frag->appendChild( $self->{session}->make_javascript( <<DLSPARK ) );
+        google.setOnLoadCallback(function(){
+            new EPJS_Stats_GoogleSpark( { 'context': $js_context, 'options': { 'container_id': '$name' } } );
+        });
 DLSPARK
 	
 	my $div = $frag->appendChild( $self->{session}->make_element( 'span', class => 'irstats2_keyfigures_metric' ) );

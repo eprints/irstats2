@@ -106,8 +106,7 @@ Exportar como <epc:pin name="options"/>
 <!--<p style="text-align:center"><a href="#" id="irstats2_summary_page:link">View more statistics</a></p>-->
 </div>
 <script type="text/javascript">
-document.observe("dom:loaded",function(){
-
+    google.setOnLoadCallback(function(){
 		var irstats2_summary_page_eprintid = '<epc:pin name='eprintid'/>';
 
 		/* $( 'irstats2_summary_page:link' ).setAttribute( 'href', '/cgi/stats/report/eprint/' + irstats2_summary_page_eprintid ); */
@@ -129,8 +128,7 @@ document.observe("dom:loaded",function(){
 <h3>Origen de las descargas</h3>
 <div id="irstats2_summary_page_countries" class="irstats2_google_geochart"/>
 <script type="text/javascript">
-document.observe("dom:loaded",function(){
-
+    google.setOnLoadCallback(function(){
 		var irstats2_summary_page_eprintid = '<epc:pin name='eprintid'/>';
 
 		new EPJS_Stats_GoogleGeoChart ( { 'context': {

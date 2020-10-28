@@ -86,16 +86,17 @@ Export as <epc:pin name="options"/>
 
 <!-- Pseudo reports (eg. the ones on citations/summary pages) -->
 <epp:phrase id="lib/irstats2:embedded:citation:eprint">
-        <script type="text/javascript">
+    <script type="text/javascript">
         document.observe("dom:loaded",function(){
-                new EPJS_Stats_Sparkline ( {
-                        'container_id': 'spark_<epc:pin name='eprintid'/>',
-                        'datatype': 'downloads',
-                        'set_name': 'eprint',
-                        'set_value': '<epc:pin name='eprintid'/>'
-                });
+            var spark_eprintid = '<epc:pin name='eprintid'/>';
+            new EPJS_Stats_Sparkline ( {
+                'container_id': 'spark_eprintid',
+                'datatype': 'downloads',
+                'set_name': 'eprint',
+                'set_value': 'spark_eprintid'
+            });
         });
-        </script>
+    </script>
 </epp:phrase>
 
 <epp:phrase id="lib/irstats2:embedded:summary_page:eprint:downloads">
@@ -106,22 +107,23 @@ Export as <epc:pin name="options"/>
 <!--<p style="text-align:center"><a href="#" id="irstats2_summary_page:link">View more statistics</a></p>-->
 </div>
 <script type="text/javascript">
-document.observe("dom:loaded",function(){
+    google.setOnLoadCallback(function(){
+        var irstats2_summary_page_eprintid = '<epc:pin name='eprintid'/>';
+        
+        /* $( 'irstats2_summary_page:link' ).setAttribute( 'href', '/cgi/stats/report/eprint/' + irstats2_summary_page_eprintid ); */
 
-		var irstats2_summary_page_eprintid = '<epc:pin name='eprintid'/>';
-
-		/* $( 'irstats2_summary_page:link' ).setAttribute( 'href', '/cgi/stats/report/eprint/' + irstats2_summary_page_eprintid ); */
-
-		new EPJS_Stats_GoogleGraph ( { 'context': {
-			'range':'1y',
-			'set_name': 'eprint',
-			'set_value': irstats2_summary_page_eprintid,
-			'datatype':'downloads' },
-			'options': {
-			'container_id': 'irstats2_summary_page_downloads', 'date_resolution':'month','graph_type':'column'
-			} } );
-		});
-
+        new EPJS_Stats_GoogleGraph ( { 
+            'context': {
+                'range':'1y',
+                'set_name': 'eprint',
+                'set_value': irstats2_summary_page_eprintid,
+                'datatype':'downloads' 
+            },
+            'options': {
+                'container_id': 'irstats2_summary_page_downloads', 'date_resolution':'month','graph_type':'column'
+                } 
+        } );
+    });
 </script>
 </epp:phrase>
 
@@ -129,20 +131,21 @@ document.observe("dom:loaded",function(){
 <h3>Origin of downloads</h3>
 <div id="irstats2_summary_page_countries" class="irstats2_google_geochart"/>
 <script type="text/javascript">
-document.observe("dom:loaded",function(){
+    google.setOnLoadCallback(function(){
+        var irstats2_summary_page_eprintid = '<epc:pin name='eprintid'/>';
 
-		var irstats2_summary_page_eprintid = '<epc:pin name='eprintid'/>';
-
-		new EPJS_Stats_GoogleGeoChart ( { 'context': {
-			'range':'1y',
-			'set_name': 'eprint',
-			'set_value': irstats2_summary_page_eprintid,
-			'datatype':'countries'
-			}, 'options': {
-			'container_id': 'irstats2_summary_page_countries'
-
-			}});
-		}); 
+        new EPJS_Stats_GoogleGeoChart ( { 
+            'context': {
+                'range':'1y',
+                'set_name': 'eprint',
+                'set_value': irstats2_summary_page_eprintid,
+                'datatype':'countries'
+            }, 
+            'options': {
+                'container_id': 'irstats2_summary_page_countries'
+                } 
+        } );
+    }); 
 </script>
 </epp:phrase>
 
