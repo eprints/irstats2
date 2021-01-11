@@ -2588,7 +2588,7 @@
       <content>coverimage</content>
     </document>
   </documents>
-  <version>1.0.6</version>
+  <version>1.1.2</version>
   <controller>EPMC::IRStats2</controller>
   <creators>
     <item>
