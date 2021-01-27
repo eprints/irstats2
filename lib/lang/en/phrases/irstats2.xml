@@ -83,22 +83,6 @@ Export as <epc:pin name="options"/>
 </epp:phrase>
 
 
-
-<!-- Pseudo reports (eg. the ones on citations/summary pages) -->
-<epp:phrase id="lib/irstats2:embedded:citation:eprint">
-    <script type="text/javascript">
-        document.observe("dom:loaded",function(){
-            var spark_eprintid = '<epc:pin name='eprintid'/>';
-            new EPJS_Stats_Sparkline ( {
-                'container_id': 'spark_eprintid',
-                'datatype': 'downloads',
-                'set_name': 'eprint',
-                'set_value': 'spark_eprintid'
-            });
-        });
-    </script>
-</epp:phrase>
-
 <epp:phrase id="lib/irstats2:embedded:summary_page:eprint:downloads">
 <h3 class="irstats2_summary_page_header">Downloads</h3>
 <div class="irstats2_summary_page_container">
@@ -294,32 +278,6 @@ Export as <epc:pin name="options"/>
 <epp:phrase id="cgi/stats/set_finder:no_match"><span>No matches</span></epp:phrase>
 <epp:phrase id="cgi/stats/set_finder:minimum_filter_length"><span>Please enter some text to filter by (at least <epc:pin name="characters"/> characters)</span></epp:phrase>
 
-
-<!-- Test for Browse Views, ignore -> experimental -->
-<!--
- <epp:phrase id="Update/Views:export_section">
-<table width="100%"><tr>
-  <td align="left">Export as <epc:pin name="menu"/><epc:pin name="button"/></td>
-  <td align="right"><epc:pin name="feeds"/></td>
-</tr>
-<tr>
-  <td align="left" colspan="2">
-    <epc:pin name="tools"/>
-  </td>
-</tr>
-<tr>
-  <td colspan="2">
-     <script type="text/javascript">
-	document.observe( "dom:loaded", function() {
-		new EPJS_Stats_Browse( { "container_id": "stats_browse_test" } );
-	} );
-     </script>
-  </td>
-</tr>
-</table>
-<div id="stats_browse_test"/>
-</epp:phrase>
--->
 
 <!-- Dashboard -->
 

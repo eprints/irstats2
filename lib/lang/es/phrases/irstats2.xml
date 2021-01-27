@@ -83,21 +83,6 @@ Exportar como <epc:pin name="options"/>
 </epp:phrase>
 
 
-
-<!-- Pseudo reports (eg. the ones on citations/summary pages) -->
-<epp:phrase id="lib/irstats2:embedded:citation:eprint">
-        <script type="text/javascript">
-        document.observe("dom:loaded",function(){
-                new EPJS_Stats_Sparkline ( {
-                        'container_id': 'spark_<epc:pin name='eprintid'/>',
-                        'datatype': 'downloads',
-                        'set_name': 'eprint',
-                        'set_value': '<epc:pin name='eprintid'/>'
-                });
-        });
-        </script>
-</epp:phrase>
-
 <epp:phrase id="lib/irstats2:embedded:summary_page:eprint:downloads">
 <h3 class="irstats2_summary_page_header">Descargas</h3>
 <div class="irstats2_summary_page_container">
@@ -263,32 +248,6 @@ Exportar como <epc:pin name="options"/>
 <epp:phrase id="Plugin/Stats/View/Counter:title">Resumen</epp:phrase>
 <epp:phrase id="Plugin/Stats/View/DownloadsGraph:title">Descargas</epp:phrase>
 
-
-<!-- Test for Browse Views, ignore -> experimental -->
-<!--
- <epp:phrase id="Update/Views:export_section">
-<table width="100%"><tr>
-  <td align="left">Exportar como <epc:pin name="menu"/><epc:pin name="button"/></td>
-  <td align="right"><epc:pin name="feeds"/></td>
-</tr>
-<tr>
-  <td align="left" colspan="2">
-    <epc:pin name="tools"/>
-  </td>
-</tr>
-<tr>
-  <td colspan="2">
-     <script type="text/javascript">
-	document.observe( "dom:loaded", function() {
-		new EPJS_Stats_Browse( { "container_id": "stats_browse_test" } );
-	} );
-     </script>
-  </td>
-</tr>
-</table>
-<div id="stats_browse_test"/>
-</epp:phrase>
--->
 
 <!-- Dashboard -->
 

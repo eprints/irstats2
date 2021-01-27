@@ -144,15 +144,13 @@ $c->add_trigger( $EPrints::Plugin::Stats::EP_TRIGGER_DYNAMIC_TEMPLATE, sub
 
         my( $repo, $pins ) = @args{qw/ repository pins/};
 
-        my $protocol = $repo->get_secure ? 'https':'http';
-
         my $head = $repo->make_doc_fragment;
 
         $head->appendChild( $repo->make_javascript( undef,
-                src => "$protocol://www.google.com/jsapi"
+                src => "https://www.gstatic.com/charts/loader.js"
         ) );
 
-        $head->appendChild( $repo->make_javascript( 'google.load("visualization", "1", {packages:["corechart", "geochart"]});' ) );
+        $head->appendChild( $repo->make_javascript( 'google.load("visualization", "48", {packages:["corechart", "geochart"]});' ) );
 
         if( defined $pins->{'utf-8.head'} )
         {
