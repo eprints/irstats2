@@ -338,7 +338,7 @@ sub render_content_ajax
 	my $session = $self->{session};
 	my $frag = $session->make_doc_fragment;
 
-	my $container_id = "irstats2_container_".int(rand()*100000);
+	my $container_id = $self->generate_container_id;
 
 	my $local_context = $self->handler->context->from_request( $self->{session} );
 	my $report = $local_context->{irs2report} || "";
