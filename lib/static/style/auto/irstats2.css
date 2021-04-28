@@ -60,16 +60,33 @@ div.irstats2_googlegraph
 	margin-right: auto;
 }
 
+div.irstats2_key_figure_googlespark
+{
+    display: inline-block;
+}
+
 div.irstats2_googlespark
 {
 	width: 150px;
 	height: 50px;
 	margin: 0px;
-	display: inline;
-	float:left;
+	display: block;
+    float: left;
 	border: 0px;
 	padding: 0px;
 }
+
+div.irstats2_googlespark_desc
+{
+	width: 150px;
+	margin: 0px;
+    font-size: 11px;
+	display: block;
+	border: 0px;
+	padding: 0px;
+    text-align: center;
+}
+
 
 div.irstats2_counter
 {
@@ -259,6 +276,7 @@ div.irstats2_progress
 div.irstats2_progress_wrapper
 {
 	border: 1px solid #3366cc;
+    box-sizing: content-box;
 	margin: 0px;
 	padding: 0px;
 	text-align:left;
@@ -273,6 +291,7 @@ div.irstats2_progress > span
 span.irstats2_keyfigures_metric {
 	font-size: 14px;
 	line-height: 50px;
+    vertical-align: top;
 }
 
 h3.irstats2_keyfigures_heading, h3.irstats2_linkstoreports_heading

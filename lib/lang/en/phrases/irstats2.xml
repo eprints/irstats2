@@ -584,6 +584,7 @@ Export as <epc:pin name="options"/>
 <epp:phrase id="Plugin/Stats/View/KeyFigures:downloads">Number of downloads</epp:phrase>
 <epp:phrase id="Plugin/Stats/View/KeyFigures:ratio_fulltext">Percentage of items containing a fulltext document</epp:phrase>
 <epp:phrase id="Plugin/Stats/View/KeyFigures:ratio_openaccess">Percentage of items containing a fulltext document and is open access</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:spark_trend">6 month trend</epp:phrase>
 
 
 </epp:phrases>

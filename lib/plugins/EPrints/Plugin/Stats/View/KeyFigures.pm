@@ -110,13 +110,18 @@ sub render_metric_with_spark
 
 	my $js_context = $local_context->to_json();
 
-    $frag->appendChild( $self->{session}->make_element( "div", id => $name, class => "irstats2_googlespark" ) );
-    $frag->appendChild( $self->{session}->make_javascript( <<DLSPARK ) );
+    my $spark_div = $self->{session}->make_element( "div", class => "irstats2_key_figure_googlespark" );
+    $spark_div->appendChild( $self->{session}->make_element( "div", id => $name, class => "irstats2_googlespark" ) );
+    $spark_div->appendChild( $self->{session}->make_javascript( <<DLSPARK ) );
         google.setOnLoadCallback(function(){
             new EPJS_Stats_GoogleSpark( { 'context': $js_context, 'options': { 'container_id': '$name' } } );
         });
 DLSPARK
-	
+    
+    $spark_div->appendChild( my $spark_desc = $self->{session}->make_element( "div", class => "irstats2_googlespark_desc" ) );
+	$spark_desc->appendChild( $self->html_phrase( "spark_trend" ) );
+    $frag->appendChild( $spark_div );
+
 	my $div = $frag->appendChild( $self->{session}->make_element( 'span', class => 'irstats2_keyfigures_metric' ) );
 
 	my $span = $div->appendChild( $self->{session}->make_element( 'span', class => 'irstats2_keyfigures_metric_figure' ) );
