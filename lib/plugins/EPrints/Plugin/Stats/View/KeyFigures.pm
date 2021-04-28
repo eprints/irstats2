@@ -118,7 +118,7 @@ sub render_metric_with_spark
         });
 DLSPARK
     
-    $spark_div->appendChild( my $spark_desc = $self->{session}->make_element( "div", class => "irstats2_googlespark_desc" ) );
+    my $spark_desc = $spark_div->appendChild( $self->{session}->make_element( "div", class => "irstats2_googlespark_desc" ) );
 	$spark_desc->appendChild( $self->html_phrase( "spark_trend" ) );
     $frag->appendChild( $spark_div );
 

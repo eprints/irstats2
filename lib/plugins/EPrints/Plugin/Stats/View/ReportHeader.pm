@@ -130,7 +130,6 @@ sub render_filters
                 $js_context = "{ 'from': '$local_context->{from}', 'to': '$local_context->{to}' }";
         }
 
-        my $form = $filters->appendChild( $session->make_element( 'form' ) );
         my $select = $filters->appendChild( $session->make_element( 'select',
                         name => 'set_name',
                         id => 'set_name',
@@ -380,7 +379,6 @@ sub render_content_ajax
 		$js_context = "{ 'from': '$local_context->{from}', 'to': '$local_context->{to}' }";
 	}
 
-	my $form = $div->appendChild( $session->make_element( 'form' ) );
 	my $select = $div->appendChild( $session->make_element( 'select', 
 			name => 'set_name', 
 			id => 'set_name',
