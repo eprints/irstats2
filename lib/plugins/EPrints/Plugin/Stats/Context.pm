@@ -88,6 +88,21 @@ sub from_request
 
 		$self->{irs2report} = 'main' if( !defined $self->{irs2report} );
         }
+	elsif( $uri =~ m#^/cgi/stats/export/?(.*)$# )
+	{
+                my @paths = split( /\//, $1 );
+                if( scalar(@paths) == 1 )
+                {
+                        $self->{format} = $paths[0];
+                        $self->{set_name} = $paths[0];
+                }
+                elsif( scalar(@paths) > 1 )
+                {
+                        $self->{set_name} = $paths[0];
+                        $self->{set_value} = $paths[1];
+                        $self->{format} = $paths[2] if( defined $paths[2] );
+		}
+	}
 
 	# Then check URI parameters, priority over the rest
 	foreach( $session->param() )
@@ -487,6 +502,16 @@ sub _validate_field_date
 	if( $v =~ m/^((?:\d{2}){2,4})$/ )
 	{
 		return $1;
+	}
+	elsif( $v =~ m#^(\d{2})[/-](\d{2})[/-](\d{4})$# )
+	{
+		#DD-MM-YYYY or DD/MM/YYYY
+		return $3.$2.$1;
+	}
+	elsif( $v =~ m#^(\d{4})[/-](\d{2})[/-](\d{2})$# )
+	{
+		#YYYY-MM-DD or YYYY/MM/DD
+		return $1.$2.$3;
 	}
 
 	return; #undef

@@ -16,7 +16,22 @@ unless( $session->can_call( 'irstats2', 'allow' ) && $session->call( ['irstats2'
         exit;
 }
 
-my $context = &get_context( $session );
+my $handler = $session->plugin( "Stats::Handler" );
+unless(defined $handler)
+{
+
+        print STDOUT "<p>IRStats2: internal error (handler not available)</p>";
+        $session->terminate();
+        return;
+}
+
+my $context = $handler->context->from_request( $session );
+# if one of these 2 isn't set, delete/ignore both
+if( !defined $context->{set_name} ne !defined $context->{set_value} )
+{
+	delete $context->{set_name};
+	delete $context->{set_value};
+}
 
 my $export = $context->{format};
 
@@ -27,13 +42,6 @@ unless( defined $export )
 	return;
 }
 
-my $dbh = $session->plugin( "Stats::Handler" );
-unless(defined $dbh)
-{
-        print STDOUT "<p>IRStats2: internal error (handler not available)</p>";
-        $session->terminate();
-        return;
-}
 
 my $export_plugin = $session->plugin( "Stats::Export::$export" );
 unless( defined $export_plugin )
@@ -44,7 +52,7 @@ unless( defined $export_plugin )
 }
 
 $session->send_http_header( content_type => $export_plugin->mimetype );
-$export_plugin->export( $dbh, $context );
+$export_plugin->export( $handler, $context );
 
 $session->terminate;
 return;
