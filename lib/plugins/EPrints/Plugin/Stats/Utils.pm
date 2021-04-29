@@ -352,7 +352,12 @@ sub get_month_labels
 
 ##########
 #
-# Parsing
+# Parsing 
+# The following two methods are used in
+# - EPrints::Plugin::Stats::Processor::Access::Referer
+# - EPrints::Plugin::Stats::Processor::Access::SearchTerms
+#
+# They are *not* used for parsing parameters used in cgi scripts
 #
 ##########
 
