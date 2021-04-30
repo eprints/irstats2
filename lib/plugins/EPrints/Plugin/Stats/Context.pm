@@ -498,20 +498,25 @@ sub _validate_field_date
 {
 	my( $self, $v ) = @_;
 
-	# YYYY, YYYYMM, YYYYMMDD
+	# YYYY, YYYYMM, YYYYMMDD ({2,4} == 4, 6 or 8 digits)
 	if( $v =~ m/^((?:\d{2}){2,4})$/ )
 	{
 		return $1;
 	}
 	elsif( $v =~ m#^(\d{2})[/-](\d{2})[/-](\d{4})$# )
 	{
-		#DD-MM-YYYY or DD/MM/YYYY
+		#DD-MM-YYYY, DD/MM/YYYY
 		return $3.$2.$1;
 	}
 	elsif( $v =~ m#^(\d{4})[/-](\d{2})[/-](\d{2})$# )
 	{
-		#YYYY-MM-DD or YYYY/MM/DD
+		#YYYY-MM-DD, YYYY/MM/DD
 		return $1.$2.$3;
+	}
+	elsif( $v =~ #^(\d{4})[/-](\d{2})$# ) 
+	{
+		#YYYY-MM, YYYY/MM
+		return $1.$2;
 	}
 
 	return; #undef
