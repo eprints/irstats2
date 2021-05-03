@@ -83,7 +83,7 @@ foreach my $value ( @$values )
 		utf8::decode( $escape_value );
 		utf8::decode( $value->{rendered_set_value} );
 	}
-	$html .= "<li><div class='irstats2_setfinder_row'><a href='$base_url/".HTML::Entities::encode( $context->{set_name} )."/".EPrints::Utils::url_escape( $escape_value )."/$report'>".$value->{rendered_set_value}."</a></div></li>";
+	$html .= "<li><div class='irstats2_setfinder_row'><a href='$base_url/".HTML::Entities::encode( $context->{set_name} )."/".EPrints::Utils::url_escape( $escape_value )."/'>".$value->{rendered_set_value}."</a></div></li>";
 
 	$done_any++;
 }
