@@ -513,7 +513,7 @@ sub _validate_field_date
 		#YYYY-MM-DD, YYYY/MM/DD
 		return $1.$2.$3;
 	}
-	elsif( $v =~ #^(\d{4})[/-](\d{2})$# ) 
+	elsif( $v =~ m#^(\d{4})[/-](\d{2})$# ) 
 	{
 		#YYYY-MM, YYYY/MM
 		return $1.$2;
