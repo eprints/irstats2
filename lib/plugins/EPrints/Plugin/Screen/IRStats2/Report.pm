@@ -45,9 +45,7 @@ sub render_action_link
         my( $self, %opts ) = @_;
 
         my $link = $self->SUPER::render_action_link( %opts );
-        my $uri = URI->new( '/cgi/stats/report' );
-        $uri->query( undef );
-        $link->setAttribute( href => $uri );
+        $link->setAttribute( href => $self->{processor}->{context}->base_url );
         return $link;
 }
 

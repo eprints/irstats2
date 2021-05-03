@@ -41,15 +41,7 @@ foreach my $set ( @$sets )
         }
 }
 
-
-my $base_url = $session->param( 'base_url' ) || '/cgi/stats/report';
-$base_url =~ s/\/$//g;
-my $report = '';
-if( $base_url =~ /report\/(.*)$/ )
-{
-	$report = $1;
-	$base_url =~ s/\/?([^\/]*)$//g;
-}
+my $base_url = $handler->context->base_url;
 
 my $q = $session->param( 'q' );
 
@@ -61,7 +53,7 @@ if( $context->{set_name} eq 'eprintid' )
 	my $eprint = $session->dataset( 'archive' )->dataobj( $q );
 	if( defined $eprint )
 	{
-		print STDOUT "<a href='/cgi/stats/report/eprint/$q'>".$eprint->value( 'title' )."</a>";
+		print STDOUT "<a href='$base_url/eprint/$q'>".$eprint->value( 'title' )."</a>";
 		$session->terminate;
 		return;
 	}
