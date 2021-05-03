@@ -290,6 +290,7 @@ Export as <epc:pin name="options"/>
 <epp:phrase id="cgi/stats/fp_stats:full_text_downloads_all"><span style='padding-right:10px;'><epc:pin name="count"/> full-text downloads to date</span></epp:phrase>
 <epp:phrase id="cgi/stats/fp_stats:full_text_downloads_year"><span style='padding-right:10px;'><epc:pin name="count"/> full-text downloads in the past year</span></epp:phrase>
 
+<!-- these phrases must be valid XML snippets (e.g. have a containing element) -->
 <epp:phrase id="cgi/stats/set_finder:no_filter"><span>Enter a filter term in the box above</span></epp:phrase>
 <epp:phrase id="cgi/stats/set_finder:no_match"><span>No matches</span></epp:phrase>
 <epp:phrase id="cgi/stats/set_finder:minimum_filter_length"><span>Please enter some text to filter by (at least <epc:pin name="characters"/> characters)</span></epp:phrase>

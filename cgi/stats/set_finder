@@ -60,7 +60,7 @@ if( $context->{set_name} eq 'eprintid' )
 }
 elsif( length($q) < $minimum_filter_length )
 {
-        print STDOUT $session->phrase( "cgi/stats/set_finder:minimum_filter_length", characters => $minimum_filter_length );
+        print STDOUT $session->html_phrase( "cgi/stats/set_finder:minimum_filter_length", characters => $session->make_text( $minimum_filter_length ) );
         $session->terminate;
         return;
 }
@@ -95,9 +95,9 @@ if( $done_any )
 else
 {
 	if ( length($q) > 0 ) {
-                $html = $session->phrase( "cgi/stats/set_finder:no_match" );
+                $html = $session->html_phrase( "cgi/stats/set_finder:no_match" );
         } else {
-                $html = $session->phrase( "cgi/stats/set_finder:no_filter" );
+                $html = $session->html_phrase( "cgi/stats/set_finder:no_filter" );
         }
 }
 
