@@ -47,6 +47,7 @@
 <epp:phrase id="Plugin/Stats/View/KeyFigures:total_usage">Total usage</epp:phrase>
 <epp:phrase id="Plugin/Stats/View/KeyFigures:last_month">Past month</epp:phrase>
 <epp:phrase id="Plugin/Stats/View/KeyFigures:downloads_trend">Downloads trend</epp:phrase>
+<epp:phrase id="Plugin/Stats/View/KeyFigures:hits">Hits</epp:phrase>
 
 <epp:phrase id="Plugin/Stats/View/KeyFigures:metric:plural:work">Works</epp:phrase>
 <epp:phrase id="Plugin/Stats/View/KeyFigures:metric:singular:work">Work</epp:phrase>
