@@ -78,8 +78,9 @@ sub get_context
 	foreach( @sparams )
 	{
 		my $val = $session->param( $_ );
+		# if there's no value, or it's a 'context' param, skip it.
 		next if( !EPrints::Utils::is_set( $val ) || $context_fields{$_} );
-		$params{$_} = $val;
+		$params{$_} = $val if EPrints::Plugin::Stats::Utils::validate_non_context_param( $session, $_, $val );
 	}
 	return ( $context, \%params );
 }

@@ -9,6 +9,67 @@ use Date::Calc;
 #
 # Provides a few useful methods for the Stats package, mostly around the handling of dates.
 
+
+############################
+#
+# Validate parameters from Apache request meet expected patterns/values.
+# Returns 'true' if the value is sensible for the parameter e.g.
+#  - 'limit' is numeric
+#  - 'container_id
+# 
+# This is used by cgi scripts e.g. cgi/stats/get
+#
+# These validations are additional to 'context' parameter handling which
+# is dealt with in EPrints::Plugins::Stats::Context.
+#
+#  Expected non-context params:
+#  - base_url (possibly deprecated) 
+#  - container_id
+#  - export
+#  - limit
+#  - q (set_finder)
+#  - referer (possibly deprecated - browse-view stats?)
+#  - title_phrase
+#  - top
+#  - view
+#
+# Note: the cgi script is still responsible for reading params
+#
+############################
+
+sub validate_non_context_param
+{
+        my( $session, $k, $v ) = @_;
+
+        if( $k eq 'limit' )
+        {
+                return $v =~ /^\d+$/;
+        }
+	elsif( $k eq 'title_phrase' )
+	{
+		return $session->get_lang->has_phrase( $v );
+	}
+	elsif( $k eq 'q' )
+	{
+		#anything sensible for a set-lookup query?
+		# https://perldoc.perl.org/perlrecharclass#Bracketed-Character-Classes
+		return $v =~ /^[[:print:]]+$/;
+	}
+        elsif( $k =~ /^export|top|view|container_id$/ )
+        {
+                return $v =~ /^[\w\.\-\:]+$/; #NB \w includes underscore, digit
+        }
+        elsif( $k =~ /^base_url|referer$/ )
+        {
+		# these are not used, Log param usage as it is unexpected?
+		$session->log( "IRStats2 (validate_non_context_params): unexpected use of parameter: $k (value: $v)." );
+        }
+
+}
+
+
+
+
 ############################
 #
 # Dates formatting methods
