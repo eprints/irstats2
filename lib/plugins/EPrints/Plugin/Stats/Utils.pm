@@ -24,11 +24,14 @@ use Date::Calc;
 #
 #  Expected non-context params:
 #  - base_url (possibly deprecated) 
+#  - date_resolution
 #  - container_id
 #  - export
+#  - graph_type
 #  - limit
 #  - q (set_finder)
 #  - referer (possibly deprecated - browse-view stats?)
+#  - show_average
 #  - title_phrase
 #  - top
 #  - view
@@ -44,6 +47,18 @@ sub validate_non_context_param
         if( $k eq 'limit' )
         {
                 return $v =~ /^\d+$/;
+        }
+        elsif( $k eq 'date_resolution' )
+        {
+                return $v =~ /^day|month|year$/;
+        }
+        elsif( $k eq 'graph_type' )
+        {
+                return $v =~ /^area|column$/;
+        }
+        elsif( $k eq 'show_average' )
+        {
+                return $v =~ /^true|false$/;
         }
 	elsif( $k eq 'title_phrase' )
 	{
