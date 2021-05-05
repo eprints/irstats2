@@ -171,13 +171,6 @@ sub forever
 	return $self;
 }
 
-sub base_url
-{
-	my( $self ) = @_;
-
-	return $self->handler->{session}->config( 'http_cgiurl' ).'/stats/report';
-}
-
 # so why doesn't this also include the set? and the range/ from-to dates?
 sub current_url
 {
@@ -185,7 +178,7 @@ sub current_url
 
 	if( !EPrints::Utils::is_set( %includes ) )
 	{
-		return $self->base_url;
+		return EPrints::Plugin::Stats::Utils::base_url( $self->handler->{session} );
 	}
 
         my $report = $self->{irs2report} || "";

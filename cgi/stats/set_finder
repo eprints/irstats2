@@ -41,7 +41,7 @@ foreach my $set ( @$sets )
         }
 }
 
-my $base_url = $handler->context->base_url;
+my $base_url = EPrints::Plugin::Stats::Utils::base_url( $session );
 
 my $q = $session->param( 'q' );
 

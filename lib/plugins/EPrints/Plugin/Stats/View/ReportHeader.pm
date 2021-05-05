@@ -35,7 +35,7 @@ sub render_breadcrumbs
 		my $report = $self->context->{irs2report} || '';
 
 		# TODO phrase up the breadcrumbs?
-		my $url = $self->context->base_url."/$report";
+		my $url = EPrints::Plugin::Stats::Utils::base_url( $session )."/$report";
 
 		my $level1 = $bd->appendChild( $session->make_element( 'a', href => $url ) );
 		$level1->appendChild( $self->handler->sets->render_set() );	# will render the 'main' set i.e. 'all items'
@@ -221,7 +221,7 @@ JS
                 push @{$reports->{$category}}, $report;
         }
 
-        my $stats_url = $context->base_url.'/';
+        my $stats_url = EPrints::Plugin::Stats::Utils::base_url( $session ).'/';
 
         if( defined $context->{set_name} && defined $context->{set_value} )
         {
@@ -339,7 +339,7 @@ sub render_content_ajax
 	my $local_context = $self->handler->context->from_request( $self->{session} );
 	my $report = $local_context->{irs2report} || "";
 
-	my $url = $self->handler->context->base_url.'/'.$report;
+	my $url = EPrints::Plugin::Stats::Utils::base_url( $session ).'/'.$report;
 
 =pod
 # All items in the repository
