@@ -231,14 +231,36 @@ sub normalise_dates
 
 	# normalise from/to formats (accept YYYYMMDD, YYYY/MM/DD and YYYY-MM-DD) to YYYYMMDD
 
-	if( defined $from && $from =~ m#^(\d{4})[/-]?(\d{2})[/-]?(\d{2})$# )
+	if( defined $from )
 	{
-		$from = "$1$2$3";
+		if( $from =~ m#^(\d{4})[/-]?(\d{2})[/-]?(\d{2})$# )
+		{
+			$from = "$1$2$3";
+		}
+		elsif( $from =~ m#^(\d{4})[/-]?(\d{2})$# )
+		{
+			$from = "$1$2" . "01";
+		}
+		elsif( $from =~ m#^(\d{4})$# )
+		{
+			$from = $1."0101";
+		}
 	}
 	
-	if( defined $to && $to =~ m#^(\d{4})[/-]?(\d{2})[/-]?(\d{2})$# )
+	if( defined $to )
 	{
-		$to = "$1$2$3";
+		if( $to =~ m#^(\d{4})[/-]?(\d{2})[/-]?(\d{2})$# )
+		{
+			$to = "$1$2$3";
+		}
+		elsif( $to =~ m#^(\d{4})[/-]?(\d{2})$# )
+		{
+			$to = "$1$2" . Date::Calc::Days_in_Month($1,$2);
+		}
+		elsif( $to =~ m#^(\d{4})$# )
+		{
+			$to = $1."1231";
+		}
 	}
 
 	# 'range' has priority over from/to being defined
