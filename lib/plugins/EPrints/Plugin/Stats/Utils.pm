@@ -83,10 +83,14 @@ sub validate_non_context_param
         }
         elsif( $k =~ /^base_url|referer$/ )
         {
-		# these are not used, Log param usage as it is unexpected?
-		$session->log( "IRStats2 (validate_non_context_params): unexpected use of parameter: $k (value: $v)." );
+		# these appear not to be used. Log param usage as it is unexpected.
+		$session->log( "IRStats2 (Utils validate_non_context_params): unexpected use of URL parameter: $k (value: $v)." );
         }
 
+	# an unexpected URL parameter. Get rid!
+	$session->log( "IRStats2 (Utils validate_non_context_params): unexpected URL parameter: $k (value: $v) has been ignored." );
+
+	# NB No default return value
 }
 
 
