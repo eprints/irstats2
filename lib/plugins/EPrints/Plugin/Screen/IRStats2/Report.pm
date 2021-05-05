@@ -4,6 +4,7 @@ use EPrints::Plugin::Screen;
 @ISA = ( 'EPrints::Plugin::Screen' );
 
 use strict;
+use EPrints::Plugin::Stats::Utils;
 
 # Screen::IRStats2::Report
 #
@@ -45,8 +46,7 @@ sub render_action_link
         my( $self, %opts ) = @_;
 
         my $link = $self->SUPER::render_action_link( %opts );
-        my $handler = $self->{session}->plugin( 'Stats::Handler' );
-        $link->setAttribute( href => $handler->context()->base_url() );
+        $link->setAttribute( href => EPrints::Plugin::Stats::Utils::base_url( $self->{session} ) );
         return $link;
 }
 

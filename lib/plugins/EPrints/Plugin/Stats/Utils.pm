@@ -9,6 +9,13 @@ use Date::Calc;
 #
 # Provides a few useful methods for the Stats package, mostly around the handling of dates.
 
+# return the url to the main stats report page
+sub base_url
+{
+        my( $session ) = @_;
+        
+        return $session->config( 'http_cgiurl' ).'/stats/report';
+}
 
 ############################
 #
