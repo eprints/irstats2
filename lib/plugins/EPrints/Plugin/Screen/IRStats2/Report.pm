@@ -45,7 +45,8 @@ sub render_action_link
         my( $self, %opts ) = @_;
 
         my $link = $self->SUPER::render_action_link( %opts );
-        $link->setAttribute( href => $self->{processor}->{context}->base_url );
+        my $handler = $self->{session}->plugin( 'Stats::Handler' );
+        $link->setAttribute( href => $handler->context()->base_url() );
         return $link;
 }
 
