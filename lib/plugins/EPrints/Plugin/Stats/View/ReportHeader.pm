@@ -213,7 +213,6 @@ JS
         foreach my $report ( keys %{$conf} )
         {
                 next unless( $self->applies( $conf->{$report}, $context ) );
-                next if( $report eq $current_report );
 
                 my $category = $conf->{$report}->{category};
                 next unless( defined $category );
@@ -265,6 +264,12 @@ JS
                         $href .= $context_args;
                         my $link = $span->appendChild( $session->make_element( 'a', class => 'irstats2_reportheader_link', href => $href ) );
                         $link->appendChild( $session->html_phrase( "lib/irstats2:report:$category:$report" ) );
+                	
+			if( $report eq $current_report )
+			{
+				$span->appendChild( $session->make_text( " " ) );
+				$span->appendChild( $session->html_phrase( "lib/irstats2/header:current_report" ) );
+			}
                 }
         }
 
