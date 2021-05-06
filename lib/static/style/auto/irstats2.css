@@ -350,8 +350,12 @@ td.irstats2_reports_content
 
 td.irstats2_reports_content > span
 {
-	padding-right: 10px;
 	font-family: Verdana;
+}
+
+td.irstats2_reports_content > span + span:before {
+    content: " | ";
+    padding: 0 10px;
 }
 
 
