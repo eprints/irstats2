@@ -224,7 +224,8 @@ sub render_export_bar
 			class => 'irstats2_export_bar_toggle ep_noprint',
 			onclick => "return EPJS_Stats_Export_Toggle( this, '$content_id' );"
 	);
-	
+	    
+    $trigger->appendChild( $session->html_phrase( "lib/irstats2:show_export" ) );
 	$trigger->appendChild( $session->make_element( 'img', border => '0', src => '/style/images/multi_down.png', title => 'Export options' ) );
 	$target->appendChild( $trigger );
 

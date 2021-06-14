@@ -13,6 +13,7 @@
 <epp:phrase id="lib/irstats2/header:available_reports">Available Reports</epp:phrase>
 <epp:phrase id="lib/irstats2/header:current_report">(current report)</epp:phrase>
 <epp:phrase id="lib/irstats2/decimal_separator">,</epp:phrase>
+<epp:phrase id="lib/irstats2:show_export">Show export options </epp:phrase>
 
 <!-- Dates -->
 <epp:phrase id="lib/irstats2/dates:separator"><span class='irstats2_date_separator'>-</span></epp:phrase>
