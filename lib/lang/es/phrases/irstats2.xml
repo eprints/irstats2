@@ -12,6 +12,9 @@
 <epp:phrase id="lib/irstats2/header:dates">Fechas</epp:phrase>
 <epp:phrase id="lib/irstats2/header:available_reports">Reportes disponibles</epp:phrase>
 <epp:phrase id="lib/irstats2/decimal_separator">.</epp:phrase>
+<epp:phrase id="lib/irstats2:show_export">Mostrar opciones de exportación </epp:phrase>
+<epp:phrase id="lib/irstats2:hide_export">Ocultar las opciones de exportación </epp:phrase>
+
 
 <!-- Dates -->
 <epp:phrase id="lib/irstats2/dates:separator"><span class='irstats2_date_separator'>-</span></epp:phrase>
