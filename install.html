@@ -109,7 +109,7 @@ cp cgi/* /opt/eprints3/archives/<ID>/cgi/
 /opt/eprints3/archives/REPO_ID/bin/stats/process_stats REPO_ID --setup --verbose
 </pre>
 
-<p>For the daily incremental processing, add the above line in cron. I let you the liberty of deciding when that cron job should run but it is a good idea to do over-night when there is less traffic to your repository.</p>
+<p>For the daily incremental processing, add the following line in cron. I let you the liberty of deciding when that cron job should run but it is a good idea to do over-night when there is less traffic to your repository.</p>
 
 <pre>
 perl /opt/eprints3/archives/REPO_ID/bin/stats/process_stats REPO_ID 1&gt;/dev/null 2&gt;/dev/null
