@@ -103,6 +103,7 @@ Export as <epc:pin name="options"/>
     </script>
 </epp:phrase>
 
+<epp:phrase id="lib/irstats2:embedded:summary_page:eprint:downloads:year">Downloads per month over past year</epp:phrase>
 <epp:phrase id="lib/irstats2:embedded:summary_page:eprint:downloads">
 <h3 class="irstats2_summary_page_header">Downloads</h3>
 <div class="irstats2_summary_page_container">

@@ -101,6 +101,7 @@ Exportar como <epc:pin name="options"/>
         </script>
 </epp:phrase>
 
+<epp:phrase id="lib/irstats2:embedded:summary_page:eprint:downloads:year">Descargas por mes a lo largo del último año</epp:phrase>
 <epp:phrase id="lib/irstats2:embedded:summary_page:eprint:downloads">
 <h3 class="irstats2_summary_page_header">Descargas</h3>
 <div class="irstats2_summary_page_container">
