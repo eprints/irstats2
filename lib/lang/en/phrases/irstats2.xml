@@ -16,6 +16,8 @@
 <epp:phrase id="lib/irstats2:show_export">Show export options </epp:phrase>
 <epp:phrase id="lib/irstats2:hide_export">Hide export options </epp:phrase>
 
+<epp:phrase id="Plugin/Screen/EPMC/IRStats2:message:cron">IRStats2 uses 'cron' to process statistics. Please refer to the 'Processing' section of <a target="_blank" href="http://eprintsug.github.io/irstats2/install.html">the IRStats2 installation guide</a>.</epp:phrase>
+
 <!-- Dates -->
 <epp:phrase id="lib/irstats2/dates:separator"><span class='irstats2_date_separator'>-</span></epp:phrase>
 <epp:phrase id="lib/irstats2/dates:forever"><span class='irstats2_date_label'>All</span></epp:phrase>
