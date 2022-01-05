@@ -91,6 +91,7 @@ sub validate_non_context_param
 	$session->log( "IRStats2 (Utils validate_non_context_params): unexpected URL parameter: $k (value: $v) has been ignored." );
 
 	# NB No default return value
+	return;
 }
 
 
