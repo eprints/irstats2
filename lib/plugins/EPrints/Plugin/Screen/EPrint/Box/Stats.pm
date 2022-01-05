@@ -8,7 +8,6 @@ sub can_be_viewed
 {
         my( $self ) = @_;
 
-        return 0 if $self->{session}->get_secure;
         return $self->has_value;
 }
 
