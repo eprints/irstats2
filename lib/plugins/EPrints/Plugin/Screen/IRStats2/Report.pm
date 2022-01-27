@@ -100,6 +100,13 @@ sub render
 		my $pluginid = delete $item->{plugin};
 		next unless( defined $pluginid );
 
+        # check permissions
+        if( exists $item->{priv} )
+        {
+            next if( !defined $session->current_user );
+            next unless $session->current_user->allow( $item->{priv} );
+        }
+
 		my $options = delete $item->{options};
 		$options ||= {};
 
