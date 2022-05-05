@@ -26,9 +26,9 @@
           <datasetid>document</datasetid>
           <filename>epm/irstats2/cfg/cfg.d/z_irstats2.pl</filename>
           <mime_type>text/plain</mime_type>
-          <hash>3c7d9b6e8ef8ae5efafe1a52003a330a</hash>
+          <hash>451c0bb7cd60a6cba1248e7180b73e02</hash>
           <hash_type>MD5</hash_type>
-          <filesize>14504</filesize>
+          <filesize>14677</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -50,9 +50,9 @@
           <datasetid>document</datasetid>
           <filename>epm/irstats2/cgi/stats/export</filename>
           <mime_type>text/plain</mime_type>
-          <hash>1dbff32e7cc1547a6815c5ce805a4715</hash>
+          <hash>dde0b9af55da0bc4bee550357a11c180</hash>
           <hash_type>MD5</hash_type>
-          <filesize>2433</filesize>
+          <filesize>1395</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -66,9 +66,9 @@
           <datasetid>document</datasetid>
           <filename>epm/irstats2/cgi/stats/get</filename>
           <mime_type>text/plain</mime_type>
-          <hash>630f44be18640c05e406f6798e0c7140</hash>
+          <hash>6364dff48921722f3d4e6054fcbfa551</hash>
           <hash_type>MD5</hash_type>
-          <filesize>1922</filesize>
+          <filesize>2066</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -82,25 +82,25 @@
           <datasetid>document</datasetid>
           <filename>epm/irstats2/cgi/stats/set_finder</filename>
           <mime_type>text/html</mime_type>
-          <hash>cd7de9478c7a5e5312bd76574b5dd037</hash>
+          <hash>dedc2608fcef699823c9588f8d192a39</hash>
           <hash_type>MD5</hash_type>
-          <filesize>2894</filesize>
+          <filesize>2866</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
           <filename>lang/en/phrases/irstats2.xml</filename>
           <mime_type>application/xml</mime_type>
-          <hash>faf70a4bb8a8e39ddef1ce735bc9a4c9</hash>
+          <hash>9e9d68491bdd1497e87015318a11d03c</hash>
           <hash_type>MD5</hash_type>
-          <filesize>59157</filesize>
+          <filesize>60586</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
           <filename>lang/es/phrases/irstats2.xml</filename>
           <mime_type>application/xml</mime_type>
-          <hash>1b8669c44d2e19430785a40639e63960</hash>
+          <hash>0af2fa7a08faa4a04b18e5e770ca8716</hash>
           <hash_type>MD5</hash_type>
-          <filesize>57084</filesize>
+          <filesize>57950</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -122,33 +122,33 @@
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Screen/EPMC/IRStats2.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>69b33336903bd212fda07519799c6e4c</hash>
+          <hash>38a804f2e56b861c991b1a25b4614aea</hash>
           <hash_type>MD5</hash_type>
-          <filesize>1138</filesize>
+          <filesize>1789</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Screen/EPrint/Box/Stats.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>569d62d9b22fde153ab22237076603e1</hash>
+          <hash>22311b1e039d388b6637b8123200b626</hash>
           <hash_type>MD5</hash_type>
-          <filesize>727</filesize>
+          <filesize>677</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Screen/IRStats2/Report.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>df9b35a1ba05efbb1155d9a567a34a09</hash>
+          <hash>5db3c4363c42e0e389f19c98444acf14</hash>
           <hash_type>MD5</hash_type>
-          <filesize>3178</filesize>
+          <filesize>3399</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Stats/Context.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>5d5b20c6be304f6213004b85429ff156</hash>
+          <hash>c879ed81fd22d08c9028063a0749aa51</hash>
           <hash_type>MD5</hash_type>
-          <filesize>7676</filesize>
+          <filesize>10428</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -354,17 +354,17 @@
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Stats/Utils.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>e4496fd6729ac45ac56fd57f92bf2807</hash>
+          <hash>792446c87dcc0d28540152fdc78bff48</hash>
           <hash_type>MD5</hash_type>
-          <filesize>9990</filesize>
+          <filesize>12836</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Stats/View.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>f24a945a1e2c495076ffe261f1af74e6</hash>
+          <hash>b3cca71e9e224bb570fbd904a751e087</hash>
           <hash_type>MD5</hash_type>
-          <filesize>8286</filesize>
+          <filesize>8548</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -394,9 +394,9 @@
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Stats/View/Google/Graph.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>699c08b2a00e77f1e5ad83188cdef053</hash>
+          <hash>d4eee3cfc637ce3784d9652e3ecf1400</hash>
           <hash_type>MD5</hash_type>
-          <filesize>5961</filesize>
+          <filesize>6361</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -426,17 +426,17 @@
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Stats/View/KeyFigures.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>bde63c52a128833bcd9100c57014c434</hash>
+          <hash>2f6c18ba21afee2e641a3e22dd24aaab</hash>
           <hash_type>MD5</hash_type>
-          <filesize>8106</filesize>
+          <filesize>8456</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Stats/View/ReportHeader.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>34b6e609e2179a70d92a5565bd96bd42</hash>
+          <hash>5f9e00db3c27691fc60c2118338e1325</hash>
           <hash_type>MD5</hash_type>
-          <filesize>14659</filesize>
+          <filesize>14578</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -2538,9 +2538,9 @@
           <datasetid>document</datasetid>
           <filename>static/javascript/auto/90_irstats2.js</filename>
           <mime_type>text/html</mime_type>
-          <hash>5eb3f5c397a9acf8769e87d301d939bc</hash>
+          <hash>f6ef6cc01c27e158b8c6a51d6d49c214</hash>
           <hash_type>MD5</hash_type>
-          <filesize>13509</filesize>
+          <filesize>13594</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -2554,9 +2554,9 @@
           <datasetid>document</datasetid>
           <filename>static/style/auto/irstats2.css</filename>
           <mime_type>text/x-asm</mime_type>
-          <hash>f1655f22d6fda03dba5d89cdb84557a4</hash>
+          <hash>808c22111abf742ca8e4b7dbf1292f27</hash>
           <hash_type>MD5</hash_type>
-          <filesize>7542</filesize>
+          <filesize>7896</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -2588,7 +2588,7 @@
       <content>coverimage</content>
     </document>
   </documents>
-  <version>1.1.3</version>
+  <version>1.1.4</version>
   <controller>EPMC::IRStats2</controller>
   <creators>
     <item>
@@ -2597,6 +2597,19 @@
         <given>Francois</given>
       </name>
       <id>sf2@ecs.soton.ac.uk</id>
+    </item>
+    <item>
+      <name>
+        <family>Salter</family>
+        <given>John</given>
+      </name>
+    </item>
+    <item>
+      <name>
+        <family>Fyson</family>
+        <given>Will</given>
+      </name>
+      <id>will.fyson@cosector.com</id>
     </item>
   </creators>
   <datestamp>2020-02-14 00:09:00</datestamp>
