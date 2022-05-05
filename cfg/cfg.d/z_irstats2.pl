@@ -192,7 +192,7 @@ $c->{plugins}->{"Screen::IRStats2::Report"}->{appears}->{key_tools} = undef;
 #
 #			# then pass extra optional arguments:
 #			show_title => 0 or 1,
-#			title => 'My Custom Title',
+#			title_phrase => 'title_phrase_id',
 #			custom_css => 'border:0px;font:12px;',
 #
 #			# then other arguments are Plugin-specific:
@@ -220,47 +220,48 @@ $c->{plugins}->{"Screen::IRStats2::Report"}->{appears}->{key_tools} = undef;
 # }
 
 $c->{irstats2}->{report} = {
-# the main Report page	
+	# the main Report page	
 	main => {
 		items => [ 
-		{ plugin => 'ReportHeader' },
-		{
-			plugin => 'Google::Graph',
-			datatype => 'downloads',
-			options => {
-				date_resolution => 'month',
-				graph_type => 'column',
-				show_average => 1
+			{ plugin => 'ReportHeader' },
+			{
+				plugin => 'Google::Graph',
+				datatype => 'downloads',
+				options => {
+					date_resolution => 'month',
+					graph_type => 'column',
+					show_average => 1
+				},
 			},
-		},
-		{
-			plugin => 'KeyFigures',
-		},
-		{
-			plugin => 'Grid',
-			options => { 
-				items => [
-				{
-					plugin => 'Table',
-					datatype => 'downloads',
-					options => {
-						limit => 5,
-						top => 'eprint',
-						title_phrase => 'top_downloads',
-						#citestyle => 'default', # defaults to brief
-					},
+			{
+				plugin => 'KeyFigures',
+			},
+			{
+				plugin => 'Grid',
+				options => { 
+					items => [
+						{
+							plugin => 'Table',
+							datatype => 'downloads',
+							options => {
+								limit => 5,
+								top => 'eprint',
+								title_phrase => 'top_downloads',
+								#citestyle => 'default', # defaults to brief
+							},
+						},
+						{
+							plugin => 'Table',
+							datatype => 'downloads',
+							options => {
+								limit => 5,
+								top => 'authors',
+								title_phrase => 'top_authors',
+							}
+						},
+					]
 				},
-				{
-					plugin => 'Table',
-					datatype => 'downloads',
-					options => {
-						limit => 5,
-						top => 'authors',
-						title_phrase => 'top_authors',
-					}
-				},
-			] },
-		},
+			},
 		],
 		category => 'general',
 	},
@@ -286,192 +287,194 @@ $c->{irstats2}->{report} = {
 
 	authors => {
 		items => [ 
-		{ plugin => 'ReportHeader' },
-		{ plugin => 'Google::Graph', 
-			datatype => 'downloads',
-			options => {
-                                date_resolution => 'month',
-                                graph_type => 'column',
-                        },
-		 },
-		{ plugin => 'KeyFigures',
-			options => {
-				metrics => [ 'downloads.spark', 'hits.spark' ],
-		}
-	
-		 },
-		{
-			plugin => 'Table',
-			datatype => 'downloads',
-			options => {
-				limit => 10,
-				top => 'eprint',
-				title_phrase => 'top_downloads',
-				#citestyle => 'default', # defaults to brief
+			{ plugin => 'ReportHeader' },
+			{ 
+				plugin => 'Google::Graph', 
+				datatype => 'downloads',
+				options => {
+					date_resolution => 'month',
+					graph_type => 'column',
+				},
 			},
-		},
+			{ 
+				plugin => 'KeyFigures',
+				options => {
+					metrics => [ 'downloads.spark', 'hits.spark' ],
+				}
+			},
+			{
+				plugin => 'Table',
+				datatype => 'downloads',
+				options => {
+					limit => 10,
+					top => 'eprint',
+					title_phrase => 'top_downloads',
+					#citestyle => 'default', # defaults to brief
+				},
+			},
 		]
-
-
 	},
 
-# Other custom Reports	
+	# Other custom Reports	
 	most_popular_eprints => {
 		items => [
-		{ plugin => 'ReportHeader' },
-		{
-			plugin => 'Table',
-			datatype => 'downloads',
-			options => {
-				limit => 10,
-				top => 'eprint',
-				title_phrase => 'top_downloads',
-				#citestyle => 'default', # defaults to brief
+			{ plugin => 'ReportHeader' },
+			{
+				plugin => 'Table',
+				datatype => 'downloads',
+				options => {
+					limit => 10,
+					top => 'eprint',
+					title_phrase => 'top_downloads',
+					#citestyle => 'default', # defaults to brief
+				},
 			},
-		},
 		],
 
-# can't show the most popular eprints if we're looking at an eprint
+		# can't show the most popular eprints if we're looking at an eprint
 		appears => { set_name => [ '!eprint' ] },
-# appears => { set_name => [ '*' ] },
-# appears => { set_name => [ 'authors', 'divisions' ] },
-
+		# appears => { set_name => [ '*' ] },
+		# appears => { set_name => [ 'authors', 'divisions' ] },
 		category => 'most_popular'
 	},
 
 	most_popular_authors => {
-
 		items => [
-		{ plugin => 'ReportHeader' },
-		{
-			plugin => 'Table',
-			datatype => 'downloads',
-			options => {
-				top => 'authors',
-				title_phrase => 'top_authors',
-			}
-		},
-		{ plugin => 'KeyFigures', },
+			{ plugin => 'ReportHeader' },
+			{
+				plugin => 'Table',
+				datatype => 'downloads',
+				options => {
+					top => 'authors',
+					title_phrase => 'top_authors',
+				}
+			},
+			{ plugin => 'KeyFigures', },
 		],
 		appears => { set_name => [ '!eprint', '!authors' ] },
-
 		category => 'most_popular',
 	},
 
 #	most_popular_divisions => {
-#
 #		items => [
-#		{ plugin => 'ReportHeader' },
-#		{
-#			plugin => 'Table',
-#			datatype => 'downloads',
-#			options => {
-#				top => 'divisions',
-#				title => 'Top Schools'
-#			}
-#		},
+#			{ plugin => 'ReportHeader' },
+#			{
+#				plugin => 'Table',
+#				datatype => 'downloads',
+#				options => {
+#					top => 'divisions',
+#					title_phrase => 'title_phrase_id'
+#				}
+#			},
 #		],
 #		appears => { set_name => [ '!eprint', '!divisions' ] },
-#
 #		category => 'most_popular',
 #	},
 
 	deposits => {
-
 		items => [
-		{ plugin => 'ReportHeader' },
-		{
-			plugin => 'Google::Graph',
-			datatype => 'deposits',
-			datafilter => 'archive',
-			options => {
-				date_resolution => 'month',
-				graph_type => 'column',
-				show_average => 1
-			}
-		},
-		{
-			plugin => 'Grid', options => { items => [
-
-                {
-                        plugin => 'Google::PieChart',
-                        datatype => 'deposits',
-                        datafilter => 'archive',
-                        options => {
-                                top => 'type',
-				title_phrase => 'item_types'
-                        }
-                },
-		{
-			plugin => 'Table',
-			datatype => 'doc_format',
-			options => {
-				title_phrase => 'file_format',
-				top => 'doc_format',
-			}
-		},
-
-		] } },
+			{ plugin => 'ReportHeader' },
+			{
+				plugin => 'Google::Graph',
+				datatype => 'deposits',
+				datafilter => 'archive',
+				options => {
+					date_resolution => 'month',
+					graph_type => 'column',
+					show_average => 1
+				}
+			},
+			{
+				plugin => 'Grid',
+				options => {
+					items => [
+						{
+							plugin => 'Google::PieChart',
+							datatype => 'deposits',
+							datafilter => 'archive',
+							options => {
+								top => 'type',
+								title_phrase => 'item_types'
+							}
+						},
+						{
+							plugin => 'Table',
+							datatype => 'doc_format',
+							options => {
+								title_phrase => 'file_format',
+								top => 'doc_format',
+							}
+						},
+					]
+				}
+			},
 		],
 		category => 'advanced'
 	},
 
 	requests => {
 		items => [
-		{ plugin => 'ReportHeader' },
-		{
-			plugin => 'Google::GeoChart',
-			datatype => 'countries',
-			options => {
-				title_phrase => 'download_countries',
-			}
-		},
-		# if you'd rather see a table of countries, use this:
-		#{
-		#	plugin => 'Table',
-		#	datatype => 'countries',
-		#	options => { top => 'countries', title => 'Countries' },
-		#},
-		{
-			plugin => 'Grid',
-			options => {
-				items => [
-
-		{
-			plugin => 'Table',
-			datatype => 'referrer',
-			options => {
-				title_phrase => 'top_referrers',
-				top => 'referrer',
-			}
-		},
-		{
-			plugin => 'Table',
-			datatype => 'browsers',
-			options => {
-				title_phrase => 'browsers',
-				top => 'browsers',
-			}
-		},
-
-		]	
-		} },    # end of Grid
-
+			{ plugin => 'ReportHeader' },
+			{
+				plugin => 'Google::GeoChart',
+				datatype => 'countries',
+				options => {
+					title_phrase => 'download_countries',
+				}
+			},
+			# if you'd rather see a table of countries, use this:
+			#{
+			#	plugin => 'Table',
+			#	datatype => 'countries',
+			#	options => { top => 'countries', title_phrase => 'download_countries' },
+			#},
+			{
+				plugin => 'Grid',
+				options => {
+					items => [
+						{
+							plugin => 'Table',
+							datatype => 'referrer',
+							options => {
+								title_phrase => 'top_referrers',
+								top => 'referrer',
+							}
+						},
+						{
+							plugin => 'Table',
+							datatype => 'browsers',
+							options => {
+								title_phrase => 'browsers',
+								top => 'browsers',
+							}
+						},
+					]	
+				}
+			},    # end of Grid
 		],
 		category => 'advanced',
 	},
 
 	compare_years => {
 		items => [ 
-		{ plugin => 'ReportHeader' },
-		{ plugin => 'Compare' }, 
+			{ plugin => 'ReportHeader' },
+			{ plugin => 'Compare' }, 
 		],
 		category => 'general',
 	},
 
 	summary_page => {
 		items => [ 
-		{ plugin => 'Google::Graph', datatype => 'downloads', range => '1y', options => { date_resolution => 'month', graph_type => 'column', title => 'Downloads per month over past year' } },
+			{ 
+				plugin => 'Google::Graph',
+				datatype => 'downloads',
+				range => '1y',
+				options => {
+					date_resolution => 'month',
+					graph_type => 'column',
+					title_phrase => 'lib/irstats2:embedded:summary_page:eprint:downloads:year',
+				}
+			},
 		],
 	},
 };

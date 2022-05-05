@@ -9,6 +9,94 @@ use Date::Calc;
 #
 # Provides a few useful methods for the Stats package, mostly around the handling of dates.
 
+# return the url to the main stats report page
+sub base_url
+{
+        my( $session ) = @_;
+        
+        return $session->config( 'http_cgiurl' ).'/stats/report';
+}
+
+############################
+#
+# Validate parameters from Apache request meet expected patterns/values.
+# Returns 'true' if the value is sensible for the parameter e.g.
+#  - 'limit' is numeric
+#  - 'container_id
+# 
+# This is used by cgi scripts e.g. cgi/stats/get
+#
+# These validations are additional to 'context' parameter handling which
+# is dealt with in EPrints::Plugins::Stats::Context.
+#
+#  Expected non-context params:
+#  - base_url (possibly deprecated) 
+#  - date_resolution
+#  - container_id
+#  - export
+#  - graph_type
+#  - limit
+#  - q (set_finder)
+#  - referer (possibly deprecated - browse-view stats?)
+#  - show_average
+#  - title_phrase
+#  - top
+#  - view
+#
+# Note: the cgi script is still responsible for reading params
+#
+############################
+
+sub validate_non_context_param
+{
+        my( $session, $k, $v ) = @_;
+
+        if( $k eq 'limit' )
+        {
+                return $v =~ /^\d+$/;
+        }
+        elsif( $k eq 'date_resolution' )
+        {
+                return $v =~ /^day|month|year$/;
+        }
+        elsif( $k eq 'graph_type' )
+        {
+                return $v =~ /^area|column$/;
+        }
+        elsif( $k eq 'show_average' )
+        {
+                return $v =~ /^true|false$/;
+        }
+	elsif( $k eq 'title_phrase' )
+	{
+		return $session->get_lang->has_phrase( $v );
+	}
+	elsif( $k eq 'q' )
+	{
+		#anything sensible for a set-lookup query?
+		# https://perldoc.perl.org/perlrecharclass#Bracketed-Character-Classes
+		return $v =~ /^[[:print:]]+$/;
+	}
+        elsif( $k =~ /^export|top|view|container_id$/ )
+        {
+                return $v =~ /^[\w\.\-\:]+$/; #NB \w includes underscore, digit
+        }
+        elsif( $k =~ /^base_url|referer$/ )
+        {
+		# these appear not to be used. Log param usage as it is unexpected.
+		$session->log( "IRStats2 (Utils validate_non_context_params): unexpected use of URL parameter: $k (value: $v)." );
+        }
+
+	# an unexpected URL parameter. Get rid!
+	$session->log( "IRStats2 (Utils validate_non_context_params): unexpected URL parameter: $k (value: $v) has been ignored." );
+
+	# NB No default return value
+	return;
+}
+
+
+
+
 ############################
 #
 # Dates formatting methods
@@ -144,14 +232,36 @@ sub normalise_dates
 
 	# normalise from/to formats (accept YYYYMMDD, YYYY/MM/DD and YYYY-MM-DD) to YYYYMMDD
 
-	if( defined $from && $from =~ m#^(\d{4})[/-]?(\d{2})[/-]?(\d{2})$# )
+	if( defined $from )
 	{
-		$from = "$1$2$3";
+		if( $from =~ m#^(\d{4})[/-]?(\d{2})[/-]?(\d{2})$# )
+		{
+			$from = "$1$2$3";
+		}
+		elsif( $from =~ m#^(\d{4})[/-]?(\d{2})$# )
+		{
+			$from = "$1$2" . "01";
+		}
+		elsif( $from =~ m#^(\d{4})$# )
+		{
+			$from = $1."0101";
+		}
 	}
 	
-	if( defined $to && $to =~ m#^(\d{4})[/-]?(\d{2})[/-]?(\d{2})$# )
+	if( defined $to )
 	{
-		$to = "$1$2$3";
+		if( $to =~ m#^(\d{4})[/-]?(\d{2})[/-]?(\d{2})$# )
+		{
+			$to = "$1$2$3";
+		}
+		elsif( $to =~ m#^(\d{4})[/-]?(\d{2})$# )
+		{
+			$to = "$1$2" . Date::Calc::Days_in_Month($1,$2);
+		}
+		elsif( $to =~ m#^(\d{4})$# )
+		{
+			$to = $1."1231";
+		}
 	}
 
 	# 'range' has priority over from/to being defined
@@ -352,7 +462,12 @@ sub get_month_labels
 
 ##########
 #
-# Parsing
+# Parsing 
+# The following two methods are used in
+# - EPrints::Plugin::Stats::Processor::Access::Referer
+# - EPrints::Plugin::Stats::Processor::Access::SearchTerms
+#
+# They are *not* used for parsing parameters used in cgi scripts
 #
 ##########
 

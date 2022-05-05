@@ -35,8 +35,7 @@ sub render_breadcrumbs
 		my $report = $self->context->{irs2report} || '';
 
 		# TODO phrase up the breadcrumbs?
-		# TODO would be nice to have a global method to retrieve the stats url:
-		my $url = "/cgi/stats/report/$report";
+		my $url = EPrints::Plugin::Stats::Utils::base_url( $session )."/$report";
 
 		my $level1 = $bd->appendChild( $session->make_element( 'a', href => $url ) );
 		$level1->appendChild( $self->handler->sets->render_set() );	# will render the 'main' set i.e. 'all items'
@@ -130,7 +129,6 @@ sub render_filters
                 $js_context = "{ 'from': '$local_context->{from}', 'to': '$local_context->{to}' }";
         }
 
-        my $form = $filters->appendChild( $session->make_element( 'form' ) );
         my $select = $filters->appendChild( $session->make_element( 'select',
                         name => 'set_name',
                         id => 'set_name',
@@ -205,7 +203,7 @@ JS
 	my $conf = $session->config( 'irstats2', 'report' );
 
         # as to not display the current_report in the list of ... reports.
-        my $current_report = $self->context->{ir2report};
+        my $current_report = $self->context->{irs2report};
 
 	my $context = $self->context;
 
@@ -215,7 +213,6 @@ JS
         foreach my $report ( keys %{$conf} )
         {
                 next unless( $self->applies( $conf->{$report}, $context ) );
-                next if( $report eq $current_report );
 
                 my $category = $conf->{$report}->{category};
                 next unless( defined $category );
@@ -223,9 +220,7 @@ JS
                 push @{$reports->{$category}}, $report;
         }
 
-        $url = $session->get_uri;
-        $url .= "/" unless( $url =~ /\/$/ );
-        my $stats_url = $session->config( 'http_cgiurl' ).'/stats/report/';
+        my $stats_url = EPrints::Plugin::Stats::Utils::base_url( $session ).'/';
 
         if( defined $context->{set_name} && defined $context->{set_value} )
         {
@@ -269,6 +264,12 @@ JS
                         $href .= $context_args;
                         my $link = $span->appendChild( $session->make_element( 'a', class => 'irstats2_reportheader_link', href => $href ) );
                         $link->appendChild( $session->html_phrase( "lib/irstats2:report:$category:$report" ) );
+                	
+			if( $report eq $current_report )
+			{
+				$span->appendChild( $session->make_text( " " ) );
+				$span->appendChild( $session->html_phrase( "lib/irstats2/header:current_report" ) );
+			}
                 }
         }
 
@@ -338,12 +339,12 @@ sub render_content_ajax
 	my $session = $self->{session};
 	my $frag = $session->make_doc_fragment;
 
-	my $container_id = "irstats2_container_".int(rand()*100000);
+	my $container_id = $self->generate_container_id;
 
 	my $local_context = $self->handler->context->from_request( $self->{session} );
 	my $report = $local_context->{irs2report} || "";
 
-	my $url = "/cgi/stats/report/$report";
+	my $url = EPrints::Plugin::Stats::Utils::base_url( $session ).'/'.$report;
 
 =pod
 # All items in the repository
@@ -380,7 +381,6 @@ sub render_content_ajax
 		$js_context = "{ 'from': '$local_context->{from}', 'to': '$local_context->{to}' }";
 	}
 
-	my $form = $div->appendChild( $session->make_element( 'form' ) );
 	my $select = $div->appendChild( $session->make_element( 'select', 
 			name => 'set_name', 
 			id => 'set_name',
