@@ -21,7 +21,7 @@ sub base_url
 #
 # Validate parameters from Apache request meet expected patterns/values.
 # Returns 'true' if the value is sensible for the parameter e.g.
-#  - 'limit' is numeric
+#  - 'limit' is numeric or "all"
 #  - 'container_id
 # 
 # This is used by cgi scripts e.g. cgi/stats/get
@@ -53,7 +53,7 @@ sub validate_non_context_param
 
         if( $k eq 'limit' )
         {
-                return $v =~ /^\d+$/;
+                return $v =~ /^\d+|all$/;
         }
         elsif( $k eq 'date_resolution' )
         {

@@ -354,9 +354,9 @@
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Stats/Utils.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>792446c87dcc0d28540152fdc78bff48</hash>
+          <hash>e6e71e33e95058ce7e7b8d5361ca332b</hash>
           <hash_type>MD5</hash_type>
-          <filesize>12836</filesize>
+          <filesize>12849</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -2588,7 +2588,7 @@
       <content>coverimage</content>
     </document>
   </documents>
-  <version>1.1.4</version>
+  <version>1.1.5</version>
   <controller>EPMC::IRStats2</controller>
   <creators>
     <item>
