@@ -26,9 +26,9 @@
           <datasetid>document</datasetid>
           <filename>epm/irstats2/cfg/cfg.d/z_irstats2.pl</filename>
           <mime_type>text/plain</mime_type>
-          <hash>451c0bb7cd60a6cba1248e7180b73e02</hash>
+          <hash>03ed717d9dff9e427488babb8d201bfd</hash>
           <hash_type>MD5</hash_type>
-          <filesize>14677</filesize>
+          <filesize>14962</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -82,9 +82,9 @@
           <datasetid>document</datasetid>
           <filename>epm/irstats2/cgi/stats/set_finder</filename>
           <mime_type>text/html</mime_type>
-          <hash>dedc2608fcef699823c9588f8d192a39</hash>
+          <hash>80a3b5558b19b183bd92746f94418121</hash>
           <hash_type>MD5</hash_type>
-          <filesize>2866</filesize>
+          <filesize>2856</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -242,9 +242,9 @@
           <datasetid>document</datasetid>
           <filename>plugins/EPrints/Plugin/Stats/Handler.pm</filename>
           <mime_type>text/plain</mime_type>
-          <hash>d18d61603d2ccc1fdf7453bca98176bd</hash>
+          <hash>9a2ca67f1b9e4d556c330561ef690f15</hash>
           <hash_type>MD5</hash_type>
-          <filesize>37392</filesize>
+          <filesize>37496</filesize>
         </file>
         <file>
           <datasetid>document</datasetid>
@@ -2588,7 +2588,7 @@
       <content>coverimage</content>
     </document>
   </documents>
-  <version>1.1.5</version>
+  <version>1.1.6</version>
   <controller>EPMC::IRStats2</controller>
   <creators>
     <item>

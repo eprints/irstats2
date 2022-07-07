@@ -95,9 +95,9 @@ if( $done_any )
 else
 {
 	if ( length($q) > 0 ) {
-                $html = $session->html_phrase( "cgi/stats/set_finder:no_match" );
+                $html = $session->phrase( "cgi/stats/set_finder:no_match" );
         } else {
-                $html = $session->html_phrase( "cgi/stats/set_finder:no_filter" );
+                $html = $session->phrase( "cgi/stats/set_finder:no_filter" );
         }
 }
 

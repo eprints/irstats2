@@ -81,6 +81,8 @@ $c->{irstats2}->{sets} = [
 ##only show live items in the stats
 $c->{irstats2}->{show_archive_only} = 1;
 
+## the dataset to use when making individual eprint queries, i.e. do we show stats for any valid eprint id regardless of sub dataset, or do we revert to showing all repository stats for items not in the live archive (the default position)
+$c->{irstats2}->{eprint_dataset} = "archive";
 
 # by default, anyone can view the stats. Comment out to enable only users with the special '+irstats2/view' role to view stats.
 push @{$c->{public_roles}}, "+irstats2/view";
