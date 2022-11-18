@@ -119,12 +119,9 @@ sub render_content
 
 	# note: when called from a Browse View, the DOM is already loaded thus the dom:loaded Event will never fire. That's why we first test that the dom's already loaded below.
         $frag->appendChild( $session->make_javascript( <<CODE ) );
-	if( document.loaded )
-	  new EPJS_Stats_$js_class( { 'context': $json_context, 'options': $view_options } );
-	else
-		document.observe("dom:loaded",function(){
-			  new EPJS_Stats_$js_class( { 'context': $json_context, 'options': $view_options } );
-		});
+        google.setOnLoadCallback(function(){
+            new EPJS_Stats_$js_class( { 'context': $json_context, 'options': $view_options } );
+        });
 CODE
 
         return $frag;
@@ -222,13 +219,18 @@ sub render_export_bar
 
 	my $content_id = $self->generate_container_id;
 
+	# not html-phrases - as we're adding to javascript / using as attributes
+	my $show = $session->phrase( "lib/irstats2:show_export" );
+	my $hide = $session->phrase( "lib/irstats2:hide_export" );
+
 	my $trigger = $session->make_element( 'a',
 			href => '#',
 			class => 'irstats2_export_bar_toggle ep_noprint',
-			onclick => "return EPJS_Stats_Export_Toggle( this, '$content_id' );"
+			onclick => "return EPJS_Stats_Export_Toggle( this, '$content_id', '$show', '$hide' );"
 	);
-	
-	$trigger->appendChild( $session->make_element( 'img', border => '0', src => '/style/images/multi_down.png', title => 'Export options' ) );
+	    
+	$trigger->appendChild( $session->make_text( $show ) );
+	$trigger->appendChild( $session->make_element( 'img', border => '0', src => '/style/images/multi_down.png', title => $show ) );
 	$target->appendChild( $trigger );
 
 	my $content = $export->appendChild( $session->make_element( 'div',

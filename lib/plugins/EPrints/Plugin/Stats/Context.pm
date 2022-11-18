@@ -88,12 +88,27 @@ sub from_request
 
 		$self->{irs2report} = 'main' if( !defined $self->{irs2report} );
         }
+	elsif( $uri =~ m#^/cgi/stats/export/?(.*)$# )
+	{
+                my @paths = split( /\//, $1 );
+                if( scalar(@paths) == 1 )
+                {
+                        $self->{format} = $paths[0];
+                        $self->{set_name} = $paths[0];
+                }
+                elsif( scalar(@paths) > 1 )
+                {
+                        $self->{set_name} = $paths[0];
+                        $self->{set_value} = $paths[1];
+                        $self->{format} = $paths[2] if( defined $paths[2] );
+		}
+	}
 
 	# Then check URI parameters, priority over the rest
 	foreach( $session->param() )
 	{
 		next if( !$FIELDSMAP{$_} ); 
-		$self->{$_} = $session->param( "$_" );
+		$self->{$_} = $self->validate_param( $_, $session->param( "$_" ) );
 	}
 
 	$self->parse_context();
@@ -156,13 +171,6 @@ sub forever
 	return $self;
 }
 
-sub base_url
-{
-	my( $self ) = @_;
-
-	return $self->handler->{session}->config( 'http_cgiurl' ).'/stats/report';
-}
-
 # so why doesn't this also include the set? and the range/ from-to dates?
 sub current_url
 {
@@ -170,7 +178,7 @@ sub current_url
 
 	if( !EPrints::Utils::is_set( %includes ) )
 	{
-		return $self->base_url;
+		return EPrints::Plugin::Stats::Utils::base_url( $self->handler->{session} );
 	}
 
         my $report = $self->{irs2report} || "";
@@ -415,5 +423,122 @@ sub select
 	my( $self, @params ) = @_;
 	return $self->data( $self )->select( @params );
 }
+
+sub validate_param
+{
+	my( $self, $field, $value ) = @_;
+
+	# Not sure if IRStats understands undef and '' to be the same.
+	# Being cautious
+	return $value if !defined $value || $value eq '';
+
+	my $validation_method = "_validate_field_$field";
+
+	# use a config/data aware validation method if there is one
+	if( $self->can( $validation_method ) )
+	{
+		$value = $self->$validation_method( $value );
+	}
+	else
+	{
+		# Strip possibly bad characters. 
+		# See: https://github.com/eprints/irstats2/issues/95 
+		$value =~ s/[<>\/\\;=\&\?\%\'[:cntrl:]]//gm;
+	}
+
+	$self->repository->log( "IRStats: bad param removed from $field : ". $_[2] ) if !defined $value;
+
+	return $value;
+}
+
+sub _validate_field_set_name
+{
+	my( $self, $v ) = @_;
+
+	if( $self->handler->sets->set_exists( $v ) )
+	{
+		return $v;
+	}
+	elsif( $v =~ m/^([\w\-]*)$/ )
+	{
+		return $1;
+	}
+
+	return;
+}
+
+# NB duplication with has_valid_set.
+sub _validate_field_set_value
+{
+	my( $self, $v ) = @_;
+
+	# if set name has already been set/validated
+	if( defined $self->{set_name} )
+	{
+		return $v if $self->handler->valid_set_value( $self->{set_name}, $v );
+	}
+	elsif( $v =~ m/^([\w\.-]*)$/ )
+	{
+		return $1;
+	}
+	# otherwise...?
+	return;
+}
+
+sub _validate_field_from { &_validate_field_date }
+sub _validate_field_to   { &_validate_field_date }
+sub _validate_field_date
+{
+	my( $self, $v ) = @_;
+
+	# YYYY, YYYYMM, YYYYMMDD ({2,4} == 4, 6 or 8 digits)
+	if( $v =~ m/^((?:\d{2}){2,4})$/ )
+	{
+		return $1;
+	}
+	elsif( $v =~ m#^(\d{2})[/-](\d{2})[/-](\d{4})$# )
+	{
+		#DD-MM-YYYY, DD/MM/YYYY
+		return $3.$2.$1;
+	}
+	elsif( $v =~ m#^(\d{4})[/-](\d{2})[/-](\d{2})$# )
+	{
+		#YYYY-MM-DD, YYYY/MM/DD
+		return $1.$2.$3;
+	}
+	elsif( $v =~ m#^(\d{4})[/-](\d{2})$# ) 
+	{
+		#YYYY-MM, YYYY/MM
+		return $1.$2;
+	}
+
+	return; #undef
+}
+
+sub _validate_field_range
+{
+	my( $self, $v ) = @_;
+
+	# can be a year, a period (e.g. '6m' (six months)) or everything.
+	if( $v =~ /^(\d{4}|\d+[dmy]|_ALL_)$/i )
+	{
+		return $1;
+	}
+
+	return; #undef
+}
+
+sub _validate_field_datatype
+{
+	my( $self, $v ) = @_;
+
+	return $v if defined $self->handler->get_processor( $v );
+
+	return; #undef
+}
+
+# NB the following are not specifically defined, so the warpping method will sanitise the input
+# sub _validate_field_datafilter
+# sub _validate_field_grouping
 
 1;

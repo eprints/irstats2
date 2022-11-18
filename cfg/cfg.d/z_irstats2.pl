@@ -11,7 +11,7 @@ $c->{irstats2}->{datasets} = {
 
 	eprint => { incremental => 0 },
 	
-	access => { filters => [ 'Robots', 'Repeat' ] },
+	access => { filters => [ 'Robots', 'Repeat'] },
 
 	history => { incremental => 1 },
 
@@ -81,6 +81,8 @@ $c->{irstats2}->{sets} = [
 ##only show live items in the stats
 $c->{irstats2}->{show_archive_only} = 1;
 
+## the dataset to use when making individual eprint queries, i.e. do we show stats for any valid eprint id regardless of sub dataset, or do we revert to showing all repository stats for items not in the live archive (the default position)
+$c->{irstats2}->{eprint_dataset} = "archive";
 
 # by default, anyone can view the stats. Comment out to enable only users with the special '+irstats2/view' role to view stats.
 push @{$c->{public_roles}}, "+irstats2/view";
@@ -123,6 +125,13 @@ $c->{irstats2}->{allow} = sub {
 # For example:
 # $c->{irstats2}->{local_domains} = { "ECS Intranet" => "\\.ecs\\.soton\\.ac\\.uk", "University Intranet" => "\\.soton\\.ac\\.uk" };
 
+#IPs additional to http://www.eprints.org/resource/bad_robots/robots_ip.txt to not include in stats
+#$c->{irstats2}->{robot_ip} = [ ];
+
+#UAs additional to http://www.eprints.org/resource/bad_robots/robots_ua.txt to not include in stats
+#$c->{irstats2}->{robot_ua} = [ ];
+
+
 # time-out for the so-called "double-click" filtering - default to 3600 secs = 1 hour
 $c->{plugins}->{"Stats::Filter::Repeat"}->{params}->{timeout} = 3600 * 24;
 
@@ -137,15 +146,13 @@ $c->add_trigger( $EPrints::Plugin::Stats::EP_TRIGGER_DYNAMIC_TEMPLATE, sub
 
         my( $repo, $pins ) = @args{qw/ repository pins/};
 
-        my $protocol = $repo->get_secure ? 'https':'http';
-
         my $head = $repo->make_doc_fragment;
 
         $head->appendChild( $repo->make_javascript( undef,
-                src => "$protocol://www.google.com/jsapi"
+                src => "https://www.gstatic.com/charts/loader.js"
         ) );
 
-        $head->appendChild( $repo->make_javascript( 'google.load("visualization", "1", {packages:["corechart", "geochart"]});' ) );
+        $head->appendChild( $repo->make_javascript( 'google.load("visualization", "48", {packages:["corechart", "geochart"]});' ) );
 
         if( defined $pins->{'utf-8.head'} )
         {
@@ -187,7 +194,7 @@ $c->{plugins}->{"Screen::IRStats2::Report"}->{appears}->{key_tools} = undef;
 #
 #			# then pass extra optional arguments:
 #			show_title => 0 or 1,
-#			title => 'My Custom Title',
+#			title_phrase => 'title_phrase_id',
 #			custom_css => 'border:0px;font:12px;',
 #
 #			# then other arguments are Plugin-specific:
@@ -215,46 +222,48 @@ $c->{plugins}->{"Screen::IRStats2::Report"}->{appears}->{key_tools} = undef;
 # }
 
 $c->{irstats2}->{report} = {
-# the main Report page	
+	# the main Report page	
 	main => {
 		items => [ 
-		{ plugin => 'ReportHeader' },
-		{
-			plugin => 'Google::Graph',
-			datatype => 'downloads',
-			options => {
-				date_resolution => 'month',
-				graph_type => 'column',
-				show_average => 1
+			{ plugin => 'ReportHeader' },
+			{
+				plugin => 'Google::Graph',
+				datatype => 'downloads',
+				options => {
+					date_resolution => 'month',
+					graph_type => 'column',
+					show_average => 1
+				},
 			},
-		},
-		{
-			plugin => 'KeyFigures',
-		},
-		{
-			plugin => 'Grid',
-			options => { 
-				items => [
-				{
-					plugin => 'Table',
-					datatype => 'downloads',
-					options => {
-						limit => 5,
-						top => 'eprint',
-						title_phrase => 'top_downloads'
-					},
+			{
+				plugin => 'KeyFigures',
+			},
+			{
+				plugin => 'Grid',
+				options => { 
+					items => [
+						{
+							plugin => 'Table',
+							datatype => 'downloads',
+							options => {
+								limit => 5,
+								top => 'eprint',
+								title_phrase => 'top_downloads',
+								#citestyle => 'default', # defaults to brief
+							},
+						},
+						{
+							plugin => 'Table',
+							datatype => 'downloads',
+							options => {
+								limit => 5,
+								top => 'authors',
+								title_phrase => 'top_authors',
+							}
+						},
+					]
 				},
-				{
-					plugin => 'Table',
-					datatype => 'downloads',
-					options => {
-						limit => 5,
-						top => 'authors',
-						title_phrase => 'top_authors',
-					}
-				},
-			] },
-		},
+			},
 		],
 		category => 'general',
 	},
@@ -280,191 +289,197 @@ $c->{irstats2}->{report} = {
 
 	authors => {
 		items => [ 
-		{ plugin => 'ReportHeader' },
-		{ plugin => 'Google::Graph', 
-			datatype => 'downloads',
-			options => {
-                                date_resolution => 'month',
-                                graph_type => 'column',
-                        },
-		 },
-		{ plugin => 'KeyFigures',
-			options => {
-				metrics => [ 'downloads.spark', 'hits.spark' ],
-		}
-	
-		 },
-		{
-			plugin => 'Table',
-			datatype => 'downloads',
-			options => {
-				limit => 10,
-				top => 'eprint',
-				title_phrase => 'top_downloads'
+			{ plugin => 'ReportHeader' },
+			{ 
+				plugin => 'Google::Graph', 
+				datatype => 'downloads',
+				options => {
+					date_resolution => 'month',
+					graph_type => 'column',
+				},
 			},
-		},
+			{ 
+				plugin => 'KeyFigures',
+				options => {
+					metrics => [ 'downloads.spark', 'hits.spark' ],
+				}
+			},
+			{
+				plugin => 'Table',
+				datatype => 'downloads',
+				options => {
+					limit => 10,
+					top => 'eprint',
+					title_phrase => 'top_downloads',
+					#citestyle => 'default', # defaults to brief
+				},
+			},
 		]
-
-
 	},
 
-# Other custom Reports	
+	# Other custom Reports	
 	most_popular_eprints => {
 		items => [
-		{ plugin => 'ReportHeader' },
-		{
-			plugin => 'Table',
-			datatype => 'downloads',
-			options => {
-				limit => 10,
-				top => 'eprint',
-				title_phrase => 'top_downloads',
+			{ plugin => 'ReportHeader' },
+			{
+				plugin => 'Table',
+				datatype => 'downloads',
+				options => {
+					limit => 10,
+					top => 'eprint',
+					title_phrase => 'top_downloads',
+					#citestyle => 'default', # defaults to brief
+				},
 			},
-		},
 		],
 
-# can't show the most popular eprints if we're looking at an eprint
+		# can't show the most popular eprints if we're looking at an eprint
 		appears => { set_name => [ '!eprint' ] },
-# appears => { set_name => [ '*' ] },
-# appears => { set_name => [ 'authors', 'divisions' ] },
-
+		# appears => { set_name => [ '*' ] },
+		# appears => { set_name => [ 'authors', 'divisions' ] },
 		category => 'most_popular'
 	},
 
 	most_popular_authors => {
-
 		items => [
-		{ plugin => 'ReportHeader' },
-		{
-			plugin => 'Table',
-			datatype => 'downloads',
-			options => {
-				top => 'authors',
-				title_phrase => 'top_authors',
-			}
-		},
-		{ plugin => 'KeyFigures', },
+			{ plugin => 'ReportHeader' },
+			{
+				plugin => 'Table',
+				datatype => 'downloads',
+				options => {
+					top => 'authors',
+					title_phrase => 'top_authors',
+				}
+			},
+			{ plugin => 'KeyFigures', },
 		],
 		appears => { set_name => [ '!eprint', '!authors' ] },
-
 		category => 'most_popular',
 	},
 
 #	most_popular_divisions => {
-#
 #		items => [
-#		{ plugin => 'ReportHeader' },
-#		{
-#			plugin => 'Table',
-#			datatype => 'downloads',
-#			options => {
-#				top => 'divisions',
-#				title => 'Top Schools'
-#			}
-#		},
+#			{ plugin => 'ReportHeader' },
+#			{
+#				plugin => 'Table',
+#				datatype => 'downloads',
+#				options => {
+#					top => 'divisions',
+#					title_phrase => 'title_phrase_id'
+#				}
+#			},
 #		],
 #		appears => { set_name => [ '!eprint', '!divisions' ] },
-#
 #		category => 'most_popular',
 #	},
 
 	deposits => {
-
 		items => [
-		{ plugin => 'ReportHeader' },
-		{
-			plugin => 'Google::Graph',
-			datatype => 'deposits',
-			datafilter => 'archive',
-			options => {
-				date_resolution => 'month',
-				graph_type => 'column',
-				show_average => 1
-			}
-		},
-		{
-			plugin => 'Grid', options => { items => [
-
-                {
-                        plugin => 'Google::PieChart',
-                        datatype => 'deposits',
-                        datafilter => 'archive',
-                        options => {
-                                top => 'type',
-				title_phrase => 'item_types'
-                        }
-                },
-		{
-			plugin => 'Table',
-			datatype => 'doc_format',
-			options => {
-				title_phrase => 'file_format',
-				top => 'doc_format',
-			}
-		},
-
-		] } },
+			{ plugin => 'ReportHeader' },
+			{
+				plugin => 'Google::Graph',
+				datatype => 'deposits',
+				datafilter => 'archive',
+				options => {
+					date_resolution => 'month',
+					graph_type => 'column',
+					show_average => 1
+				}
+			},
+			{
+				plugin => 'Grid',
+				options => {
+					items => [
+						{
+							plugin => 'Google::PieChart',
+							datatype => 'deposits',
+							datafilter => 'archive',
+							options => {
+								top => 'type',
+								title_phrase => 'item_types'
+							}
+						},
+						{
+							plugin => 'Table',
+							datatype => 'doc_format',
+							options => {
+								title_phrase => 'file_format',
+								top => 'doc_format',
+							}
+						},
+					]
+				}
+			},
 		],
 		category => 'advanced'
 	},
 
 	requests => {
 		items => [
-		{ plugin => 'ReportHeader' },
-		{
-			plugin => 'Google::GeoChart',
-			datatype => 'countries',
-			options => {
-				title_phrase => 'download_countries',
-			}
-		},
-		# if you'd rather see a table of countries, use this:
-		#{
-		#	plugin => 'Table',
-		#	datatype => 'countries',
-		#	options => { top => 'countries', title => 'Countries' },
-		#},
-		{
-			plugin => 'Grid',
-			options => {
-				items => [
-
-		{
-			plugin => 'Table',
-			datatype => 'referrer',
-			options => {
-				title_phrase => 'top_referrers',
-				top => 'referrer',
-			}
-		},
-		{
-			plugin => 'Table',
-			datatype => 'browsers',
-			options => {
-				title_phrase => 'browsers',
-				top => 'browsers',
-			}
-		},
-
-		]	
-		} },    # end of Grid
-
+			{ plugin => 'ReportHeader' },
+			{
+				plugin => 'Google::GeoChart',
+				datatype => 'countries',
+				options => {
+					title_phrase => 'download_countries',
+				}
+			},
+			# if you'd rather see a table of countries, use this:
+			#{
+			#	plugin => 'Table',
+			#	datatype => 'countries',
+			#	options => { top => 'countries', title_phrase => 'download_countries' },
+			#},
+			{
+				plugin => 'Grid',
+				options => {
+					items => [
+						{
+							plugin => 'Table',
+							datatype => 'referrer',
+							options => {
+								title_phrase => 'top_referrers',
+								top => 'referrer',
+							}
+						},
+						{
+							plugin => 'Table',
+							datatype => 'browsers',
+							options => {
+								title_phrase => 'browsers',
+								top => 'browsers',
+							}
+						},
+					]	
+				}
+			},    # end of Grid
 		],
 		category => 'advanced',
 	},
 
 	compare_years => {
 		items => [ 
-		{ plugin => 'ReportHeader' },
-		{ plugin => 'Compare' }, 
+			{ plugin => 'ReportHeader' },
+			{ plugin => 'Compare' }, 
 		],
 		category => 'general',
 	},
 
+	summary_page => {
+		items => [ 
+			{ 
+				plugin => 'Google::Graph',
+				datatype => 'downloads',
+				range => '1y',
+				options => {
+					date_resolution => 'month',
+					graph_type => 'column',
+					title_phrase => 'lib/irstats2:embedded:summary_page:eprint:downloads:year',
+				}
+			},
+		],
+	},
 };
-
-# must be enabled manually
-$c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{disable} = 1;
 
 # Bazaar config
 
@@ -483,6 +498,9 @@ $c->{plugins}{"Stats::Export::XML"}{params}{disable} = 0;
 
 $c->{plugins}{"Stats::Filter::Robots"}{params}{disable} = 0;
 $c->{plugins}{"Stats::Filter::Repeat"}{params}{disable} = 0;
+#MM 04/05/2017 - New filter for IP addresses
+$c->{plugins}{"Stats::Filter::LocalIP"}{params}{disable} = 0;
+
 
 $c->{plugins}{"Stats::Processor::Access"}{params}{disable} = 0;
 $c->{plugins}{"Stats::Processor::Access::Browsers"}{params}{disable} = 0;
@@ -512,3 +530,12 @@ $c->{plugins}{"Stats::View::Table"}{params}{disable} = 0;
 
 $c->{plugins}{"Screen::IRStats2::Report"}{params}{disable} = 0;
 
+# Display download stats for an EPrints on it's summary page?
+# Confusingly, set this to '0' to make them appear, or 1 to not show them
+$c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{disable} = 1;
+# Where on the summary page should they appear?
+# Valid options are 'summary_left', 'summary_right', 'summary_bottom', 'summary_top'.
+# The default is 'summary_bottom' - the following 2 lines demonstrate how to move it
+# somewhere else
+#$c->{plugins}{"Screen::EPrint::Box::Stats"}{appears}{summary_bottom} = undef;
+#$c->{plugins}{"Screen::EPrint::Box::Stats"}{appears}{summary_right} = 1000;

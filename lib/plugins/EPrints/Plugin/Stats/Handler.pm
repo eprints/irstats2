@@ -903,13 +903,14 @@ sub create_sets_tables
 sub valid_set_value
 {
         my( $self, $set_name, $set_value ) = @_;
-
+        
         return 0 unless( defined $set_name && defined $set_value );
 
         # TODO can do better than that?
         if( $set_name eq 'eprint' )
         {
-                return (defined $self->{session}->dataset( 'archive' )->dataobj( $set_value ) ) ? 1 : 0;
+            my $eprint_ds = $self->{session}->config( 'irstats2', 'eprint_dataset' ) || "archive";
+            return (defined $self->{session}->dataset( $eprint_ds )->dataobj( $set_value ) ) ? 1 : 0;
         }
 
         my $set_tablename = $SET_TABLE_PREFIX."_".$set_name;

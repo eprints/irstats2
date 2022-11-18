@@ -43,7 +43,6 @@ sub mimetype { 'application/json' }
 sub get_data
 {
 	my( $self ) = @_;
-
 	# the FROM/TO dates might need to be normalised if the date resolution is "month" or "year" (cos it's better to start at the beginning of the month/year for those)
 	my $from = $self->context->dates->{from};
 
@@ -146,16 +145,27 @@ sub get_data
 		}
 
 		my $record = { count => $subtotal, datestamp => $ds, description => $desc };
-
+	
+		$avg_sum += $subtotal; # keep a sum of all the counts for potential future data clearing up, even if we don't need it to show an average
 		if( $show_average )
 		{
-			$avg_sum += $subtotal;
 			$record->{average} = int( $avg_sum / $avg_n++ );
 		}
 
 		push @exports, $record;
 	}
 	
+
+	# clean up the data if we all have all 0s... Google Graphs get a bit upset in these circumstances and include pointless negative y-axes
+	if( $avg_sum == 0 )
+	{
+		foreach my $export ( @exports )
+		{
+			$export->{count} = "null";
+			$export->{average} = "null" if $show_average;
+		}
+	}
+
 	# TODO needs new name:
 	$stats->{data} = \@exports;
 

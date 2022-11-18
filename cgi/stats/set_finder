@@ -22,10 +22,9 @@ unless(defined $handler)
         $session->terminate();
         return;
 }
+my $context = $handler->context->from_request( $session );
 
-my $set_name = $session->param( 'set_name' );
-
-unless( defined $set_name )
+unless( defined $context->{set_name} )
 {
 	$session->terminate;
 	return;
@@ -35,47 +34,39 @@ my $sets = $session->config( 'irstats2', 'sets' );
 my $minimum_filter_length = 0;
 foreach my $set ( @$sets )
 {
-        if( ( defined( $set->{name}) && $set->{name} eq $set_name )
-                || ( defined( $set->{field} ) && $set->{field} eq $set_name ) )
+        if( ( defined( $set->{name}) && $set->{name} eq $context->{set_name} )
+                || ( defined( $set->{field} ) && $set->{field} eq $context->{set_name} ) )
 	{
                 $minimum_filter_length = $set->{minimum_filter_length};
         }
 }
 
-
-my $base_url = $session->param( 'base_url' ) || '/cgi/stats/report';
-$base_url =~ s/\/$//g;
-my $report = '';
-if( $base_url =~ /report\/(.*)$/ )
-{
-	$report = $1;
-	$base_url =~ s/\/?([^\/]*)$//g;
-}
+my $base_url = EPrints::Plugin::Stats::Utils::base_url( $session );
 
 my $q = $session->param( 'q' );
 
 my $values;
 
-if( $set_name eq 'eprintid' )
+if( $context->{set_name} eq 'eprintid' )
 {
 	# special case - there should only be only one match
 	my $eprint = $session->dataset( 'archive' )->dataobj( $q );
 	if( defined $eprint )
 	{
-		print STDOUT "<a href='/cgi/stats/report/eprint/$q'>".$eprint->value( 'title' )."</a>";
+		print STDOUT "<a href='$base_url/eprint/$q'>".$eprint->value( 'title' )."</a>";
 		$session->terminate;
 		return;
 	}
 }
 elsif( length($q) < $minimum_filter_length )
 {
-        print STDOUT $session->phrase( "cgi/stats/set_finder:minimum_filter_length", characters => $minimum_filter_length );
+        print STDOUT $session->html_phrase( "cgi/stats/set_finder:minimum_filter_length", characters => $session->make_text( $minimum_filter_length ) );
         $session->terminate;
         return;
 }
 else
 {
-	$values = $handler->get_all_rendered_set_values( $set_name, $q );
+	$values = $handler->get_all_rendered_set_values( $context->{set_name}, $q );
 }
 
 my $html = "<ul class='irstats2_setfinder_values'>";
@@ -92,7 +83,7 @@ foreach my $value ( @$values )
 		utf8::decode( $escape_value );
 		utf8::decode( $value->{rendered_set_value} );
 	}
-	$html .= "<li><div class='irstats2_setfinder_row'><a href='$base_url/".HTML::Entities::encode( $set_name )."/".EPrints::Utils::url_escape( $escape_value )."/$report'>".$value->{rendered_set_value}."</a></div></li>";
+	$html .= "<li><div class='irstats2_setfinder_row'><a href='$base_url/".HTML::Entities::encode( $context->{set_name} )."/".EPrints::Utils::url_escape( $escape_value )."/'>".$value->{rendered_set_value}."</a></div></li>";
 
 	$done_any++;
 }
