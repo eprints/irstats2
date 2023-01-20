@@ -1,10 +1,11 @@
 package EPrints::Plugin::Screen::IRStats2::Report;
 
 use EPrints::Plugin::Screen;
+use Digest::MD5 qw(md5 md5_hex md5_base64);
+use JSON;
 @ISA = ( 'EPrints::Plugin::Screen' );
 
 use strict;
-use EPrints::Plugin::Stats::Utils;
 
 # Screen::IRStats2::Report
 #
@@ -23,7 +24,8 @@ sub new
                         position => 5000,
                 }
         ];
-
+	$self->{cache_enabled} = defined $self->{session}->config( 'irstats2', 'cache_enabled' ) ? $self->{session}->config( 'irstats2', 'cache_enabled' ) : 1 ;
+	$self->{cache_dir} = $self->{session}->config( 'irstats2', 'cache_dir' ) ;
 	return $self;
 }
 
@@ -89,25 +91,39 @@ sub render
 	{
 		return $self->html_phrase( 'invalid_set_value' );
 	}
+
 	my $report = $context->current_report;
 	my $divrep=$self->{session}->make_element('h2', class=>'ep_tm_pagetitle report_title');
 	$frag->appendChild($divrep);
 	$divrep->appendChild($self->{session}->html_phrase( "lib/irstats2:report:$report" ));
-	
+
+	##load cache from file, if exist.
+	my $cache_enabled = $self->{cache_enabled};
 	foreach my $item ( @{$conf->{items} || []} )
 	{
+		my $using_cache = 0; # flag to indicate we are using cache
+		my $loaded_from_cache = 0; # a flag to determine if the cache need to be write to disk.
+		my $cachefile; 
+		my $cache = {};
 		my $pluginid = delete $item->{plugin};
 		next unless( defined $pluginid );
 
-        # check permissions
-        if( exists $item->{priv} )
-        {
-            next if( !defined $session->current_user );
-            next unless $session->current_user->allow( $item->{priv} );
-        }
+		# check permissions
+		if( exists $item->{priv} )
+		{
+			next if( !defined $session->current_user );
+			next unless $session->current_user->allow( $item->{priv} );
+		}
 
 		my $options = delete $item->{options};
 		$options ||= {};
+
+		##jy2e08: url date_resolution overwrites the local config one.
+		if (EPrints::Utils::is_set($options->{date_resolution}) && EPrints::Utils::is_set($self->{repository}->param('date_resolution')))
+		{
+			$options->{date_resolution} = 'month';
+			$options->{date_resolution} = $self->{repository}->param('date_resolution') if $self->{repository}->param('date_resolution') =~ /^[a-zA-Z0-9_]+$/;
+		}
 
 		# each View plugin needs its own copy of the context (if a View plugin changed one parameter of the context, this would propagate across all View plugins)	
 		my $local_context = $context->clone();
@@ -120,13 +136,38 @@ sub render
 			$done_any = 1;
 		}
 		$local_context->parse_context() if( $done_any );
+		$cachefile = $self->{cache_dir}."/". md5_hex(  $session->config("host").$pluginid.$options->{metrics}.$local_context->{from}.$local_context->{to}.$local_context->{set_name}.$local_context->{set_value}.$local_context->{datatype}).".ir2";
 
-		my $plugin = $session->plugin( "Stats::View::$pluginid", handler => $handler, options => $options, context => $local_context );
+		if( $cache_enabled  && not( -f "$cachefile.lock") )  ##if cache enabled and not locked and cache file exist
+		{
+			$using_cache = 1;
+			if (-f $cachefile) ##Load from cache if cachefile exist.
+			{
+				local $/; #Enable 'slurp' mode
+				open my $fh, "<$cachefile";
+				my $json = <$fh>;
+				close $fh;
+				$cache = decode_json($json);
+				$loaded_from_cache=1;
+			}
+			##otherwise, cache hash will not be filled, hence retrive from DB.
+		}
+
+		my $plugin = $session->plugin( "Stats::View::$pluginid", handler => $handler, options => $options, context => $local_context, cache=>$cache );
 		next unless( defined $plugin );	# an error / warning would be nice...
-		
 		$frag->appendChild( $plugin->render );
+		if( $using_cache && %$cache && (not $loaded_from_cache )) ## only save if we are using cache, %cache hash is not empty and not loaded from cache. $using_cache -> $cache_enabled && cachefile not locked.
+		{
+			#save $cache to file:
+			my $json_cache = encode_json($cache);
+			`touch $cachefile.lock`;
+			open(OUT,">$cachefile");
+			binmode(OUT, ":utf8");
+			print OUT $json_cache;
+			close OUT;
+			`rm -f $cachefile.lock`;
+		}
 	}
-
 	return $frag;	
 }
 

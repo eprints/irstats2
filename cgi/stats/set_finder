@@ -73,6 +73,7 @@ my $html = "<ul class='irstats2_setfinder_values'>";
 my $done_any = 0;
 foreach my $value ( @$values )
 {
+	next unless $value->{rendered_set_value}; ## skip items where there is no render value (would render blank line otherwise)
 	my $escape_value = $value->{set_value};
 	$escape_value =~ s/'/\\'/g;
 #	unless( EPrints::Utils::is_set( $q ) )

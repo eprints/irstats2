@@ -29,7 +29,7 @@ sub new
 	$dat_file = 1 if( !-e $dat_file );	
 
 	#Test Geo::IP first - it's faster!
-	#RM: If dat_file is not the global one and Geo::IP is available, then we need to call open($dat_file) not new($dat_file)
+	#If dat_file is not the global one and Geo::IP is available, then we need to call open($dat_file) not new($dat_file)
 	foreach my $pkg ( 'Geo::IP', 'Geo::IP::PurePerl' )
 	{
 		if( EPrints::Utils::require_if_exists( $pkg ) )

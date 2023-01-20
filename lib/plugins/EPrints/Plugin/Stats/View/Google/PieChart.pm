@@ -84,7 +84,7 @@ sub get_data
 	return $self->handler->data( $self->context )->select( %$options );
 }
 
-sub render_content_ajax
+sub ajax
 {
 	my( $self ) = @_;
 
@@ -105,9 +105,10 @@ sub render_content_ajax
 
 	my $jsdata = join(",",@full_labels);
 
+	binmode( STDOUT, ":utf8" );
 	print STDOUT "{ \"data\": [$jsdata]  }";
+	return "{ \"data\": [$jsdata]  }";
 
-	return;
 }
 
 1;

@@ -77,9 +77,9 @@ sub ajax
 	}
 
 	my $jsdata = join(",",@full_labels);
+	binmode( STDOUT, ":utf8" );
 	print STDOUT "{ \"data\": [$jsdata] }";
-
-	return;
+	return "{ \"data\": [$jsdata] }";
 }
 
 sub render_title

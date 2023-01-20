@@ -89,13 +89,13 @@ sub apply_metric_context
 sub get_metric
 {
 	my( $self, $context, $name ) = @_;
-	
-	return $self->{cache}->{$name} if( exists $self->{cache}->{$name} );
 
-	$self->{cache}->{$name} = $self->handler->data( $context )->select( type => 'sum' )->sum_all();
-	$self->{cache}->{$name} = 0 if( !defined $self->{cache}->{$name} );
+	my $cachekey = "_".$name.$context->{from}.$context->{to}.$context->{set_name}.$context->{set_value}.$context->{datatype};
+	return $self->{cache}->{$cachekey} if( exists $self->{cache}->{$cachekey} );
+	$self->{cache}->{$cachekey} = $self->handler->data( $context )->select( type => 'sum' )->sum_all();
+	$self->{cache}->{$cachekey} = 0 if( !defined $self->{cache}->{$cachekey} );
 
-	return $self->{cache}->{$name};
+	return $self->{cache}->{$cachekey};
 }
 
 sub render_metric_with_spark
@@ -110,17 +110,19 @@ sub render_metric_with_spark
 
 	my $js_context = $local_context->to_json();
 
-    my $spark_div = $self->{session}->make_element( "div", class => "irstats2_key_figure_googlespark" );
-    $spark_div->appendChild( $self->{session}->make_element( "div", id => $name, class => "irstats2_googlespark" ) );
-    $spark_div->appendChild( $self->{session}->make_javascript( <<DLSPARK ) );
-        google.setOnLoadCallback(function(){
-            new EPJS_Stats_GoogleSpark( { 'context': $js_context, 'options': { 'container_id': '$name' } } );
-        });
+	my $spark_div = $self->{session}->make_element( "div", class => "irstats2_key_figure_googlespark" );
+	$spark_div->appendChild( $self->{session}->make_element( "div", id => $name, class => "irstats2_googlespark" ) );
+	$spark_div->appendChild( $self->{session}->make_javascript( <<DLSPARK ) );
+	google.setOnLoadCallback(drawGoogleSpark_$name);
+	function drawGoogleSpark_$name() 
+	{
+		new EPJS_Stats_GoogleSpark( { 'context': $js_context, 'options': { 'container_id': '$name' } } );
+	}
 DLSPARK
-    
-    my $spark_desc = $spark_div->appendChild( $self->{session}->make_element( "div", class => "irstats2_googlespark_desc" ) );
+
+	my $spark_desc = $spark_div->appendChild( $self->{session}->make_element( "div", class => "irstats2_googlespark_desc" ) );
 	$spark_desc->appendChild( $self->html_phrase( "spark_trend" ) );
-    $frag->appendChild( $spark_div );
+	$frag->appendChild( $spark_div );
 
 	my $div = $frag->appendChild( $self->{session}->make_element( 'span', class => 'irstats2_keyfigures_metric' ) );
 
@@ -140,7 +142,8 @@ sub compute_metric
 {
 	my( $self, $context, $name ) = @_;
 
-	return $self->{cache}->{$name} if( exists $self->{cache}->{$name} );
+	my $cachekey = "_".$name.$context->{from}.$context->{to}.$context->{set_name}.$context->{set_value}.$context->{datatype};
+    return $self->{cache}->{$cachekey} if( exists $self->{cache}->{$cachekey} );
 
 	my $metric = $METRICS->{$name};
 	

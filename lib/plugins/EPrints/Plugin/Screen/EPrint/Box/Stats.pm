@@ -1,14 +1,33 @@
 package EPrints::Plugin::Screen::EPrint::Box::Stats;
 
+use EPrints::Plugin::Screen::EPrint::Box;
 our @ISA = ( 'EPrints::Plugin::Screen::EPrint::Box' );
 
 use strict;
+
+sub new
+{
+        my( $class, %params ) = @_;
+
+        my $self = $class->SUPER::new(%params);
+
+        $self->{appears} = [];
+
+        return $self;
+}
 
 sub can_be_viewed
 {
         my( $self ) = @_;
 
         return $self->has_value;
+}
+
+sub can_be_previewed
+{
+	my( $self ) = @_;
+
+	return 0;
 }
 
 sub has_value

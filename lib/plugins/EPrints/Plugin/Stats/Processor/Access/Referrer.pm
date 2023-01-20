@@ -81,7 +81,7 @@ sub get_referrer
 		return 'Internal (OAI-PMH)';
 	}
 
-	if( $hostname eq $self->{host} )
+	if( ( defined $self->{host} && $hostname eq $self->{host} ) || ( defined $self->{securehost} && $hostname eq $self->{securehost} ) )
 	{
 		return 'Internal (Abstract page)' if( $uri =~ /^\/\d+$/ );
 

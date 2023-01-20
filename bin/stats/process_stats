@@ -104,6 +104,23 @@ foreach my $dataset_id ( keys %$dataset_ids )
 
 $handler->log( "Leaving now" );
 
+
+$handler->log( "Clearing cache" );
+my $cache_dir = $session->config( 'irstats2', 'cache_dir' );
+`find $cache_dir/ -maxdepth 1 -type f -name '*.ir2' -delete`; # Use find rather than rm in case there are a lot of files
+
+my $cache_paths = $session->config( 'irstats2', 'cache_paths' );
+if ( defined $cache_paths )
+{
+	$handler->log( "Requesting stats pages to be cached" );
+	for my $cache_path ( @$cache_paths )
+	{
+		my $cmd = $session->config("perl_url") . $cache_path;
+		$handler->log( "Caching $cmd" );
+		`curl $cmd > /dev/null 2>&1`;
+	}
+}
+
 $session->terminate;
 exit;
 
@@ -111,7 +128,7 @@ sub usage
 {
 	print <<USAGE;
 
-$0 ARCHIVE_ID [--setup][--sets-only] [--uninstall] [--verbose]
+$0 ARCHIVE_ID [--setup] [--datasets=DATASETS] [--sets-only] [--uninstall] [--verbose]
 
 \t--setup: use this option the first time to run IRStats2, or if you want to re-process all the statistics.
 \t--datasets=<dataset1,[dataset2...]>: this will only generate data for the selected datasets.

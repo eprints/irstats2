@@ -36,9 +36,9 @@ sub ajax
 
 	my $jsdata = join(",",@data);
 
+	binmode( STDOUT, ":utf8" );
 	print STDOUT "{ \"data\": [$jsdata] }";
-
-	return;
+	return "{ \"data\": [$jsdata] }";
 }
 
 
