@@ -67,40 +67,40 @@ sub from_request
 	# First check params in the URL	
 	# /cgi/stats/report/report_name
 	# /cgi/stats/report/set_name/set_value/report_name
-	if( $uri =~ m#^/cgi/stats/report/?(.*)$# ) #
-        {
-                my @paths = split( /\//, $1 );
-                if( scalar(@paths) == 1 )
-                {
-                        $self->{irs2report} = $paths[0];
-                }
-                elsif( scalar(@paths) > 1 )
-                {
-                        $self->{set_name} = $paths[0];
-                        $self->{set_value} = $paths[1];
-                        $self->{irs2report} = $paths[2] if( defined $paths[2] );
+	if ( $uri =~ m#^/cgi/stats/report/?(.*)$# )
+    {
+		my @paths = split( /\//, $1 );
+		if( scalar(@paths) == 1 )
+		{
+			$self->{irs2report} = $paths[0];
+		}
+		elsif( scalar(@paths) > 1 )
+		{
+			$self->{set_name} = $paths[0];
+			$self->{set_value} = $paths[1];
+			$self->{irs2report} = $paths[2] if( defined $paths[2] );
 
 			if( !defined $self->{irs2report} && defined $session->config( 'irstats2', 'report', $self->{set_name} ) )
 			{
 				$self->{irs2report} = $self->{set_name};
 			}
-                }
+		}
 
 		$self->{irs2report} = 'main' if( !defined $self->{irs2report} );
-        }
+	}
 	elsif( $uri =~ m#^/cgi/stats/export/?(.*)$# )
 	{
-                my @paths = split( /\//, $1 );
-                if( scalar(@paths) == 1 )
-                {
-                        $self->{format} = $paths[0];
-                        $self->{set_name} = $paths[0];
-                }
-                elsif( scalar(@paths) > 1 )
-                {
-                        $self->{set_name} = $paths[0];
-                        $self->{set_value} = $paths[1];
-                        $self->{format} = $paths[2] if( defined $paths[2] );
+		my @paths = split( /\//, $1 );
+		if( scalar(@paths) == 1 )
+		{
+			$self->{format} = $paths[0];
+			$self->{set_name} = $paths[0];
+		}
+		elsif( scalar(@paths) > 1 )
+		{
+			$self->{set_name} = $paths[0];
+			$self->{set_value} = $paths[1];
+			$self->{format} = $paths[2] if( defined $paths[2] );
 		}
 	}
 
@@ -178,12 +178,12 @@ sub current_url
 
 	if( !EPrints::Utils::is_set( %includes ) )
 	{
-		return EPrints::Plugin::Stats::Utils::base_url( $self->handler->{session} );
+		return EPrints::Plugin::Stats::Utils::base_url( $self->{session} );
 	}
 
         my $report = $self->{irs2report} || "";
 
-	my $url = $self->handler->{session}->config( 'http_cgiurl' ).'/stats/report';
+	my $url = $self->handler->{session}->config( 'perl_url' ).'/stats/report';
 
 	# the 'main' report is the default 
 	if( defined $report && $report ne 'main' )

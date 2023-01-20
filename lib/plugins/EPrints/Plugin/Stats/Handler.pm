@@ -616,12 +616,58 @@ sub extract_set_data
 	return \@results;
 }
 
+# Inserts a group of records into the database. This inserts multiple rows
+# using one INSERT statement for performance. In practice, this needs to be
+# batched so that a single INSERT statement does not exceed database limits.
+
+sub save_data_values_aux
+{
+	my( $self, $tablename, $columns, $rows ) = @_;
+
+	my $sql = "INSERT INTO ".$self->{dbh}->quote_identifier( $tablename );
+	$sql .= " (".join(",", map { $self->{dbh}->quote_identifier($_) } @$columns).")";
+	$sql .= " VALUES ";
+
+	my $row_template = "(".join(",", map { '?' } @$columns)."),";
+
+	foreach my $row (@$rows)
+	{
+		$sql .= $row_template;
+	}
+
+	$sql =~ s/,$//;
+
+	my $sth = $self->{dbh}->prepare($sql);
+
+	my $i = 1;
+
+	$self->{dbh}->begin;
+
+	foreach my $row (@$rows)
+	{
+		my( $counter, $epid, $date, $value, $count ) = @$row;
+
+		$sth->bind_param( $i++, $counter );
+		$sth->bind_param( $i++, $epid );
+		$sth->bind_param( $i++, $date );
+		$sth->bind_param( $i++, $value );
+		$sth->bind_param( $i++, $count );
+	}
+
+	my $rc = $sth->execute();
+
+	$self->{dbh}->commit;
+
+	return $rc;
+}
 
 # Saves processed data to the correct table
 # called by Processor::{class}::{type}->commit_data()
 sub save_data_values
 {
 	my( $self, $datatype, $data ) = @_;
+
+	my $batch_limit = 1000;
 
 	my $tablename = "irstats2_$datatype";
 	$data ||= {};
@@ -630,35 +676,39 @@ sub save_data_values
 
 	my $columns = [ 'uid', 'eprintid', 'datestamp', 'value', 'count' ];
 
-        my $sql = "INSERT INTO ".$self->{dbh}->quote_identifier( $tablename );
-        $sql .= " (".join(",", map { $self->{dbh}->quote_identifier($_) } @$columns).")";
+	my $rc = 1;
 
-        $sql .= " VALUES ";
-        $sql .= "(".join(",", map { '?' } @$columns).")";
+	# Batch values into groups.
 
-        my $sth = $self->{dbh}->prepare($sql);
+	my @rows;
 
-        my $rc = 1;
-        my $i = 0;
-        foreach my $date ( keys %{$data} )
-        {
-                foreach my $epid ( keys %{$data->{$date}} )
-                {
-						$self->{dbh}->begin;
-						
-                        foreach my $value ( keys %{$data->{$date}->{$epid}} )
-                        {
-                                $i = 0;
-                                $sth->bind_param( ++$i, $_ ) for( ( $counter, $epid, $date, $value, ($data->{$date}->{$epid}->{$value}) ) );
-                                $rc &&= $sth->execute();
-                                $counter++;
-                        }
-						
-						$self->{dbh}->commit;
-                }
-        }
+	foreach my $date ( keys %{$data} )
+	{
+		foreach my $epid ( keys %{$data->{$date}} )
+		{
+			foreach my $value ( keys %{$data->{$date}->{$epid}} )
+			{
+				push @rows, [ $counter++, $epid, $date, $value, $data->{$date}->{$epid}->{$value} ];
 
-        return $rc;
+				# If we have a full batch of rows to save, then save them.
+
+				if( scalar( @rows ) > $batch_limit )
+				{
+					$rc &&= $self->save_data_values_aux( $tablename, $columns, \@rows );
+					@rows = ();
+				}
+			}
+		}
+	}
+
+	# If there is a partial batch left over at the end then save it.
+
+	if( scalar( @rows ) > 0 )
+	{
+		$rc &&= $self->save_data_values_aux( $tablename, $columns, \@rows );
+	}
+
+	return $rc;
 }
 
 
@@ -890,8 +940,7 @@ sub create_sets_tables
 	push @fields, EPrints::MetaField->new(
 			repository => $session->get_repository,
 			name => "rendered_set_value",
-			type => "text",
-			maxlength => 255,
+			type => "longtext",
 			sql_index => 0
 	);
 		
@@ -903,7 +952,7 @@ sub create_sets_tables
 sub valid_set_value
 {
         my( $self, $set_name, $set_value ) = @_;
-        
+
         return 0 unless( defined $set_name && defined $set_value );
 
         # TODO can do better than that?

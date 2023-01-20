@@ -73,7 +73,7 @@ sub get_data
 	}
 	elsif( EPrints::Utils::is_set( $self->context->{set_name} ) && $self->context->{set_name} ne $top )
 	{
-		$self->context->{grouping} = $top;
+        $self->context->{grouping} = $top if $self->context->{set_name} ne $top;  ## only set the grouping to top when they are not the same (issue with top authors list not returning when click on 10/25/50/all buttons)
 		$options->{fields} = [ 'set_value' ];
 	}
 	else
@@ -122,7 +122,10 @@ sub render_content_ajax
         {
 		my $object = $_->{$options->{fields}->[0]};
                 my $count = $_->{count};
-		
+
+		# dont show results which are less than 'data_min', if 'data_min' is defined as an option
+		next if( defined $options->{ 'data_min' } && $options->{ 'data_min' } > $count );
+
 		my $row_class = $c % 2 == 0 ? 'irstats2_table_row_even' : 'irstats2_table_row_odd';
 		$tr = $table->appendChild( $session->make_element( 'tr', class => "$row_class" ) );
 

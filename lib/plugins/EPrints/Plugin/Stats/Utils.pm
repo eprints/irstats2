@@ -12,9 +12,9 @@ use Date::Calc;
 # return the url to the main stats report page
 sub base_url
 {
-        my( $session ) = @_;
-        
-        return $session->config( 'http_cgiurl' ).'/stats/report';
+	my( $session ) = @_;
+	
+	return $session->config( 'perl_url' ).'/stats/report';
 }
 
 ############################

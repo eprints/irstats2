@@ -44,8 +44,11 @@ sub ajax
 
 	binmode( STDOUT, ":utf8" );
 
-	print STDOUT EPrints::XML::to_string( $frag ) if( defined $frag );
-
+	if( defined $frag )
+	{
+		print STDOUT EPrints::XML::to_string( $frag ); 
+		return EPrints::XML::to_string( $frag );
+	}
 	return;
 }
 
@@ -119,9 +122,12 @@ sub render_content
 
 	# note: when called from a Browse View, the DOM is already loaded thus the dom:loaded Event will never fire. That's why we first test that the dom's already loaded below.
         $frag->appendChild( $session->make_javascript( <<CODE ) );
-        google.setOnLoadCallback(function(){
-            new EPJS_Stats_$js_class( { 'context': $json_context, 'options': $view_options } );
-        });
+	google.setOnLoadCallback(drawChart_$id);
+	function drawChart_$id()
+	{
+		new EPJS_Stats_$js_class( { 'context': $json_context, 'options': $view_options } );
+
+	}
 CODE
 
         return $frag;

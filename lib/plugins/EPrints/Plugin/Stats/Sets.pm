@@ -264,7 +264,9 @@ sub populate_tables
 	};
 
 	my $info = {};
-	$self->{session}->dataset( 'archive' )->map( $self->{session}, $process_fn, $info );
+
+	# Reverse the order so if an author changes name it uses there most recent name.
+	$self->{session}->dataset( 'archive' )->search( custom_order => "-eprintid" )->map( $process_fn, $info );
 
 	$cache = {};
 	$display_cache = {};
@@ -537,6 +539,7 @@ sub nc
                 $name =~ s/\bMacKley/Mackley/go ;
                 $name =~ s/\bMacHell/Machell/go ;
                 $name =~ s/\bMacHon/Machon/go ;
+                $name =~ s/\bMacBeth/Macbeth/go ;
         }
         $name =~ s/Macmurdo/MacMurdo/go ;
 
@@ -647,11 +650,11 @@ sub render_set
 			{
 				if( $field->get_property( "multiple" ) )
 				{
-					return $field->render_value( $session, [$setvalue], 0, 0, undef );
+					return $field->render_value( $session, [$setvalue], 0, 1, undef );
 				}
 				else
 				{
-					return $field->render_value( $session, $setvalue, 0, 0, undef );
+					return $field->render_value( $session, $setvalue, 0, 1, undef );
 				}
 			}
 		}

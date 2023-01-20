@@ -38,7 +38,21 @@ sub create_tables
 
 sub clear_cache
 {
-        my( $self ) = @_;
+	my( $self ) = @_;
+
+	my @keys = keys %{$self->{cache}};
+
+	if( scalar @keys > 0 )
+	{
+		my $time = $self->{cache}->{$keys[-1]};
+
+		for( @keys )
+		{
+			delete $self->{cache}->{$_} if abs($time - $self->{cache}->{$_}) > $self->{timeout};
+		}
+	}
+
+	@keys = keys %{$self->{cache}};
 }
 
 sub commit_data
@@ -55,13 +69,6 @@ sub filter_record
         return 0 unless( defined $ip );
 	
 	my $time = $record->{datestamp}->{epoch};
-
-	# cache clean-up (to keep the memory footprint low)
-	# this should work cos the records are sorted by time
-	for(keys %{$self->{cache}})
-	{
-		delete $self->{cache}->{$_} if abs($time - $self->{cache}->{$_}) > $self->{timeout};
-	}
 
         my $epid = $record->{referent_id};
         my $docid = $record->{referent_docid};
