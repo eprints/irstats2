@@ -27,7 +27,6 @@ $c->{irstats2}->{cache_paths} = [
 
 $c->{plugins}{"Stats::Processor::Access::DocDownloads"}{params}{disable} = undef;
 
-
 # The following utility routines can be used for inserting the charts into a summary page, eg
 #
 # my $util = $repository->get_conf( "irstats2", "util" );
@@ -254,17 +253,20 @@ $c->{irstats2}->{allow} = sub {
 # $c->{irstats2}->{local_domains} = { "ECS Intranet" => "\\.ecs\\.soton\\.ac\\.uk", "University Intranet" => "\\.soton\\.ac\\.uk" };
 
 #IPs additional to http://www.eprints.org/resource/bad_robots/robots_ip.txt to not include in stats
-#$c->{irstats2}->{robot_ip} = [ ];
+#$c->{irstats2}->{robots_ip} = [ ];
 
 #UAs additional to http://www.eprints.org/resource/bad_robots/robots_ua.txt to not include in stats
-#$c->{irstats2}->{robot_ua} = [ ];
+#$c->{irstats2}->{robots_ua} = [ ];
 
 
 # time-out for the so-called "double-click" filtering - default to 3600 secs = 1 hour
+# Default setting - 3600 secs = 1 hour
+# Current setting - 3600 * 24 = 24 hours
 $c->{plugins}->{"Stats::Filter::Repeat"}->{params}->{timeout} = 3600 * 24;
 
-# prevents EPrints 3.2 from breaking (because that trigger isn't implemented in that versin of EPrints)
-# the value '16' comes from EPrints::Const::EP_TRIGGER_DYNAMIC_TEMPLATE
+# Prevents EPrints 3.2 from breaking. 
+# Trigger is not implemented in earlier EPrints versions.
+# '16' is from EPrints::Const::EP_TRIGGER_DYNAMIC_TEMPLATE
 $EPrints::Plugin::Stats::EP_TRIGGER_DYNAMIC_TEMPLATE ||= 16;
 
 # Trigger to load the Google Charts library from the template(s)

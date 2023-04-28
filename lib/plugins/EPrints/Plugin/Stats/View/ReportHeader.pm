@@ -82,7 +82,7 @@ sub render_filters
         my $local_context = $self->handler->context->from_request( $session );
         my $report = $local_context->{irs2report} || "";
 
-        my $url = $self->context->current_url;
+        my $url = $self->handler->context->current_url;
 	$url .= "/" . $report if $report;
 
         my $filters = $frag->appendChild( $session->make_element( 'div', id => 'irstats2_filters', class => 'irstats2_options_filters' ) );
@@ -283,7 +283,7 @@ JS
         my $block_width = int( 100 / $blocks );
         $block_width = 25 if( $block_width > 25 );
 
-        my $context_args = $context_args. "?from=$context->{from}&to=$context->{to}"  if ($context->{from} &&  $context->{to});
+        my $context_args = "?from=$context->{from}&to=$context->{to}"  if ($context->{from} &&  $context->{to});
 
         my( $tr, $td );
 
@@ -394,7 +394,7 @@ sub render_content_ajax
 
 	my $container_id = $self->generate_container_id;
 
-	my $local_context = $self->handler->context->from_request( $self->{session} );
+	my $local_context = $self->handler->context->from_request( $session );
 	my $report = $local_context->{irs2report} || "";
 
 	my $url = EPrints::Plugin::Stats::Utils::base_url( $session ).'/'.$report;

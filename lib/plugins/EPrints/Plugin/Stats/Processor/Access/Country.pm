@@ -23,7 +23,7 @@ sub new
 	return $self if( !$self->{session} );
 
 	# if possible, use the GeoIP data file shipped with EPrints
-	my $dat_file = $self->{session}->config( "lib_path").'/geoip/GeoIP.dat';
+	my $dat_file = $self->{session}->config( "lib_path" ) . '/geoip/GeoIP.dat';
 	
 	# alternatively use the global one
 	$dat_file = 1 if( !-e $dat_file );	
@@ -34,9 +34,13 @@ sub new
 	{
 		if( EPrints::Utils::require_if_exists( $pkg ) )
 		{
-			if($pkg !~ /PurePerl/){
-				$self->{geoip} = $pkg->open( $dat_file );
-			}else{
+			if( $pkg !~ /PurePerl/ )
+			{
+				$self->{geoip} = $pkg->new( $dat_file ) if $dat_file eq '1';
+				$self->{geoip} = $pkg->open( $dat_file ) if $dat_file ne '1';
+			}
+			else
+			{
 				$self->{geoip} = $pkg->new( $dat_file );
 			}
 			last if( defined $self->{geoip} );

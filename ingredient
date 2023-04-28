@@ -1,0 +1,22 @@
+#!/bin/bash
+cd `dirname $0`
+if [ "$1" == "make" ]; then
+	ln -sf cfg/cfg.d
+	ln -sf lib/lang
+	ln -sf lib/static 
+	mkdir -p plugins/EPrints/Plugin
+	cd plugins/EPrints/Plugin
+	ln -sf ../../../lib/plugins/EPrints/Plugin/Screen
+	ln -sf ../../../lib/plugins/EPrints/Plugin/Stats
+	echo "IRStats2 ingredient has been made."
+elif [ "$1" == "unmake" ]; then
+	rm -f cfg.d
+	rm -f lang
+	rm -f static
+	rm -rf plugins
+	echo "IRStats2 ingredient has been unmade."
+else
+	echo "ingredient requires one of the following actions as an argument: make unmake"
+	exit 1
+fi
+exit 0
