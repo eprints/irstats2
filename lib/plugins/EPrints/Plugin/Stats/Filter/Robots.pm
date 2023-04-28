@@ -83,7 +83,7 @@ sub get_robots
 
 	##
 	#to use this feature, define in z_irstats2.pl
-	#$c->{irstats2}->{robot_ips} = [
+	#$c->{irstats2}->{robots_ip} = [
 	#        "180.76.15",
 	#        "123.125.71",
 	#        ];

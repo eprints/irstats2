@@ -265,8 +265,6 @@ Export as <epc:pin name="options"/>
 </epp:phrase>
 
 <epp:phrase id="lib/irstats2/datepicker">
-<?xml version="1.0"?>
-<epp:phrase id="lib/irstats2/datepicker">
   <div class="irstats2_datepicker_inner">
     <form id="irstats2_datepicker">
       <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse;">

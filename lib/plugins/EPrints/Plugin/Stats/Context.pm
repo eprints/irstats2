@@ -178,7 +178,7 @@ sub current_url
 
 	if( !EPrints::Utils::is_set( %includes ) )
 	{
-		return EPrints::Plugin::Stats::Utils::base_url( $self->{session} );
+		return EPrints::Plugin::Stats::Utils::base_url( $self->handler->{session} );
 	}
 
         my $report = $self->{irs2report} || "";
