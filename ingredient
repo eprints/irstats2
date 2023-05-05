@@ -1,5 +1,7 @@
 #!/bin/bash
-cd `dirname $0`
+d=`dirname $0`
+dir=`pwd`
+cd $dir
 if [ "$1" == "make" ]; then
 	ln -sf cfg/cfg.d
 	ln -sf lib/lang
@@ -18,5 +20,8 @@ elif [ "$1" == "unmake" ]; then
 else
 	echo "ingredient requires one of the following actions as an argument: make unmake"
 	exit 1
+fi
+if ls $dir/../../flavours/*/inc 1> /dev/null 2>&1; then 
+	touch $dir/../../flavours/*/inc
 fi
 exit 0
