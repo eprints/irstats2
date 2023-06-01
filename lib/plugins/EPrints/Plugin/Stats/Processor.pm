@@ -182,19 +182,23 @@ sub commit_data
 # Common helper method
 sub parse_datestamp
 {
-        my( $self, $session, $d ) = @_;
+	my( $self, $session, $d ) = @_;
 
-        if( $d =~ /^(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)$/ )
-        {
-                return { day => $3, month => $2, year => $1, epoch => EPrints::Time::datestring_to_timet( $session, "$1-$2-$3T$4:$5:$6Z" ) };
-        }
-	elsif( $d =~ /^(\d\d\d\d)-(\d\d)-(\d\d)$/ )
+	if( defined( $d ) )
 	{
-		return { day => $3, month => $2, year => $1, epoch => EPrints::Time::datestring_to_timet( $session, "$1-$2-$3T00:00:00Z" ) };
+		if( $d =~ /^(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)$/ )
+		{
+			return { day => $3, month => $2, year => $1, epoch => EPrints::Time::datestring_to_timet( $session, "$1-$2-$3T$4:$5:$6Z" ) };
+		}
+		elsif( $d =~ /^(\d\d\d\d)-(\d\d)-(\d\d)$/ )
+		{
+			return { day => $3, month => $2, year => $1, epoch => EPrints::Time::datestring_to_timet( $session, "$1-$2-$3T00:00:00Z" ) };
+		}
 	}
 
-        print STDERR "Stats::Processor: [error] failed to parse date '$d'\n";
-        return {day=>0,month=>0, year=>1900, epoch => 0};
+	print STDERR "Stats::Processor: [error] failed to parse date '" . ( defined $d ? $d : "" ) . "'\n";
+
+	return {day=>0,month=>0, year=>1900, epoch => 0};
 }
 
 sub conf { shift->{conf} || {} }
