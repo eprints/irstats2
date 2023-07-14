@@ -49,24 +49,32 @@ sub base_url
 
 sub validate_non_context_param
 {
-        my( $session, $k, $v ) = @_;
+	my( $session, $k, $v ) = @_;
 
-        if( $k eq 'limit' )
-        {
-                return $v =~ /^\d+|all$/;
-        }
-        elsif( $k eq 'date_resolution' )
-        {
-                return $v =~ /^day|month|year$/;
-        }
-        elsif( $k eq 'graph_type' )
-        {
-                return $v =~ /^area|column$/;
-        }
-        elsif( $k eq 'show_average' )
-        {
-                return $v =~ /^true|false$/;
-        }
+	if( $k eq 'limit' )
+	{
+		return $v =~ /^\d+|all$/;
+	}
+	elsif( $k eq 'date_resolution' )
+	{
+		return $v =~ /^day|month|year$/;
+	}
+	elsif( $k eq 'graph_type' )
+	{
+		return $v =~ /^area|column$/;
+	}
+	elsif( $k eq 'cumulative' )
+	{
+		return $v =~ /^true|false$/;
+	}
+	elsif( $k eq 'show_average' )
+	{
+		return $v =~ /^true|false$/;
+	}
+	elsif( $k eq 'title' )
+	{
+		return $v;
+	}
 	elsif( $k eq 'title_phrase' )
 	{
 		return $session->get_lang->has_phrase( $v );
@@ -77,15 +85,15 @@ sub validate_non_context_param
 		# https://perldoc.perl.org/perlrecharclass#Bracketed-Character-Classes
 		return $v =~ /^[[:print:]]+$/;
 	}
-        elsif( $k =~ /^export|top|view|container_id$/ )
-        {
-                return $v =~ /^[\w\.\-\:]+$/; #NB \w includes underscore, digit
-        }
-        elsif( $k =~ /^base_url|referer$/ )
-        {
+	elsif( $k =~ /^export|top|view|container_id$/ )
+	{
+		return $v =~ /^[\w\.\-\:]+$/; #NB \w includes underscore, digit
+	}
+	elsif( $k =~ /^base_url|referer$/ )
+	{
 		# these appear not to be used. Log param usage as it is unexpected.
 		$session->log( "IRStats2 (Utils validate_non_context_params): unexpected use of URL parameter: $k (value: $v)." );
-        }
+	}
 
 	# an unexpected URL parameter. Get rid!
 	$session->log( "IRStats2 (Utils validate_non_context_params): unexpected URL parameter: $k (value: $v) has been ignored." );

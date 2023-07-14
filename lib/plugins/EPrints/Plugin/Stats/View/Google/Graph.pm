@@ -22,6 +22,7 @@ sub new
 	# default options		
 	$self->options->{date_resolution} ||= 'day';
 	$self->options->{graph_type} ||= 'area';
+	$self->options->{cumulative} ||= 0;
 
 	return $self;
 }
@@ -168,6 +169,18 @@ sub get_data
 
 	# TODO needs new name:
 	$stats->{data} = \@exports;
+
+	if( $has_data && ( $self->options->{cumulative} eq "true" ) )
+	{
+		my $sum = 0;
+
+		for my $datum ( @{ $stats->{data} } )
+		{
+			$datum->{count} += $sum;
+
+			$sum = $datum->{count};
+		}
+	}
 
 	# "has_data" in the sense that: has at least one non-zero data point
 	$stats->{has_data} = $has_data;
