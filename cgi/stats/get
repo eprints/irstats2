@@ -12,7 +12,7 @@ return unless( defined $session );
 
 my $cache_enabled = defined $session->config( 'irstats2', 'cache_enabled' ) ? $session->config( 'irstats2', 'cache_enabled' ) : 1 ;
 # $cache_enabled = undef; # why disable?
-my $cache_dir = $session->config( 'irstats2', 'cache_dir' ) || "/opt/eprints3/tmp";
+my $cache_dir = $session->config( 'irstats2', 'cache_dir' ) || ( $session->config( 'base_path' ) . "/tmp" );
 ##Views that is tested working with caching
 my $cache_enabled_views = {
 	"Table"=>1, 

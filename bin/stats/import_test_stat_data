@@ -1,6 +1,11 @@
-#!/usr/bin/perl -w -I/opt/eprints3/perl_lib
+#!/usr/bin/perl -w 
 
 use strict;
+
+# The script should be installed in $EPRINTS_PATH/ingredients/irstats2/bin/stats/
+use FindBin;
+use lib "$FindBin::Bin/../../../../perl_lib";
+
 use EPrints;
 
 # Set STDOUT to auto flush (without needing a \n)

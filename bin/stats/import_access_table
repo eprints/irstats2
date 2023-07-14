@@ -1,7 +1,11 @@
-#!/usr/bin/perl -w -I /opt/eprints3/perl_lib
-## This script assumes the eprints is installed in /opt/eprints3/
+#!/usr/bin/perl -w
 
 use strict;
+
+# The script should be installed in $EPRINTS_PATH/ingredients/irstats2/bin/stats/
+use FindBin;
+use lib "$FindBin::Bin/../../../../perl_lib";
+
 use Getopt::Long;
 use Pod::Usage;
 use EPrints;
@@ -27,7 +31,7 @@ unless( defined $repoid )
 my $session = new EPrints::Session( 1, $repoid );
 unless( defined $session )
 {
-	&usage;
+	print STDERR "Could not load archive '$repoid'\n";
 	exit;
 }
 
