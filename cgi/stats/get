@@ -73,9 +73,6 @@ if( defined $params->{export} )
 }
 else
 {
-	$session->send_http_header( content_type => $view_plugin->mimetype );
-
-
 	my $container_id = $params->{container_id}||"";
         if ( EPrints::Utils::is_set( $container_id ) && $container_id !~ m/^[a-zA-Z0-9_-]+$/ )
         {
@@ -83,6 +80,8 @@ else
                 $session->terminate;
                 return;
         }
+
+	$session->send_http_header( content_type => $view_plugin->mimetype );
  
 	my $cache = "$cache_dir/" .  get_hashname($session)  ;
 	# if caching is disabled or if this search is already happening(locked) or the view is not cache enabled
