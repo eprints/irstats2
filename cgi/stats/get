@@ -74,12 +74,6 @@ if( defined $params->{export} )
 else
 {
 	my $container_id = $params->{container_id}||"";
-        if ( EPrints::Utils::is_set( $container_id ) && $container_id !~ m/^[a-zA-Z0-9_-]+$/ )
-        {
-                print STDOUT "<p>IRStats2: Invalid container ID <strong>".HTML::Entities::encode( $container_id )."</strong></p>";
-                $session->terminate;
-                return;
-        }
 
 	$session->send_http_header( content_type => $view_plugin->mimetype );
  
