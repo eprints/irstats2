@@ -1,7 +1,7 @@
 #!/bin/bash
 d=`dirname $0`
-dir=`pwd`
-cd $dir
+cd $d
+dir=`pwd`1
 if [ "$1" == "make" ]; then
 	ln -sf cfg/cfg.d
 	ln -sf lib/lang
