@@ -208,8 +208,8 @@ $c->{irstats2}->{sets} = [
 # Misc Options
 ###############
 
-## the dataset to use when making individual eprint queries, i.e. do we show stats for any valid eprint id regardless of sub dataset, or do we revert to showing all repository stats for items not in the live archive (the default position)
-$c->{irstats2}->{eprint_dataset} = "archive";
+## the dataset to use when making individual eprint queries, i.e. do we show stats for any valid eprint id regardless of sub dataset, or do we revert to showing all repository stats for items not in the live archive. As these stats can be cached before an item is moved to the live archive and there is no generic use case of showing all repository stats if a chosen eprint is not yet in the archive, the default is 'eprint' rather than 'archive'.
+$c->{irstats2}->{eprint_dataset} = "eprint";
 
 # by default, anyone can view the stats. Comment out to enable only users with the special '+irstats2/view' role to view stats.
 push @{$c->{public_roles}}, "+irstats2/view";

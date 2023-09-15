@@ -958,7 +958,7 @@ sub valid_set_value
         # TODO can do better than that?
         if( $set_name eq 'eprint' )
         {
-            my $eprint_ds = $self->{session}->config( 'irstats2', 'eprint_dataset' ) || "archive";
+            my $eprint_ds = $self->{session}->config( 'irstats2', 'eprint_dataset' ) || "eprint";
             return (defined $self->{session}->dataset( $eprint_ds )->dataobj( $set_value ) ) ? 1 : 0;
         }
 
