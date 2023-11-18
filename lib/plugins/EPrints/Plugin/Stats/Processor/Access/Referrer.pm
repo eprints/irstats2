@@ -21,8 +21,9 @@ sub new
 
 	if( defined $self->{session} )
 	{
-		$self->{host} = $self->{session}->config( "host" );
-		$self->{domains} = $self->{session}->config( "irstats2", "local_domains" );
+ 		$self->{host} = $self->{session}->config( "host" );
+  		$self->{host} = $self->{session}->config( "securehost" ) unless EPrints::Utils::is_set( $self->{host} );
+    		$self->{domains} = $self->{session}->config( "irstats2", "local_domains" );
 	}
 
 	$self->{domains} ||= {};
@@ -81,7 +82,7 @@ sub get_referrer
 		return 'Internal (OAI-PMH)';
 	}
 
-	if( ( defined $self->{host} && $hostname eq $self->{host} ) || ( defined $self->{securehost} && $hostname eq $self->{securehost} ) )
+	if( defined $self->{host} && $hostname eq $self->{host} )
 	{
 		return 'Internal (Abstract page)' if( $uri =~ /^\/\d+$/ );
 
