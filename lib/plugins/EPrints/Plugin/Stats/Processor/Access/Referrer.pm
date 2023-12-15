@@ -13,25 +13,25 @@ use strict;
 
 sub new
 {
-        my( $class, %params ) = @_;
+	my( $class, %params ) = @_;
 	my $self = $class->SUPER::new( %params );
-        $self->{provides} = [ "referrer" ];
+	$self->{provides} = [ "referrer" ];
 	$self->{disable} = 0;
 	$self->{cache} = {};
 
 	if( defined $self->{session} )
 	{
- 		$self->{host} = $self->{session}->config( "host" );
-  		$self->{host} = $self->{session}->config( "securehost" ) unless EPrints::Utils::is_set( $self->{host} );
-    		$self->{domains} = $self->{session}->config( "irstats2", "local_domains" );
+		$self->{host} = $self->{session}->config( "host" );
+		$self->{host} = $self->{session}->config( "securehost" ) unless EPrints::Utils::is_set( $self->{host} );
+		$self->{domains} = $self->{session}->config( "irstats2", "local_domains" );
 	}
 
 	$self->{domains} ||= {};
 
-        $self->{conf} = {
-                fields => [ 'value' ],
-                render => 'string',
-        };
+	$self->{conf} = {
+		fields => [ 'value' ],
+		render => 'string',
+	};
 	
 	return $self;
 }
@@ -46,8 +46,8 @@ sub process_record
 	my $ref = $record->{referring_entity_id};
 	return unless( EPrints::Utils::is_set( $ref ) );
 
-        # and unescaping the %XX characters:
-        $ref =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
+	# and unescaping the %XX characters:
+	$ref =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
 
 	my $referrer = $self->get_referrer( $ref );
 
@@ -66,7 +66,6 @@ sub get_referrer
 
 	unless( defined $hostname )
 	{
-##		print STDERR "\nReferrer improvement? Failed to parse '$ref'";
 		return undef;
 	}
 

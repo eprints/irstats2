@@ -232,7 +232,8 @@ $c->{irstats2}->{allow} = sub {
 #                                        'Referer' );
 #		if( defined $referer )
 #		{
-#			my $hostname = $session->config( 'host' ) or return 0;
+#			my $hostname = defined $session->config( 'host' ) ? $session->config( 'host' ) : $session->config( 'securehost' );
+#			return 0 unless defined $hostname;
 #
 #			return 1 if( $referer =~ /^https?:\/\/$hostname\/\d+\/?$/ );
 #		}

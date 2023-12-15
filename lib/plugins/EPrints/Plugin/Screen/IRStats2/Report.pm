@@ -136,7 +136,8 @@ sub render
 			$done_any = 1;
 		}
 		$local_context->parse_context() if( $done_any );
-		$cachefile = $self->{cache_dir}."/". md5_hex(  $session->config("host").$pluginid.$options->{metrics}.$local_context->{from}.$local_context->{to}.$local_context->{set_name}.$local_context->{set_value}.$local_context->{datatype}).".ir2";
+		my $host = defined $session->config("host") ? $session->config("host") : $session->config("securehost");
+		$cachefile = $self->{cache_dir}."/". md5_hex(  $host.$pluginid.$options->{metrics}.$local_context->{from}.$local_context->{to}.$local_context->{set_name}.$local_context->{set_value}.$local_context->{datatype}).".ir2";
 
 		if( $cache_enabled  && not( -f "$cachefile.lock") )  ##if cache enabled and not locked and cache file exist
 		{

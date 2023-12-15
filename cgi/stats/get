@@ -116,13 +116,13 @@ sub get_hashname
 	my %none_hash_fields = map { $_ => 1 } @{ ["container_id" ] }; ## parameters to exclude from the md5 generation.
 	my %_params;
 	my @sparams = $session->param();
-        foreach( @sparams )
-        {
-                my $val = $session->param( $_ );
-                next if( !EPrints::Utils::is_set( $val ) || $none_hash_fields{$_} );
-                $_params{$_} = $val;
-        }
-	$_params{'host'} = $session->config('host'); 
+	foreach( @sparams )
+	{
+		my $val = $session->param( $_ );
+		next if( !EPrints::Utils::is_set( $val ) || $none_hash_fields{$_} );
+		$_params{$_} = $val;
+	}
+	$_params{'host'} = defined $session->config('host') ? $session->config('host') :  $session->config('securehost');
 	my $sorted_params = JSON->new->canonical->encode( \%_params);
 	return md5_hex( $sorted_params ).".ir2" ;
 
