@@ -3,6 +3,7 @@ package EPrints::Plugin::Stats::Handler;
 our @ISA = qw/ EPrints::Plugin /;
 
 use Date::Calc;
+use POSIX qw( strftime );
 use strict;
 
 my $INTERNAL_TABLE = 'irstats2_internal';
@@ -229,6 +230,37 @@ sub extract_eprint_data
 	# Dates are normalised by Stats::Context
 	my $dates = $context->dates;
 	my( $from, $to ) = ( $dates->{from}, $dates->{to} );
+	
+	# Set from date to at least since eprint went live or tomorrow if eprint not yet live. This is so confusing pre-live downloads (where uploading user has tested download link) do not get shown in graph.
+	my $really_from = $from;
+	if ( defined $context->{set_value} && $context->{datatype} !~ m/^cache_/ )
+	{
+		my $eprint = $self->{session}->dataset( 'eprint' )->dataobj( $context->{set_value} );
+		if ( defined $eprint )
+		{
+			if ( my $datestamp = $eprint->get_value( 'datestamp' ) )
+			{
+				my @dtbits = split( /[- :]/, $datestamp );
+				my $new_really_from = $dtbits[0] . $dtbits[1] . $dtbits[2];
+				if ( !defined $really_from || $really_from < $new_really_from )
+				{
+					$really_from = $new_really_from;
+				}
+				unless ( defined $to )
+				{
+					$to = strftime( '%Y%m%d', localtime() );
+				}
+			}	
+			else
+			{
+				$really_from = strftime( '%Y%m%d', localtime( time + 86400 ) ); 
+				unless ( defined $to )
+				{
+					$to = $really_from;
+				}
+			}
+		}
+	}
 
 	# Datafilters provide extra filtering of rows.
 	my $datafilter = $context->{datafilter};
@@ -291,17 +323,17 @@ sub extract_eprint_data
 	my @conditions;	
 
 	# time/datestamp conditions
-	if( defined $from && defined $to )
+	if( defined $really_from && defined $to )
 	{
 		my $Q_datestamp = $self->{dbh}->quote_identifier( 'datestamp' );
-		my $Q_from = $self->{dbh}->quote_int( $from );
+		my $Q_from = $self->{dbh}->quote_int( $really_from );
 
-		if( $from < $to )
+		if( $really_from < $to )
 		{
 			my $Q_to = $self->{dbh}->quote_int( $to );
 			push @conditions, "$Q_datestamp >= $Q_from AND $Q_datestamp <= $Q_to";
 		}
-		elsif( "$from" eq "$to" )
+		elsif( "$really_from" eq "$to" )
 		{
 			push @conditions, "$Q_datestamp = $Q_from";
 		}
