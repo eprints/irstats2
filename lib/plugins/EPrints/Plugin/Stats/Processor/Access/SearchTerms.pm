@@ -181,6 +181,7 @@ sub normalize_word
 	$w =~ s/^(.*?)(\&.*)$/$1/g;
 	$w =~ s/^\s+//g;
 	$w =~ s/\s+$//g;
+	$w =~ s/[^\N{U+0000}-\N{U+FFFF}]//g; # Remove unsupported UTF8-MB4 characters that will cause issues when inserting into database.
 
 	return undef unless( EPrints::Utils::is_set( $w ) );
 	
