@@ -154,7 +154,7 @@ JS
 
 ##form for the date and date resolution
         my $datediv = $session->make_element( "div" );
-        my $range = $session->make_element( "form" , "onsubmit"=>"return EPJS_drange_convert();");
+        my $range = $session->make_element( "form" , "onsubmit"=>"return EPJS_drange_convert();", id=>"filter_year_selection");
         $datediv->appendChild($range);
         $filters->appendChild($datediv);
         $range->appendChild($session->make_element( 'input', id => 'drange',name=>"drange", type=>"text", size=>23 ));
@@ -201,7 +201,7 @@ jQuery.noConflict();
 JS
 
 #####resolution block 
-        my $res_block = $session->make_element( 'span', style => 'margin-left:20px;margin-right:20px;' );
+        my $res_block = $session->make_element( 'span', style => 'margin-left:20px;margin-right:20px;', id=>"date_resolution_container" );
         $res_block->appendChild($session->html_phrase( "lib/irstats2/date_resolution/label" ));
 #        my $select = $session->make_element( 'select', name => 'range', style => 'margin-left:20px;' );
 #        my $dates = $frag->appendChild( $session->make_element( 'div', id => 'irstats2_dates', class => 'irstats2_options_dates' ) );
