@@ -115,6 +115,14 @@ sub render_content_ajax
 
 	my $data = $stats->data;
 
+        my $table_header_row = $session->make_element( 'tr', class => "irstats2_table_header_row" );
+        for my $table_header ("#", "Title", "Downloads") {
+                my $th = $session->make_element( 'th' );
+                $th->appendChild( $session->make_text( $table_header ) );
+                $table_header_row->appendChild( $th );
+        }
+        $table->appendChild( $table_header_row );
+
 	my $c = 0;
 	my $reference = 0;
 	my $ref_width = "100";
