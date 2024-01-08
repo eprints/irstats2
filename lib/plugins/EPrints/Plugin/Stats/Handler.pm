@@ -233,7 +233,7 @@ sub extract_eprint_data
 	
 	# Set from date to at least since eprint went live or tomorrow if eprint not yet live. This is so confusing pre-live downloads (where uploading user has tested download link) do not get shown in graph.
 	my $really_from = $from;
-	if ( defined $context->{set_value} && $context->{datatype} !~ m/^cache_/ )
+	if ( defined $context->{set_value} && $context->{set_value} =~ m/^\d+/ && $context->{datatype} !~ m/^cache_/ )
 	{
 		my $eprint = $self->{session}->dataset( 'eprint' )->dataobj( $context->{set_value} );
 		if ( defined $eprint )
