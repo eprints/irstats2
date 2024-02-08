@@ -17,7 +17,7 @@ use strict;
 
 sub new
 {
-        my( $class, %params ) = @_;
+	my( $class, %params ) = @_;
 	
 	my $self = $class->SUPER::new( %params );
 	return $self if( !$self->{session} );
@@ -30,11 +30,16 @@ sub new
 
 	#Test Geo::IP first - it's faster!
 	#If dat_file is not the global one and Geo::IP is available, then we need to call open($dat_file) not new($dat_file)
-	foreach my $pkg ( 'Geo::IP', 'Geo::IP::PurePerl' )
+	foreach my $pkg ( 'GeoIP2::Database::Reader', 'Geo::IP', 'Geo::IP::PurePerl' )
 	{
 		if( EPrints::Utils::require_if_exists( $pkg ) )
 		{
-			if( $pkg !~ /PurePerl/ )
+			if( $pkg =~ /GeoIP2/ && -e "/usr/share/GeoIP/GeoLite2-Country.mmdb" )
+            {
+				$dat_file = "/usr/share/GeoIP/GeoLite2-Country.mmdb";
+				$self->{geoip} = GeoIP2::Database::Reader->new( file  => $dat_file, locales => [ 'en' ] );
+			}
+			elsif( $pkg !~ /PurePerl/ )
 			{
 				$self->{geoip} = $pkg->new( $dat_file ) if $dat_file eq '1';
 				$self->{geoip} = $pkg->open( $dat_file ) if $dat_file ne '1';
@@ -55,14 +60,14 @@ sub new
 		return $self;
 	}
 	
-        $self->{disable} = 0;
-        $self->{provides} = [ "countries" ];
+	$self->{disable} = 0;
+	$self->{provides} = [ "countries" ];
 
 	$self->{conf} = {
-                fields => [ 'value' ],
-                render => 'phrase',
-                render_phrase_prefix => 'irstats2_objects:country_code:',
-        };
+		fields => [ 'value' ],
+		render => 'phrase',
+		render_phrase_prefix => 'irstats2_objects:country_code:',
+	};
 
 	return $self;
 }
@@ -73,10 +78,21 @@ sub process_record
 
 	return unless( $is_download );
 	
-        my $ip = $record->{requester_id};
-        return unless( defined $ip );
+	my $ip = $record->{requester_id};
+	return unless( defined $ip );
 
-	my $code = $self->{geoip}->country_code_by_addr( $ip );
+	my $code;
+	if ( ref $self->{geoip} eq "GeoIP2::Database::Reader" )
+	{
+		eval
+		{
+			$code = $self->{geoip}->country( ip => $ip )->country()->iso_code();
+		};
+	}
+	else
+	{
+		$code = $self->{geoip}->country_code_by_addr( $ip );
+	}
 
 	if( defined $code && length $code )
 	{
