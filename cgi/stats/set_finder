@@ -30,6 +30,9 @@ unless( defined $context->{set_name} )
 	return;
 }
 
+my ( $from, $to ) = EPrints::Plugin::Stats::Utils::normalise_dates( $context );
+my $query_params = $from && $to ? "?from=$from&to=$to" : "";
+
 my $sets = $session->config( 'irstats2', 'sets' );
 my $minimum_filter_length = 0;
 foreach my $set ( @$sets )
@@ -42,6 +45,12 @@ foreach my $set ( @$sets )
 }
 
 my $base_url = EPrints::Plugin::Stats::Utils::base_url( $session );
+my $report = '';
+my $base_url_param = $session->param( 'base_url' );
+if ( EPrints::Plugin::Stats::Utils::validate_non_context_param( $session, 'base_url', $base_url_param ) && $base_url_param =~ m!report/(.*)/?$! )
+{
+        $report = $1;
+}
 
 my $q = $session->param( 'q' );
 
@@ -84,7 +93,7 @@ foreach my $value ( @$values )
 		utf8::decode( $escape_value );
 		utf8::decode( $value->{rendered_set_value} );
 	}
-	$html .= "<li><div class='irstats2_setfinder_row'><a href='$base_url/".HTML::Entities::encode( $context->{set_name} )."/".EPrints::Utils::url_escape( $escape_value )."/'>".$value->{rendered_set_value}."</a></div></li>";
+	$html .= "<li><div class='irstats2_setfinder_row'><a href='$base_url/".HTML::Entities::encode( $context->{set_name} )."/".EPrints::Utils::url_escape( $escape_value )."/$report$query_params'>".$value->{rendered_set_value}."</a></div></li>";
 
 	$done_any++;
 }

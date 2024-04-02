@@ -30,7 +30,7 @@ sub base_url
 # is dealt with in EPrints::Plugins::Stats::Context.
 #
 #  Expected non-context params:
-#  - base_url (possibly deprecated) 
+#  - base_url
 #  - date_resolution
 #  - container_id
 #  - export
@@ -89,9 +89,14 @@ sub validate_non_context_param
 	{
 		return $v =~ /^[\w\.\-\:]+$/; #NB \w includes underscore, digit
 	}
-	elsif( $k =~ /^base_url|referer$/ )
+	elsif( $k =~ 'base_url' )
 	{
-		# these appear not to be used. Log param usage as it is unexpected.
+		my $base_url = base_url( $session );
+		return $v =~ m!^$base_url/?\w+$!;
+	}
+	elsif( $k =~ 'referer' )
+	{
+		# this appear not to be used. Log param usage as it is unexpected.
 		$session->log( "IRStats2 (Utils validate_non_context_params): unexpected use of URL parameter: $k (value: $v)." );
 	}
 
