@@ -630,3 +630,6 @@ $c->{plugins}{"Screen::EPrint::Box::Stats"}{params}{disable} = 1;
 
 #$c->{plugins}{"Screen::EPrint::Box::Stats"}{appears}{summary_bottom} = undef;
 #$c->{plugins}{"Screen::EPrint::Box::Stats"}{appears}{summary_right} = 1000;
+
+# If you are embedding in abstract pages using a phrase set below to 1.
+$c->{irstats2}->{abstract_embed} = 0;

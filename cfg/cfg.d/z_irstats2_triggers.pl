@@ -22,6 +22,10 @@ $c->add_trigger( EPrints::Const::EP_TRIGGER_DYNAMIC_TEMPLATE, sub
 	{
 		$for_stats = 1;
 	}
+	elsif ( $repo->config( "irstats2", "abstract_embed" ) && defined $repo->get_request && ( $repo->get_request->uri =~ m!$abstract_path! || $repo->get_request->uri =~ m!$abstract_long_path! ) )
+	{
+		$for_stats = 1;
+	}
 	return EP_TRIGGER_OK unless $for_stats;
 
 		my $head = $repo->make_doc_fragment;
