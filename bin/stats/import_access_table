@@ -11,17 +11,32 @@ use Pod::Usage;
 use EPrints;
 
 our $verbose = 0;
+my $help = 0;
 
 Getopt::Long::Configure("permute");
 
+my $constraints = { };
+
 GetOptions(
 	'verbose' => \$verbose,
+	'min-accessid=i' => \$constraints->{min_accessid},
+	'max-accessid=i' => \$constraints->{max_accessid},
+	'min-date=s' => \$constraints->{min_date},
+	'max-date=s' => \$constraints->{max_date},
+	'help|?' => \$help,
+
 ) || pod2usage( 2 );
 
 # Set STDOUT to auto flush (without needing a \n)
 $|=1;
 
 my $repoid = shift @ARGV;
+if( $help )
+{
+	&usage();
+	exit;
+}
+
 unless( defined $repoid )
 {
 	&usage();
@@ -43,7 +58,19 @@ unless($handler)
 	exit;
 }
 
-process_access_dataset( $session, $handler );
+if( $constraints->{min_date} && !( $constraints->{min_date} =~ /^(\d{4})-(\d{2})-(\d{2})$/ ) )
+{
+	print STDERR "FATAL ERROR: Failed to parse date '" . $constraints->{min_date} . "'\n";
+	exit 1;
+}
+
+if( $constraints->{max_date} && !( $constraints->{max_date} =~ /^(\d{4})-(\d{2})-(\d{2})$/ ) )
+{
+	print STDERR "FATAL ERROR: Failed to parse date '" . $constraints->{max_date} . "'\n";
+	exit 1;
+}
+
+process_access_dataset( $session, $handler, $constraints );
 
 $session->terminate;
 exit;
@@ -54,9 +81,16 @@ sub usage
 {
 	print <<USAGE;
 
-$0 ARCHIVE_ID [--verbose]
+$0 ARCHIVE_ID [--verbose] [--help]
+     [--min-accessid MIN_ACCESS_ID] [--max-accessid MAX_ACCESS_ID]
+     [--min-date MIN_DATE] [--max-date MAX_DATE]
 
-\t--verbose: displays extra information (useful for debugging).
+    --verbose         displays extra information (useful for debugging).
+    --help            this help.
+    --min-accessid    imports records from this access id onwards.
+    --max-accessid    imports records up until and including this access id.
+    --min-date        imports records from this date onwards (YYYY-MM-DD).
+    --max-date        imports records up until and including this date (YYYY-MM-DD).
 
 USAGE
 }
@@ -66,7 +100,7 @@ USAGE
 # Note that we cannot return ALL the records in one go in an array(-ref) (use far too much memory)
 sub get_records
 {
-	my( $database, $from_accessid ) = @_;
+	my( $database, $constraints ) = @_;
 
 	my @fields = (qw{
 		accessid
@@ -86,8 +120,6 @@ sub get_records
 
 	my $dbh = $database->{dbh};
 
-	my( $date_year, $date_month ) = (undef,undef);
-
 	my $Q_fields = {};
 	my @Q_fields = ();
 
@@ -99,23 +131,56 @@ sub get_records
 
 	my $Q_table = $dbh->quote_identifier( 'access' );
 
+	my $Q_datestamp_year = $dbh->quote_identifier( 'datestamp_year' );
+	my $Q_datestamp_month = $dbh->quote_identifier( 'datestamp_month' );
+	my $Q_datestamp_day = $dbh->quote_identifier( 'datestamp_day' );
+
 	my $sql = "SELECT ".join(",",@Q_fields)." FROM $Q_table";
 
 	my @conditions;
-	if( defined $date_year && defined $date_month )
-	{
-		my $Q_year = $dbh->quote_value( $date_year );
-		my $Q_month = $dbh->quote_value( $date_month );
 
-		push @conditions, $Q_fields->{'datestamp_year'}."=$Q_year";
-		push @conditions, $Q_fields->{'datestamp_month'}."=$Q_month";
-	}
-
-	if( defined $from_accessid && "$from_accessid" ne "0" )
+	if( defined $constraints->{min_accessid} && ( $constraints->{min_accessid} =~ /^[0-9]+$/ ) )
 	{
 		my $Q_access = $dbh->quote_identifier( 'accessid' );
-		my $Q_accessid = $dbh->quote_value( $from_accessid );
-		push @conditions, "$Q_access > $Q_accessid";
+		my $Q_accessid = $constraints->{min_accessid};
+		push @conditions, "$Q_access >= $Q_accessid";
+	}
+
+	if( defined $constraints->{max_accessid} && ( $constraints->{max_accessid} =~ /^[0-9]+$/ ) )
+	{
+		my $Q_access = $dbh->quote_identifier( 'accessid' );
+		my $Q_accessid = $constraints->{max_accessid};
+		push @conditions, "$Q_access <= $Q_accessid";
+	}
+
+	if( defined $constraints->{min_date} )
+	{
+		if( $constraints->{min_date} =~ /^(\d{4})-(\d{2})-(\d{2})$/ )
+		{
+			my $year = $1;
+			my $month = $2;
+			my $day = $3;
+
+			push @conditions,
+				"(($Q_datestamp_year > $year) OR " .
+				"(($Q_datestamp_year = $year) AND (($Q_datestamp_month > $month) OR " .
+				"(($Q_datestamp_month = $month) AND ($Q_datestamp_day >= $day)))))";
+		}
+	}
+
+	if( defined $constraints->{max_date} )
+	{
+		if( $constraints->{max_date} =~ /^(\d{4})-(\d{2})-(\d{2})$/ )
+		{
+			my $year = $1;
+			my $month = $2;
+			my $day = $3;
+
+			push @conditions,
+				"(($Q_datestamp_year < $year) OR " .
+				"(($Q_datestamp_year = $year) AND (($Q_datestamp_month < $month) OR " .
+				"(($Q_datestamp_month = $month) AND ($Q_datestamp_day <= $day)))))";
+		}
 	}
 
 	if( scalar(@conditions) )
@@ -135,18 +200,12 @@ sub get_records
 #
 sub process_access_dataset
 {
-	my( $self, $handler ) = @_;
+	my( $self, $handler, $constraints ) = @_;
 
 	my $database = $self->{database};
 	my $dbh = $database->{dbh};
 
 	my $current_accessid = 0;
-
-        my $access_max_sql = "SELECT MAX(accessid) FROM access;";
-        my $access_max_sth = $dbh->prepare( $access_max_sql );
-
-	$access_max_sth->execute();
-        my @access_max = $access_max_sth->fetchrow_array;
 
 	my $global_ref_time = time;
 	my $global_records_parsed = 0;
@@ -154,7 +213,7 @@ sub process_access_dataset
         my $logger = $self->plugin( "Stats::Logger" );
 
 	# the get_records() method handles incremental SQL processing (it doesn't retrieve ALL the records in one go)
-	my $records_list = get_records( $database, $current_accessid );
+	my $records_list = get_records( $database, $constraints );
 
 	$records_list->map( sub
 	{
