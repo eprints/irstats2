@@ -26,6 +26,7 @@ sub new
         ];
 	$self->{cache_enabled} = defined $self->{session}->config( 'irstats2', 'cache_enabled' ) ? $self->{session}->config( 'irstats2', 'cache_enabled' ) : 1 ;
 	$self->{cache_dir} = $self->{session}->config( 'irstats2', 'cache_dir' ) ;
+	$self->{template} = $self->{session}->config( 'irstats2', 'template' ) if defined $self->{session}->config( 'irstats2', 'template' );
 	return $self;
 }
 
