@@ -13,18 +13,29 @@ $c->add_trigger( EPrints::Const::EP_TRIGGER_DYNAMIC_TEMPLATE, sub
 	my $abstract_long_path = '^' . $repo->config( "rel_path" ) . '/id/eprint/[0-9]+/?';
 	my $for_stats = 0;
 	# IRStats2 pages
-	if ( defined $repo->get_request && $repo->get_request->uri =~ m!$stats_path! )
+	if ( defined $repo->get_request && $repo->get_request->uri =~ m!^$stats_path! )
 	{
 		$for_stats = 1;
 	}
 	# Abstract pages if IRStats2 box plugin enabled
-	elsif ( $repo->config( 'plugins', 'Screen::EPrint::Box::Stats', 'params', 'disable' ) == '0' && defined $repo->get_request && ( $repo->get_request->uri =~ m!$abstract_path! || $repo->get_request->uri =~ m!$abstract_long_path! ) )
+	elsif ( $repo->config( 'plugins', 'Screen::EPrint::Box::Stats', 'params', 'disable' ) == '0' && defined $repo->get_request && ( $repo->get_request->uri =~ m!^$abstract_path! || $repo->get_request->uri =~ m!^$abstract_long_path! ) )
 	{
 		$for_stats = 1;
 	}
-	elsif ( $repo->config( "irstats2", "abstract_embed" ) && defined $repo->get_request && ( $repo->get_request->uri =~ m!$abstract_path! || $repo->get_request->uri =~ m!$abstract_long_path! ) )
+	elsif ( $repo->config( "irstats2", "abstract_embed" ) && defined $repo->get_request && ( $repo->get_request->uri =~ m!^$abstract_path! || $repo->get_request->uri =~ m!^$abstract_long_path! ) )
 	{
 		$for_stats = 1;
+	}
+	elsif( $repo->config( "irstats2", "extra_paths" ) && defined $repo->get_request )
+	{
+		my $request_uri = $repo->get_request->uri;
+		foreach my $extra_path ( @{$repo->config( "irstats2", "extra_paths" ) } )
+		{
+			if ( $request_uri =~ m!^$extra_path! )
+			{
+				$for_stats = 1;
+			}
+		}
 	}
 	return EP_TRIGGER_OK unless $for_stats;
 
@@ -52,4 +63,4 @@ $c->add_trigger( EPrints::Const::EP_TRIGGER_DYNAMIC_TEMPLATE, sub
 		}
 
 		return EP_TRIGGER_OK;
-} );
+}, id => 'include_google_charts_jsapi' );
