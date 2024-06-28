@@ -679,6 +679,16 @@ sub save_data_values_aux
 	{
 		my( $counter, $epid, $date, $value, $count ) = @$row;
 
+		{
+			# Make sure value is not too long (even if utf8-mb4)
+			use bytes;
+			if ( length( $value ) > 767 )
+			{
+				no bytes;
+				$value = substr( $value, 0, 191 );
+			}
+		}
+
 		$sth->bind_param( $i++, $counter );
 		$sth->bind_param( $i++, $epid );
 		$sth->bind_param( $i++, $date );
