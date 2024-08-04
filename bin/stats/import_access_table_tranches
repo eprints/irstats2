@@ -1,0 +1,10 @@
+#!/bin/bash
+dir=`dirname $0`
+repoid=$1
+lastid=$2
+tranche=10000000
+for (( i=1; i<=$lastid; i=$i+$tranche )) do
+	minid=$i
+	maxid=`expr $i + $tranche - 1`
+	$dir/import_access_table $repoid --min-id=$minid --max-id=$maxid --verbose
+done
