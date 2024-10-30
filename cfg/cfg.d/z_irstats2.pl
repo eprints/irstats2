@@ -202,7 +202,8 @@ $c->{irstats2}->{sets} = [
 #	{ 'field' => 'userid' },
 ];
 
-
+# Define the order sets should be displayed if this is important, (e.g. for Filters).
+# $c->{irstats2}->{sets_order} = [ qw/ divisions subjects type authors / ];
 
 ###############
 # Misc Options

@@ -154,6 +154,13 @@ sub load_conf
 			push @{$self->{sets}->{$set_name}->{groupings}}, $gr_name;
 		}
 	}
+
+	# if a specific order for sets is set that store this so set names are provided in this order.
+	my $sets_order = $self->{session}->config( 'irstats2', 'sets_order' );
+	if ( ref( $sets_order ) eq "ARRAY" && scalar @$sets_order > 0 )
+	{
+		$self->{sets_order} = $sets_order;
+	}
 }
 
 # helper methods below - they read and return 'sets' properties
@@ -203,6 +210,10 @@ sub get_sets_names
 {
 	my( $self ) = @_;
 
+	if ( defined $self->{sets_order} )
+	{
+		return $self->{sets_order};
+	}
 	my @names = keys %{$self->{sets}};
 	return \@names;
 }
