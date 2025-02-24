@@ -137,6 +137,9 @@ Export as <epc:pin name="options"/>
 		} );
 	}
 
+	/* Uncomment to resize graphs on window size change. This will override an existing use of window.onresize. */
+    /* window.onresize = irstats2_redraw; */
+
 </script>
 </epp:phrase>
 
@@ -166,6 +169,10 @@ Export as <epc:pin name="options"/>
 			}
 		});
 	});
+			
+	/* Uncomment to resize graphs on window size change. This will override an existing use of window.onresize. */
+    /* window.onresize = irstats2_redraw; */
+			
 </script>
 </epp:phrase>
 
@@ -188,6 +195,10 @@ Export as <epc:pin name="options"/>
                 } 
         } );
     }); 
+	
+	/* Uncomment to resize graphs on window size change. This will override an existing use of window.onresize. */
+    /* window.onresize = irstats2_redraw; */
+	
 </script>
 </epp:phrase>
 
