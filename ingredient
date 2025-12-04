@@ -22,6 +22,7 @@ else
 	exit 1
 fi
 if ls $dir/../../flavours/*/inc 1> /dev/null 2>&1; then 
+    #force auto css/js to update
 	touch $dir/../../flavours/*/inc
 fi
 exit 0
