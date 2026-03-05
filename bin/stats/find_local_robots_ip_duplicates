@@ -1,0 +1,49 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+# The script should be installed in $EPRINTS_PATH/ingredients/irstats2/bin/stats/
+use FindBin;
+use lib "$FindBin::Bin/../../../../perl_lib";
+
+use File::Slurp;
+
+use EPrints;
+
+my $repoid = shift @ARGV;
+unless( defined $repoid )
+{
+        print STDERR "No repository specified\n";
+        exit;
+}
+
+my $session = new EPrints::Session( 1, $repoid );
+unless( defined $session )
+{
+        print STDERR "Repository with ID '$repoid' does not exist\n";
+        exit;
+}
+
+my $local_robots_ip = $session->config( 'irstats2', 'robots_ip' );
+
+use File::Slurp;
+my $global_robots_ip = "\n" . read_file( $session->config( 'base_path' ) . '/var/robots_ip.txt' ) . "\n";
+
+foreach my $ip ( @$local_robots_ip )
+{
+	my @ip_bits = split( /\./, $ip );
+	my $class_b = $ip_bits[0] . '.' . $ip_bits[1] . '.';
+	my $class_c = $ip_bits[0] . '.' . $ip_bits[1] . '.' . $ip_bits[2] . '.' if defined $ip_bits[2];
+        if ( $global_robots_ip =~ m/\n$class_b\n/ )
+	{
+		print "$ip matches $class_b\n";
+	}
+	elsif ( defined $ip_bits[2] && $global_robots_ip =~ m/\n$class_c\n/)
+	{
+		print "$ip matches $class_c\n";
+	}
+	elsif ( defined $ip_bits[3] && $global_robots_ip =~ m/\n$ip\n/ )
+        {
+                print "$ip matches $ip\n";
+        }
+}
