@@ -27,7 +27,7 @@ sub export
 	$stats->render_objects( 'description', 1 );
 
 	my $header = $stats->data->[0];
-	my @header_columns = keys %$header;
+	my @header_columns = sort keys %$header;
 	if( defined $header )
 	{
 		print STDOUT join( ",", @header_columns )."\n";

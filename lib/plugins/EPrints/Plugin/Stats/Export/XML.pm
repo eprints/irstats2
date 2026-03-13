@@ -34,7 +34,7 @@ sub export
         foreach my $data (@{$stats->data})
         {
                 my @record;
-                foreach my $k (keys %$data)
+                foreach my $k (sort keys %$data)
                 {
                         my $v = $data->{$k};
 			push @record, "<$k>$v</$k>";

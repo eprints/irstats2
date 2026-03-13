@@ -30,7 +30,7 @@ sub export
 	foreach my $data (@{$stats->data})
 	{
 		my $fields = {};
-		foreach my $k (keys %$data)
+		foreach my $k (sort keys %$data)
 		{
 			my $v = $data->{$k};
 			$v =~ s/'/\\'/g;
