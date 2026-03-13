@@ -94,15 +94,20 @@ Export as <epc:pin name="options"/>
 </epp:phrase>
 
 <!-- Pseudo reports (eg. the ones on citations/summary pages) -->
+{ 'context': $js_context, 'options': { 'container_id': '$name' } }
 <epp:phrase id="lib/irstats2:embedded:citation:eprint">
     <script type="text/javascript">
         google.setOnLoadCallback(function(){
             var spark_eprintid = '<epc:pin name='eprintid'/>';
-            new EPJS_Stats_Sparkline ( {
-                'container_id': 'spark_eprintid',
-                'datatype': 'downloads',
-                'set_name': 'eprint',
-                'set_value': 'spark_eprintid'
+            new EPJS_Stats_GoogleSpark ( {
+                'context': {
+                    'datatype': 'downloads',
+                    'set_name': 'eprint',
+                    'set_value': spark_eprintid
+                 },
+                 'options': {
+                     'container_id': 'spark_eprintid'
+                 } 
             });
         });
     </script>
