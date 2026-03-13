@@ -406,6 +406,7 @@ Export as <epc:pin name="options"/>
 <epp:phrase id="irstats2_objects:country_code:BM"><img src="{$config{rel_path}}/images/irstats2/flags/bm.png"/><span style="padding-left:5px;">Bermuda</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:BN"><img src="{$config{rel_path}}/images/irstats2/flags/bn.png"/><span style="padding-left:5px;">Brunei Darussalam</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:BO"><img src="{$config{rel_path}}/images/irstats2/flags/bo.png"/><span style="padding-left:5px;">Bolivia</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:BQ"><img src="{$config{rel_path}}/images/irstats2/flags/bq.png"/><span style="padding-left:5px;">Bonaire, Sint Eustatius and Saba</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:BR"><img src="{$config{rel_path}}/images/irstats2/flags/br.png"/><span style="padding-left:5px;">Brazil</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:BS"><img src="{$config{rel_path}}/images/irstats2/flags/bs.png"/><span style="padding-left:5px;">Bahamas</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:BT"><img src="{$config{rel_path}}/images/irstats2/flags/bt.png"/><span style="padding-left:5px;">Bhutan</span></epp:phrase>
@@ -428,6 +429,7 @@ Export as <epc:pin name="options"/>
 <epp:phrase id="irstats2_objects:country_code:CR"><img src="{$config{rel_path}}/images/irstats2/flags/cr.png"/><span style="padding-left:5px;">Costa Rica</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:CU"><img src="{$config{rel_path}}/images/irstats2/flags/cu.png"/><span style="padding-left:5px;">Cuba</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:CV"><img src="{$config{rel_path}}/images/irstats2/flags/cv.png"/><span style="padding-left:5px;">Cape Verde</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:CW"><img src="{$config{rel_path}}/images/irstats2/flags/cw.png"/><span style="padding-left:5px;">Curaçao</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:CX"><img src="{$config{rel_path}}/images/irstats2/flags/cx.png"/><span style="padding-left:5px;">Christmas Island</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:CY"><img src="{$config{rel_path}}/images/irstats2/flags/cy.png"/><span style="padding-left:5px;">Cyprus</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:CZ"><img src="{$config{rel_path}}/images/irstats2/flags/cz.png"/><span style="padding-left:5px;">Czech Republic</span></epp:phrase>
@@ -516,6 +518,7 @@ Export as <epc:pin name="options"/>
 <epp:phrase id="irstats2_objects:country_code:MC"><img src="{$config{rel_path}}/images/irstats2/flags/mc.png"/><span style="padding-left:5px;">Monaco</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:MD"><img src="{$config{rel_path}}/images/irstats2/flags/md.png"/><span style="padding-left:5px;">Moldova, Republic of</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:ME"><img src="{$config{rel_path}}/images/irstats2/flags/me.png"/><span style="padding-left:5px;">Montenegro</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:MF"><img src="{$config{rel_path}}/images/irstats2/flags/mf.png"/><span style="padding-left:5px;">Saint Martin (French part)</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:MG"><img src="{$config{rel_path}}/images/irstats2/flags/mg.png"/><span style="padding-left:5px;">Madagascar</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:MH"><img src="{$config{rel_path}}/images/irstats2/flags/mh.png"/><span style="padding-left:5px;">Marshall Islands</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:MK"><img src="{$config{rel_path}}/images/irstats2/flags/mk.png"/><span style="padding-left:5px;">Macedonia</span></epp:phrase>
@@ -582,8 +585,10 @@ Export as <epc:pin name="options"/>
 <epp:phrase id="irstats2_objects:country_code:SN"><img src="{$config{rel_path}}/images/irstats2/flags/sn.png"/><span style="padding-left:5px;">Senegal</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:SO"><img src="{$config{rel_path}}/images/irstats2/flags/so.png"/><span style="padding-left:5px;">Somalia</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:SR"><img src="{$config{rel_path}}/images/irstats2/flags/sr.png"/><span style="padding-left:5px;">Suriname</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SS"><img src="{$config{rel_path}}/images/irstats2/flags/ss.png"/><span style="padding-left:5px;">South Sudan</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:ST"><img src="{$config{rel_path}}/images/irstats2/flags/st.png"/><span style="padding-left:5px;">Sao Tome and Principe</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:SV"><img src="{$config{rel_path}}/images/irstats2/flags/sv.png"/><span style="padding-left:5px;">El Salvador</span></epp:phrase>
+<epp:phrase id="irstats2_objects:country_code:SX"><img src="{$config{rel_path}}/images/irstats2/flags/sx.png"/><span style="padding-left:5px;">Sint Maarten (Dutch part)</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:SY"><img src="{$config{rel_path}}/images/irstats2/flags/sy.png"/><span style="padding-left:5px;">Syrian Arab Republic</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:SZ"><img src="{$config{rel_path}}/images/irstats2/flags/sz.png"/><span style="padding-left:5px;">Swaziland</span></epp:phrase>
 <epp:phrase id="irstats2_objects:country_code:TC"><img src="{$config{rel_path}}/images/irstats2/flags/tc.png"/><span style="padding-left:5px;">Turks and Caicos Islands</span></epp:phrase>
