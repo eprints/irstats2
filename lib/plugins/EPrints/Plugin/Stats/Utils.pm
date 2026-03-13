@@ -4,6 +4,8 @@ our @ISA = qw/ EPrints::Plugin /;
 
 use strict;
 use Date::Calc;
+use Digest::MD5 qw(md5 md5_hex md5_base64);
+use JSON;
 
 # Stats::Utils
 #
@@ -517,6 +519,176 @@ sub get_param
         }
 
         return undef;
+}
+
+sub cache_report
+{
+        my( $session, $handler, $full_uri )  = @_;
+
+        unless( defined $full_uri )
+        {
+                # no conf means that this report is not valid.
+                $session->log( "IRStats2 Cache: No URI provided");
+                return;
+        }
+	$full_uri = $session->config( 'rel_cgipath' ) . $full_uri;
+	my ( $uri, $params_str ) = split( '\?', $full_uri );
+	my %params = ();
+	if ( $params_str )
+	{
+		my @params_kv = split( '&', $params_str );
+		foreach ( @params_kv )
+		{
+			my ( $param_key, $param_value ) = split( '=', $_ );
+			$params{$param_key} = $param_value;
+		}
+	}
+
+	my $context = EPrints::Plugin::Stats::Context->new( handler => $handler, session => $session )->from_request( $uri, %params );
+
+	my $report = $context->current_report;
+	my $conf = $session->config( 'irstats2', 'report', $report );
+
+	my $items = $conf->{items} || [];
+	foreach my $item ( @{$conf->{items} || []} )
+	{
+		if ( $item->{options}->{items} )
+		{
+			push @$items, @{$item->{options}->{items}};
+		}
+	}
+
+	foreach my $item ( @$items )
+	{
+	        my $pluginid = delete $item->{plugin};
+	        next if !defined $pluginid || $pluginid eq "ReportHeader"  || $pluginid eq "Grid";
+
+		my $options = delete $item->{options};
+                $options = {} unless defined $options;
+		$options->{range} ||= '_ALL_' unless $pluginid eq "KeyFigures" || $context->{from} || $context->{to};
+		$options->{cumulative} ||= '0' if $pluginid eq "Google::Graph";
+		foreach ( keys %$options )
+		{
+			if ( $params{$_} )
+			{
+				$options->{$_} = $params{$_};
+			}
+			$options->{$_} = "" . $options->{$_};
+		}
+
+		my $local_context = $context->clone();
+
+                my $done_any = 0;
+                foreach( keys %$item )
+                {
+                        $local_context->{$_} = $item->{$_};
+			$done_any = 1;
+                }
+                $local_context->parse_context() if( $done_any );
+
+		my $cache = {};
+		my $cache_dir = $session->config( 'irstats2', 'cache_dir' );
+		my $cachekey = generate_md5_sorted_params_cachekey( $session, { view => $pluginid, %$options, from => $local_context->{from}, to => $local_context->{to}, set_name => $local_context->{set_name}, set_value => $local_context->{set_value}, datatype => $local_context->{datatype}, datafilter => $local_context->{datafilter} } );
+		my $cachefile = "$cache_dir/" . $cachekey . ".ir2";
+
+		my $plugin = $session->plugin( "Stats::View::$pluginid", handler => $handler, options => $options, context => $local_context, cache => $cache );
+		next unless( defined $plugin );
+		my $container_id = $plugin->container;
+
+		my $data;
+		if( $pluginid eq "KeyFigures" )
+                {
+                        my $render = $plugin->render;
+                        $data = encode_json( $cache );
+                        foreach my $metric ( @{$plugin->get_metrics} )
+                        {
+                                my ($metric_name, $metric_type) = split( /\./, $metric );
+                                next if ! defined $metric_name || ( defined $metric_type  && $metric_type ne 'spark' );
+                                my $spark_context = $local_context->clone();
+                                $spark_context = $plugin->apply_metric_context( $spark_context, $metric_name );
+				my $range = $options->{range} ? $options->{range} : '_ALL_';
+                                my $spark_cachekey = generate_md5_sorted_params_cachekey( $session, { view => 'Google::Spark', range => $range, from => $spark_context->{from}, to => $spark_context->{to}, set_name => $spark_context->{set_name}, set_value => $spark_context->{set_value}, datatype => $spark_context->{datatype}, datafilter => $spark_context->{datafilter} } );
+                                my $spark_cachefile = "$cache_dir/" . $spark_cachekey . ".ir2";
+
+                                my $spark_plugin = $session->plugin( "Stats::View::Google::Spark", handler => $handler, options => $options, context => $spark_context );
+				my $spark_data = get_ajax_data( $spark_plugin, $spark_context );
+                                write_cachefile( $spark_cachefile, $spark_data );
+                        }
+                }
+		elsif ( $pluginid eq "Compare" )
+		{
+			foreach my $year ( $plugin->get_years )
+			{
+				my $year_context = $local_context->clone();
+				$year_context->{datatype} = 'downloads';
+				$year_context->dates( { from => undef, to => undef, range => "$year" } );
+				my $year_options = { date_resolution => 'month', graph_type => 'column', cumulative => '0' };
+				my $year_cachekey = generate_md5_sorted_params_cachekey( $session, { view => 'Google::Graph', %$year_options, range => $year_context->{range}, from => $year_context->{from}, to => $year_context->{to}, set_name => $year_context->{set_name}, set_value => $year_context->{set_value}, datatype => $year_context->{datatype}, datafilter => $year_context->{datafilter} } );
+				my $year_cachefile = "$cache_dir/" . $year_cachekey . ".ir2";
+				my $year_plugin = $session->plugin( "Stats::View::Google::Graph", handler => $handler, options => $year_options, context => $year_context );
+				my $year_data = get_ajax_data( $year_plugin, $year_context );
+                                write_cachefile( $year_cachefile, $year_data );
+			}
+		}
+		else
+		{
+			$data = get_ajax_data( $plugin, $local_context, $container_id );
+                }
+		write_cachefile( $cachefile, $data ) unless $pluginid eq "Compare";
+        }
+}
+
+sub get_ajax_data
+{
+	my ( $plugin, $context, $container_id ) = @_;
+
+	local *STDOUT;
+        open STDOUT, '>/dev/null' or warn "Can't open /dev/null: $!";
+        my $data = $plugin->ajax( $context );
+        $data =~ s/$container_id/irstats2_container_IDNUM/g if $container_id;
+        close STDOUT;
+
+	return $data;
+}
+
+sub write_cachefile
+{
+	my ( $filename, $data ) = @_;
+
+	`touch $filename.lock`;
+	open(OUT,">$filename");
+	binmode(OUT, ":utf8");
+	print OUT $data;
+	close OUT;
+	`rm -f $filename.lock`;
+}
+
+sub generate_cachekey
+{
+	my $string = '';
+	foreach ( @_ )
+	{
+		$string .= $_ if defined $_;
+	}
+	return $string;
+}
+
+sub generate_md5_sorted_params_cachekey
+{
+        my ( $session, $param_keys_values ) = @_;
+
+        my %none_hash_fields = map { $_ => 1 } @{ ["container_id" ] }; ## parameters to exclude from the md5 generation.
+        my %params;
+        my @param_keys = $param_keys_values ? keys %$param_keys_values : $session->param();
+        foreach( @param_keys )
+        {
+                my $val = $param_keys_values ? $param_keys_values->{$_} : $session->param( $_ ) ;
+                next if( !EPrints::Utils::is_set( $val ) || $none_hash_fields{$_} );
+                $params{$_} = $val;
+        }
+        $params{'host'} = defined $session->config('host') ? $session->config('host') :  $session->config('securehost');
+        my $sorted_params = JSON->new->canonical->encode( \%params );
+        return md5_hex( $sorted_params );
 }
 
 1;

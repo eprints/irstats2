@@ -77,7 +77,7 @@ else
 
 	$session->send_http_header( content_type => $view_plugin->mimetype );
  
-	my $cache = "$cache_dir/" .  get_hashname($session)  ;
+	my $cache = "$cache_dir/" .  EPrints::Plugin::Stats::Utils::generate_md5_sorted_params_cachekey( $session ) . ".ir2";
 	# if caching is disabled or if this search is already happening(locked) or the view is not cache enabled
 	if( $cache_enabled == 0 || -f "$cache.lock" || not $cache_enabled_views->{$view}) 
 	{
@@ -94,13 +94,7 @@ else
 			my $data = $view_plugin->ajax( $context );
 			##replace irstats2_container_14902 with irstats2_container_IDNUM
 			$data =~ s/$container_id/irstats2_container_IDNUM/g;
-
-			`touch $cache.lock`;
-			open(OUT,">$cache");
-			binmode(OUT, ":utf8");
-			print OUT $data;
-			close OUT;
-			`rm -f $cache.lock`;
+			EPrints::Plugin::Stats::Utils::write_cachefile( $cache, $data );
 		}
 	}
 }
@@ -108,32 +102,11 @@ else
 $session->terminate;
 return;
 
-
-sub get_hashname
-{	
-	my ($session) = @_;
-
-	my %none_hash_fields = map { $_ => 1 } @{ ["container_id" ] }; ## parameters to exclude from the md5 generation.
-	my %_params;
-	my @sparams = $session->param();
-	foreach( @sparams )
-	{
-		my $val = $session->param( $_ );
-		next if( !EPrints::Utils::is_set( $val ) || $none_hash_fields{$_} );
-		$_params{$_} = $val;
-	}
-	$_params{'host'} = defined $session->config('host') ? $session->config('host') :  $session->config('securehost');
-	my $sorted_params = JSON->new->canonical->encode( \%_params);
-	return md5_hex( $sorted_params ).".ir2" ;
-
-}
-
-
 sub get_context
 {
 	my( $session, $handler ) = @_;
 
-	my $context = $handler->context->from_request( $session );
+	my $context = $handler->context->from_request;
 	
 	my %context_fields = map { $_ => 1 } @{ $context->fields || [] };
 
