@@ -651,3 +651,40 @@ table.irstats2_table {
 div[id^=irstats2_summary_page_doc_downloads_] > div > div:nth-child(2) {
 	font-size: initial !important;
 }
+
+#irstats2_datepicker > table {
+	border: 0;
+	border-collapse: collapse;
+	width: 100%;
+}
+#irstats2_datepicker > table > tbody > tr > td, #irstats2_datepicker > table > tbody > tr > th {
+	padding: 5px;
+	border: 1px solid #ccc;
+}
+
+#irstats2_datepicker > table > tbody > tr > th {
+	font-weight: bold;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#irstats2_datepicker > table table {
+	border: 0;
+	border-collapse: collapse;
+}
+
+#irstats2_datepicker > table table td, #irstats2_datepicker > table table th {
+	padding: 0;
+}
+
+#irstats2_datepicker > table table td {
+	width: 60px;
+}
+
+#irstats2_datepicker .ep_form_action_buttons {
+	text-align: center;
+}
+
+#irstats2_datepicker .ep_form_action_button {
+	margin-left: 25px;
+}

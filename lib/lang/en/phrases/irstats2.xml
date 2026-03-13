@@ -284,45 +284,44 @@ Export as <epc:pin name="options"/>
 <epp:phrase id="lib/irstats2/datepicker">
   <div class="irstats2_datepicker_inner">
     <form id="irstats2_datepicker">
-      <table cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse;">
+      <table>
         <tr>
-          <td style="font-weight: bold;padding: 5px;border:1px solid #CCC" valign="middle" align="center">Select dates:</td>
-          <td style="padding: 5px;border:1px solid #CCC">
-            <table cellspacing="0" cellpadding="0" border="0">
+          <th>Select dates:</th>
+          <td>
+            <table>
               <tr>
                 <td>
-                  <label for="sd" style="width: 30px;">Start Date : </label>
+                  <label for="sd">Start Date : </label>
                 </td>
                 <td>
                   <input type="text" class="w8em format-y-m-d highlight-days-67 range-high-today" name="from" id="sd" value="" maxlength="10"/>
                 </td>
               </tr>
               <tr>
-                <td>
-                  <label for="ed" style="width: 30px;">End Date : </label>
+		<td>
+                  <label for="ed">End Date : </label>
                 </td>
                 <td>
                   <input type="text" class="w8em format-y-m-d highlight-days-67 range-high-today" name="to" id="ed" value="" maxlength="10"/>
                 </td>
-                <td align="center" rowspan="2">
-                  <input type="submit" value="View" style="margin-left:25px;" class="ep_form_action_button"/>
+                <td class="ep_form_action_buttons" rowspan="2">
+                  <input type="submit" value="View" class="ep_form_action_button"/>
                 </td>
               </tr>
             </table>
           </td>
         </tr>
         <tr>
-          <td style="font-weight: bold; padding: 5px;border:1px solid #CCC" valign="middle" align="center">-OR- select a range:</td>
-          <td style="padding: 5px;border:1px solid #CCC">
+          <th>-OR- select a range:</th>
+          <td>
             <epc:pin name="ranges"/>
             <input type="submit" name="view_range" value="View" class="ep_form_action_button"/>
           </td>
         </tr>
         <tr>
-          <td style="font-weight: bold; padding: 5px;border:1px solid #CCC" valign="middle" align="center">Date resolution</td>
-          <td style="padding: 5px;border:1px solid #CCC">
+	  <th>Date resolution</th>
+          <td>
             <epc:pin name="date_res"/>
-            <!--    <input type="submit" value="View" class="ep_form_action_button" /> -->
           </td>
         </tr>
       </table>
