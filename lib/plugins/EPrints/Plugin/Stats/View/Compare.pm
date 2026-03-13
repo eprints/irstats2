@@ -31,22 +31,7 @@ sub render_content
         my( $min_date, $max_date ) = $self->handler->get_dataset_boundaries( 'access' );
         $min_date ||= '20000101';
 
-	my @years;
-
-	my( $min_y, $max_y );
-	if( $min_date =~ /^(\d{4})/ )
-	{
-		$min_y = $1;
-	}
-	if( $max_date =~ /^(\d{4})/ )
-	{
-		$max_y = $1;
-	}
-
-	if( defined $min_y && defined $max_y )
-	{
-		push @years, $_ for( $min_y..$max_y );
-	}
+	my @years = $self->get_years;
 
 	foreach my $year (@years)
 	{
@@ -60,6 +45,33 @@ sub render_content
 
 	return $frag;
 
+}
+
+sub get_years
+{
+	my( $self ) = @_;
+
+	my( $min_date, $max_date ) = $self->handler->get_dataset_boundaries( 'access' );
+        $min_date ||= '20000101';
+
+        my @years;
+
+        my( $min_y, $max_y );
+        if( $min_date =~ /^(\d{4})/ )
+        {
+                $min_y = $1;
+        }
+        if( $max_date =~ /^(\d{4})/ )
+        {
+                $max_y = $1;
+        }
+
+        if( defined $min_y && defined $max_y )
+        {
+                push @years, $_ for( $min_y..$max_y );
+        }
+
+	return @years;
 }
 
 sub render_sub_plugins

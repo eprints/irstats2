@@ -115,9 +115,10 @@ if ( defined $cache_paths )
 	$handler->log( "Requesting stats pages to be cached" );
 	for my $cache_path ( @$cache_paths )
 	{
-		my $cmd = $session->config("perl_url") . $cache_path;
-		$handler->log( "Caching $cmd" );
-		`curl $cmd > /dev/null 2>&1`;
+		my $full_cache_path = $session->config("rel_cgipath") . $cache_path;
+		$handler->log( "Caching $full_cache_path" );
+		EPrints::Plugin::Stats::Utils::cache_report( $session, $handler, $full_cache_path );
+
 	}
 }
 

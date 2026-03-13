@@ -90,7 +90,7 @@ sub get_metric
 {
 	my( $self, $context, $name ) = @_;
 
-	my $cachekey = "_".$name.$context->{from}.$context->{to}.$context->{set_name}.$context->{set_value}.$context->{datatype};
+	my $cachekey = EPrints::Plugin::Stats::Utils::generate_cachekey( "_", $name, $context->{from}, $context->{to}, $context->{set_name}, $context->{set_value}, $context->{datatype} );
 	return $self->{cache}->{$cachekey} if( exists $self->{cache}->{$cachekey} );
 	$self->{cache}->{$cachekey} = $self->handler->data( $context )->select( type => 'sum' )->sum_all();
 	$self->{cache}->{$cachekey} = 0 if( !defined $self->{cache}->{$cachekey} );
@@ -142,8 +142,8 @@ sub compute_metric
 {
 	my( $self, $context, $name ) = @_;
 
-	my $cachekey = "_".$name.$context->{from}.$context->{to}.$context->{set_name}.$context->{set_value}.$context->{datatype};
-    return $self->{cache}->{$cachekey} if( exists $self->{cache}->{$cachekey} );
+	my $cachekey = EPrints::Plugin::Stats::Utils::generate_cachekey( "_", $name, $context->{from}, $context->{to}, $context->{set_name}, $context->{set_value}, $context->{datatype} );
+	return $self->{cache}->{$cachekey} if( exists $self->{cache}->{$cachekey} );
 
 	my $metric = $METRICS->{$name};
 	
@@ -235,12 +235,7 @@ sub render_content
 
 	my $frag = $session->make_element( 'div', class => 'irstats2_keyfigures' );
 
-	my $metrics = $self->options->{metrics};
-
-	if( !EPrints::Utils::is_set( $metrics ) || ref( $metrics ) ne 'ARRAY' )
-	{
-		$metrics = $DEFAULT_METRICS;
-	}
+	my $metrics = $self->get_metrics;
 
 	my $c = 0;
 	foreach my $metric (@$metrics)
@@ -275,6 +270,20 @@ sub render_content
 	$frag->appendChild( $session->make_element( 'div', class => 'irstats2_ruler' ) );
 
 	return $frag;
+}
+
+sub get_metrics
+{
+	my( $self ) = @_;
+
+	my $metrics = $self->options->{metrics};
+
+        if( !EPrints::Utils::is_set( $metrics ) || ref( $metrics ) ne 'ARRAY' )
+        {
+                $metrics = $DEFAULT_METRICS;
+        }
+
+	return $metrics;
 }
 
 
