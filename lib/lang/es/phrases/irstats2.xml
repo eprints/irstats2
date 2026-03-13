@@ -177,6 +177,17 @@ Exportar como <epc:pin name="options"/>
 <epp:phrase id="lib/irstats2:report:general:main">Resumen</epp:phrase>
 <epp:phrase id="lib/irstats2:report:general:compare_years">Comparación anual</epp:phrase>
 
+<!-- View titles -->
+
+<epp:phrase id="lib/irstats2:view:top_downloads">Artículos más descargados</epp:phrase>
+<epp:phrase id="lib/irstats2:view:top_authors">Autores principales</epp:phrase>
+<epp:phrase id="lib/irstats2:view:item_types">Tipo de recursos</epp:phrase>
+<epp:phrase id="lib/irstats2:view:file_format">Tipo de recursos</epp:phrase>
+<epp:phrase id="lib/irstats2:view:download_countries">Formatos de archivo</epp:phrase>
+<epp:phrase id="lib/irstats2:view:top_referrers">Formatos de archivo</epp:phrase>
+<epp:phrase id="lib/irstats2:view:browsers">Navegadores</epp:phrase>
+<epp:phrase id="lib/irstats2:view:search_terms">Términos de búsqueda</epp:phrase>
+
 <epp:phrase id="lib/irstats2:report:timeline:content">
 	<div style='float:left;'>
 		<epc:pin name='date'/>
