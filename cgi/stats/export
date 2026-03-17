@@ -25,7 +25,7 @@ unless(defined $handler)
         return;
 }
 
-my $context = $handler->context->from_request( $session );
+my $context = $handler->context->from_request;
 
 # if one of these 2 isn't set, delete/ignore both
 if( !defined $context->{set_name} ne !defined $context->{set_value} )

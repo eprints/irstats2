@@ -62,7 +62,7 @@ sub from
 	my $processor = $self->{processor};
 	$processor->{stats}->{handler} = $self->{session}->plugin( 'Stats::Handler' );
 
-	$processor->{context} = $processor->{stats}->{handler}->context()->from_request( $self->{session} );
+	$processor->{context} = $processor->{stats}->{handler}->context()->from_request;
 
 	my $report = $processor->{context}->current_report;
 	my $conf = $self->{session}->config( 'irstats2', 'report', $report );
@@ -138,7 +138,8 @@ sub render
 		}
 		$local_context->parse_context() if( $done_any );
 		my $host = defined $session->config("host") ? $session->config("host") : $session->config("securehost");
-		$cachefile = $self->{cache_dir}."/". md5_hex(  $host.$pluginid.$options->{metrics}.$local_context->{from}.$local_context->{to}.$local_context->{set_name}.$local_context->{set_value}.$local_context->{datatype}).".ir2";
+		my $cachekey = EPrints::Plugin::Stats::Utils::generate_md5_sorted_params_cachekey( $session,  { view => $pluginid, metrics => $options->{metrics}, from => $context->{from}, to => $context->{to}, set_name => $context->{set_name}, set_value => $context->{set_value}, datatype => $context->{datatype} } );
+		$cachefile = $session->config( 'irstats2', 'cache_dir' )."/" . $cachekey . ".ir2";
 
 		if( $cache_enabled  && not( -f "$cachefile.lock") )  ##if cache enabled and not locked and cache file exist
 		{

@@ -43,7 +43,7 @@ sub handler { shift->{handler} }
 
 sub from_request
 {
-	my( $self ) = @_;
+	my( $self, $uri, %params ) = @_;
 
 	my $session = $self->handler->{session};
 
@@ -53,8 +53,8 @@ sub from_request
 		delete $self->{$_};
 	}
 
-	# Then check via URI
-        my $uri = $session->get_uri();
+	# Then check via URI unless provided as a parameter
+	$uri ||= $session->get_uri();
 
 	return $self unless defined $uri;
 
@@ -68,7 +68,7 @@ sub from_request
 	# /cgi/stats/report/report_name
 	# /cgi/stats/report/set_name/set_value/report_name
 	if ( $uri =~ m#^/cgi/stats/report/?(.*)$# )
-    {
+	{
 		my @paths = split( /\//, $1 );
 		if( scalar(@paths) == 1 )
 		{
@@ -105,10 +105,21 @@ sub from_request
 	}
 
 	# Then check URI parameters, priority over the rest
-	foreach( $session->param() )
+	if ( $session->request )
 	{
-		next if( !$FIELDSMAP{$_} ); 
-		$self->{$_} = $self->validate_param( $_, $session->param( "$_" ) );
+		foreach( $session->param() )
+		{
+			next if( !$FIELDSMAP{$_} );
+			$self->{$_} = $self->validate_param( $_, $session->param( "$_" ) );
+		}
+	}
+	elsif ( %params )
+	{
+		foreach( keys %params )
+		{
+			next if( !$FIELDSMAP{$_} );
+			$self->{$_} = $self->validate_param( $_, $params{$_} );
+		}
 	}
 
 	$self->parse_context();

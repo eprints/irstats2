@@ -79,7 +79,7 @@ sub render_filters
         my @sets = @{$self->handler->sets->get_sets_names()||[]};
         push @sets, 'eprintid';
 
-        my $local_context = $self->handler->context->from_request( $session );
+        my $local_context = $self->handler->context->from_request;
         my $report = $local_context->{irs2report} || "";
 
         my $url = $self->handler->context->current_url;
@@ -394,7 +394,7 @@ sub render_content_ajax
 
 	my $container_id = $self->generate_container_id;
 
-	my $local_context = $self->handler->context->from_request( $session );
+	my $local_context = $self->handler->context->from_request;
 	my $report = $local_context->{irs2report} || "";
 
 	my $url = EPrints::Plugin::Stats::Utils::base_url( $session ).'/'.$report;

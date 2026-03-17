@@ -22,7 +22,7 @@ unless(defined $handler)
         $session->terminate();
         return;
 }
-my $context = $handler->context->from_request( $session );
+my $context = $handler->context->from_request;
 
 unless( defined $context->{set_name} )
 {
