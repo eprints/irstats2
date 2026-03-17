@@ -2,8 +2,9 @@
 dir=`dirname $0`
 repoid=$1
 lastid=$2
+firstid=${3:-1}
 tranche=10000000
-for (( i=1; i<=$lastid; i=$i+$tranche )) do
+for (( i=$firstid; i<=$lastid; i=$i+$tranche )) do
 	minid=$i
 	maxid=`expr $i + $tranche - 1`
 	$dir/import_access_table $repoid --min-accessid=$minid --max-accessid=$maxid --verbose
