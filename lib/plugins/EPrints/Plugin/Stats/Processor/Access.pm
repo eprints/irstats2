@@ -266,6 +266,18 @@ sub process_dataset
 
 	my @plugins = @{$handler->get_stat_plugins( 'Processor::Access' ) || []};
 
+	if ( $params->{processors} )
+	{
+		my @selected_plugins = ();
+		foreach ( @plugins )
+		{
+			my $plugin_name = ref $_;
+			$plugin_name = ( split( '::', $plugin_name ) )[-1];
+			push @selected_plugins, $_ if $params->{processors}->{$_};
+		}
+		@plugins = @selected_plugins;
+	}
+
 	my @filters = ();
 	foreach my $filterid (@{$params->{'filters'} || []})
 	{
@@ -312,7 +324,10 @@ sub process_dataset
 		process_existing_records( $session, $handler, \%run_stats, \@plugins, \@filters, $params->{from_date} );
 	}
 
-	process_new_records( $session, $handler, \%run_stats, \@plugins, \@filters );
+	unless ( $params->{'from_date'} )
+	{
+		process_new_records( $session, $handler, \%run_stats, \@plugins, \@filters );
+	}
 
 	# Because $record_list->is_last() is not reliable on the last run (see below: is_last()), we need to call commit_data again.
 	foreach my $plugin ( @plugins, @filters )
