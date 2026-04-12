@@ -88,11 +88,11 @@ else
 	$processors = '';
 }
 
-if ( ( $from_date || $datasets ) && $setup )
+if ( $from_date && $setup )
 {
 	$from_date = undef;
 	$processors = '';
-	$handler->log( "WARNING: --from-date and/or --datasets have no effect when used with --setup.", 1 );
+	$handler->log( "WARNING: --from-date has no effect when used with --setup.", 1 );
 }
 
 if( $do_sets )
