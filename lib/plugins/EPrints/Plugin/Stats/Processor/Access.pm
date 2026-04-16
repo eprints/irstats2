@@ -89,9 +89,10 @@ sub process_access_record
 
 sub process_existing_records
 {
-	my( $session, $handler, $run_stats, $plugins, $filters ) = @_;
+	my( $session, $handler, $run_stats, $plugins, $filters, $from_date ) = @_;
 
 	my $access_base_path = $session->config( 'archiveroot' ) . "/var/access";
+
 
 	if( -e $access_base_path )
 	{
@@ -99,8 +100,17 @@ sub process_existing_records
 		my @years = grep { /^\d{4}$/ } readdir $access_base_dh;
 		closedir $access_base_dh;
 
+		my $from_date_num = 0;
+		if ( $from_date )
+		{
+			$from_date_num = $from_date;
+			$from_date_num =~ s/-//g;
+		}
+
 		foreach my $year ( sort @years )
 		{
+			next if $year . 9999 < $from_date_num; # No need to process any stats for this year if from_date is a later year.
+
 			my $year_path = "$access_base_path/$year";
 
 			opendir my( $year_dh ), "$year_path" or die "Couldn't open dir '$year_path': $!";
@@ -109,6 +119,11 @@ sub process_existing_records
 
 			foreach my $day ( sort @days )
 			{
+				# No need to process any stats for this daya if from_date is a later date
+				my $day_num = $day;
+				$day_num =~ s/\D//g;
+				next if $day_num < $from_date_num;
+
 				my $day_path = "$year_path/$day";
 
 				$handler->log( "Processing file: $day_path" );
@@ -251,6 +266,18 @@ sub process_dataset
 
 	my @plugins = @{$handler->get_stat_plugins( 'Processor::Access' ) || []};
 
+	if ( $params->{processors} )
+	{
+		my @selected_plugins = ();
+		foreach ( @plugins )
+		{
+			my $plugin_name = ref $_;
+			$plugin_name = ( split( '::', $plugin_name ) )[-1];
+			push @selected_plugins, $_ if $params->{processors}->{$_};
+		}
+		@plugins = @selected_plugins;
+	}
+
 	my @filters = ();
 	foreach my $filterid (@{$params->{'filters'} || []})
 	{
@@ -276,12 +303,31 @@ sub process_dataset
 		global_records_kept => 0
 	);
 
-	if( $params->{'create_tables'} )
+	# Delete all recordsfrom date-based tables on or after from_date irstats2 tables before re-inserting
+	if ( $params->{'from_date'} )
 	{
-		process_existing_records( $session, $handler, \%run_stats, \@plugins, \@filters );
+		my @provides = ();
+		foreach my $plugin ( @plugins )
+		{
+			push @provides, @{$plugin->{provides}};
+		}
+	        my %temp_provides_hash = map { $_ => 1 } @provides;
+		my $database = $session->get_database;
+		foreach my $provide ( keys %temp_provides_hash )
+		{
+			$handler->delete_data_values_from_date( $provide, $params->{from_date} );
+		}
 	}
 
-	process_new_records( $session, $handler, \%run_stats, \@plugins, \@filters );
+	if( $params->{'create_tables'} || $params->{'from_date'} )
+	{
+		process_existing_records( $session, $handler, \%run_stats, \@plugins, \@filters, $params->{from_date} );
+	}
+
+	unless ( $params->{'from_date'} )
+	{
+		process_new_records( $session, $handler, \%run_stats, \@plugins, \@filters );
+	}
 
 	# Because $record_list->is_last() is not reliable on the last run (see below: is_last()), we need to call commit_data again.
 	foreach my $plugin ( @plugins, @filters )

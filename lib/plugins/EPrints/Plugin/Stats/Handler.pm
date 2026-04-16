@@ -753,6 +753,23 @@ sub save_data_values
 	return $rc;
 }
 
+sub delete_data_values_from_date
+{
+	my( $self, $datatype, $from_date ) = @_;
+
+	my $rc = 1;
+	my $Q_table = $self->{dbh}->quote_identifier( "irstats2_$datatype" );
+	my $Q_datestamp_name = $self->{dbh}->quote_identifier( 'datestamp' );
+	my $Q_datestamp_from_value = $self->{dbh}->quote_value( $from_date );
+
+	my $sql = "DELETE FROM $Q_table WHERE $Q_datestamp_name >= $Q_datestamp_from_value";
+	my $sth = $self->{dbh}->prepare( $sql );
+	$self->log( "SQL IS '$sql'" ) if( $DEBUG_SQL );
+	$rc &&= $self->{dbh}->execute( $sth, $sql );
+
+	return $rc;
+}
+
 
 #
 # Sets tables/values
