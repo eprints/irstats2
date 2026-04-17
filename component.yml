@@ -1,0 +1,16 @@
+---
+id: "ingredient:irstats"
+name: "IRStats2 Ingredient"
+type: "ingredient"
+version: 2.0
+maintainers:
+  - name: "David R Newman"
+    email: "drn@ecs.soton.ac.uk"
+description: >
+  This is an ingredient that allows charts and tables for usage and other statistics to be generated and displayed.
+requires:
+  - component: "core"
+    version: ">= 3.4.2"
+notes: >
+  This can be installed by dropping into the ingredients sub-directory and
+  adding to your archive's package.yml (EPrints 3.5) or flavour's inc file (EPrints 3.4)
