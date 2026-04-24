@@ -82,7 +82,7 @@ if ( $from_date )
 	$from_date =~ s/-//g;
 	$datasets = "access";
 }
-else
+elsif ( $processors )
 {
 	$handler->log( "WARNING: --processors has no effect when used without --from-date.", 1 );
 	$processors = '';
