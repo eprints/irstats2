@@ -212,6 +212,9 @@ $c->{irstats2}->{sets} = [
 ## the dataset to use when making individual eprint queries, i.e. do we show stats for any valid eprint id regardless of sub dataset, or do we revert to showing all repository stats for items not in the live archive. As these stats can be cached before an item is moved to the live archive and there is no generic use case of showing all repository stats if a chosen eprint is not yet in the archive, the default is 'eprint' rather than 'archive'.
 $c->{irstats2}->{eprint_dataset} = "eprint";
 
+## Filter search results by only items that are currently in the live archive not those that may have been in the live archive in the past.  Be aware that as the size of your archive grows and the number of days of usage data accrues, having the option enabled may make IRStats2 reports quite slow to load.
+$c->{irstats2}->{show_archive_only} = 0;
+
 # by default, anyone can view the stats. Comment out to enable only users with the special '+irstats2/view' role to view stats.
 push @{$c->{public_roles}}, "+irstats2/view";
 push @{$c->{public_roles}}, "+irstats2/export";
