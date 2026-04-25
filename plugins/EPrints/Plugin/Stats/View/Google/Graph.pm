@@ -48,7 +48,10 @@ sub get_data
 	# the FROM/TO dates might need to be normalised if the date resolution is "month" or "year" (cos it's better to start at the beginning of the month/year for those)
 	my $from = $self->context->dates->{from};
 
-	if( $self->options->{date_resolution} eq 'month' )
+	# If range is set and is a number of years, months or days you should get whole months or years not to the specific date.
+	my $range = $self->context->dates->{range};
+
+	if( $self->options->{date_resolution} eq 'month' && $range && $range =~ /^(\d+)([dmy])$/ )
 	{
 		if( defined $from && $from =~ /^(\d{4})(\d{2})(\d{2})$/ )
 		{
@@ -56,7 +59,7 @@ sub get_data
 			$self->context->dates( { from => $from, range => undef } );
 		}
 	}
-	elsif( $self->options->{date_resolution} eq 'year' )
+	elsif( $self->options->{date_resolution} eq 'year' && $range && $range =~ /^(\d+)([dmy])$/ ) 
 	{
 		if( $from =~ /^(\d{4})(\d{2})(\d{2})$/ )
 		{
