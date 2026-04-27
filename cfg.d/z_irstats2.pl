@@ -263,6 +263,35 @@ $c->{irstats2}->{allow} = sub {
 #UAs additional to http://www.eprints.org/resource/bad_robots/robots_ua.txt to not include in stats
 #$c->{irstats2}->{robots_ua} = [ ];
 
+# Browser signatures for use in classification by Stats::Processor::Access::Browsers
+#$c->{irstats2}->{browsers_signatures} = {
+#        '; AOL' => 'AOL',
+#        'Chrome\/' => 'Google Chrome',
+#        'Elinks\/' => 'Elinks',
+#        'Firefox\/' => 'Firefox',
+#        '; MSIE ' => 'Microsoft Internet Explorer',
+#        'Netscape\/' => 'Netscape',
+#        'Navigator\/' => 'Netscape',
+#        'Safari\/' => 'Apple Safari',
+#        '; Android ' => 'Android',
+#        '\(BlackBerry;' => 'BlackBerry',
+#        'Opera\/' => 'Opera',
+#        '; Opera Mobi\/' => 'Opera Mobile',
+#};
+#$c->{irstats2}->{browsers_signatures_order} = [
+#        '; AOL',
+#        'Chrome\/',
+#        'Elinks\/',
+#        'Firefox\/',
+#        '; MSIE ',
+#        'Netscape\/',
+#        'Navigator\/',
+#        'Safari\/',
+#        '; Android ',
+#        '\(BlackBerry;',
+#        'Opera\/',
+#        '; Opera Mobi\/',
+#];
 
 # time-out for the so-called "double-click" filtering - default to 3600 secs = 1 hour
 # Default setting - 3600 secs = 1 hour
