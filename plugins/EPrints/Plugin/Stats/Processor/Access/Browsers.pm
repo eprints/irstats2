@@ -24,6 +24,21 @@ our $BROWSERS_SIGNATURES = {
 	'; Opera Mobi\/' => 'Opera Mobile',
 };
 
+our $BROWSERS_SIGNATURES_ORDER = [
+	'; AOL',
+	'Chrome\/',
+	'Elinks\/',
+	'Firefox\/',
+	'; MSIE ',
+	'Netscape\/',
+	'Navigator\/',
+        'Safari\/',
+        '; Android ',
+        '\(BlackBerry;',
+        'Opera\/',
+        '; Opera Mobi\/',
+];
+
 sub new
 {
         my( $class, %params ) = @_;
@@ -37,7 +52,23 @@ sub new
                 fields => [ 'value' ],
                 render => 'string',
         };
-	
+
+	if ( EPrints::Utils::require_if_exists( 'HTTP::BrowserDetect' ) )
+	{
+		$self->{conf}->{browser_cache} = {};
+	}
+	else
+	{
+		if ( $self->{session}->config( 'irstats2', 'browsers_signatures' ) )
+		{
+			$BROWSERS_SIGNATURES = $self->{session}->config( 'irstats2', 'browsers_signatures' );
+		}
+		if ( $self->{session}->config( 'irstats2', 'browsers_signatures_order' ) )
+		{
+			$BROWSERS_SIGNATURES_ORDER = $self->{session}->config( 'irstats2', 'browsers_signatures_order' );
+		}
+	}
+
 	return $self;
 }
 
@@ -51,24 +82,42 @@ sub process_record
 	my $ua = $record->{requester_user_agent};
 	return unless( EPrints::Utils::is_set( $ua ) );
 
-	my $found = 0;
 	my $date = $record->{datestamp}->{cache};
-	foreach( sort keys %$BROWSERS_SIGNATURES )
+
+
+	if ( defined $self->{conf}->{browser_cache} )
 	{
-		if( $ua =~ $_ )
+		my $browser;
+		if ( $self->{conf}->{browser_cache}->{$ua} )
 		{
-			$self->{cache}->{"$date"}->{$epid}->{$BROWSERS_SIGNATURES->{$_}}++;
-			$found = 1;
-			last;
+			$browser = $self->{conf}->{browser_cache}->{$ua};
+		}
+		else
+		{
+			my $browser_detect = HTTP::BrowserDetect->new( $ua );
+			$browser = $browser_detect->browser_string || 'Other';
+			$self->{conf}->{browser_cache}->{$ua} = $browser;
+		}
+		$self->{cache}->{"$date"}->{$epid}->{$browser}++;
+	}
+	else
+	{
+		my $found = 0;
+		foreach( @$BROWSERS_SIGNATURES_ORDER )
+		{
+			if( $ua =~ $_ )
+			{
+				$self->{cache}->{"$date"}->{$epid}->{$BROWSERS_SIGNATURES->{$_}}++;
+				$found = 1;
+				last;
+			}
+		}
+
+		if (not $found)
+		{
+			$self->{cache}->{"$date"}->{$epid}->{Other}++;
 		}
 	}
-
-	if (not $found)
-	{
-		$self->{cache}->{"$date"}->{$epid}->{Other}++;
-	}
-
-
 }
 
 1;
