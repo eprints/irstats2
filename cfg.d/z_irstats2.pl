@@ -264,6 +264,7 @@ $c->{irstats2}->{allow} = sub {
 #$c->{irstats2}->{robots_ua} = [ ];
 
 # Browser signatures for use in classification by Stats::Processor::Access::Browsers
+# Will only be used if uncommented and HTTP::BrowserDetect module is not installed.
 #$c->{irstats2}->{browsers_signatures} = {
 #        '; AOL' => 'AOL',
 #        'Chrome\/' => 'Google Chrome',
