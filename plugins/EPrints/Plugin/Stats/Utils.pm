@@ -60,6 +60,7 @@ sub validate_non_context_param
 	}
 	if ( $k eq 'limits' )
 	{
+		# comma-separated list of numbers or "all"
 		return $v =~ /^((\d+|all),?)+$/;
 	}
 	elsif( $k eq 'date_resolution' )
