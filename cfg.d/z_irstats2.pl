@@ -376,7 +376,7 @@ $c->{irstats2}->{report} = {
 								#limits => '10,25,50,all',
 								title_phrase => 'top_downloads',
 								#citestyle => 'default', # defaults to brief
-								#limits => '10,25,50,all', # defaults to these limits, uncomment to change
+								#limits => '10,25,50,100', # defaults to these limits, uncomment to change. 'all' could be added but this may be slow to load.
 							},
 						},
 						{

@@ -54,7 +54,7 @@ sub get_data
 	$options->{limit} ||= 10;
 	delete $options->{limit} if( $options->{limit} eq 'all' );
 
-	my $limits = '10,25,50,all';
+	my $limits = '10,25,50,100';
 	if ( defined $self->options->{limits} )
 	{
 		$limits = $self->options->{limits};
