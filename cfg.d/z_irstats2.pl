@@ -373,8 +373,10 @@ $c->{irstats2}->{report} = {
 							options => {
 								limit => 5,
 								top => 'eprint',
+								#limits => '10,25,50,all',
 								title_phrase => 'top_downloads',
 								#citestyle => 'default', # defaults to brief
+								#limits => '10,25,50,all', # defaults to these limits, uncomment to change
 							},
 						},
 						{

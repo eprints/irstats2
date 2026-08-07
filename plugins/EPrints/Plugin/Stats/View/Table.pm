@@ -54,6 +54,14 @@ sub get_data
 	$options->{limit} ||= 10;
 	delete $options->{limit} if( $options->{limit} eq 'all' );
 
+	my $limits = '10,25,50,all';
+	if ( defined $self->options->{limits} )
+	{
+		$limits = $self->options->{limits};
+	}
+	my @limits_arr = split( ',',  $limits );
+	$options->{limits} = \@limits_arr;
+
 	my $top = $self->options->{top};
 
 	# Perhaps the user wants to see the top:
@@ -172,7 +180,7 @@ sub render_content_ajax
 	{
 		my $table_options = $frag->appendChild( $session->make_element( 'div', class => 'irstats2_table_options ep_noprint' ) );
 
-		foreach my $limit ( '10', '25', '50', 'all' )
+		foreach my $limit ( @{$options->{limits}} )
 		{
 			$options->{limit} = $limit;
 			$self->{options} = $options;
