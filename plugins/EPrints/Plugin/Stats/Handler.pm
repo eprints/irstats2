@@ -652,11 +652,26 @@ sub extract_set_data
 # using one INSERT statement for performance. In practice, this needs to be
 # batched so that a single INSERT statement does not exceed database limits.
 
+# Using INSERT IGNORE rather than just INSERT ensures that in one record has
+# an issue (e.g. the value is longer than 255 characters somehow), the other
+# rows will still get inserted and possibly the row at issue will get
+# inserted if there is a default remedial action (e.g. truncating).
+
 sub save_data_values_aux
 {
 	my( $self, $tablename, $columns, $rows ) = @_;
 
-	my $sql = "INSERT INTO ".$self->{dbh}->quote_identifier( $tablename );
+	# INSERT IGNORE is only applied for MySQL. PostgreSQL uses a more complex
+	# ON CONFLICT.  Therefore, as the main issue is truncation, which should be
+	# dealt with before the INSERT is executed, it has been decided no fix will
+	# be applied for the lesser used PostgreSQL.
+	my $ignore = "";
+	if ( ref( $self->{dbh} ) eq "EPrints::Database::mysql" )
+	{
+		$ignore = " IGNORE";
+	}
+
+	my $sql = "INSERT$ignore INTO ".$self->{dbh}->quote_identifier( $tablename );
 	$sql .= " (".join(",", map { $self->{dbh}->quote_identifier($_) } @$columns).")";
 	$sql .= " VALUES ";
 
@@ -679,6 +694,14 @@ sub save_data_values_aux
 	{
 		my( $counter, $epid, $date, $value, $count ) = @$row;
 
+		# Make sure $value is no more than 255 characters.
+		# Sometimes even after parsing referrer (stored as longtext in the access
+		# table and unlimited in the access file), the hostname extracted will
+		# be too long.
+		if ( length( $value ) > 255 )
+		{
+			 $value = substr( $value, 0, 255 );
+		}
 		{
 			# Make sure value is not too long (even if utf8-mb4)
 			use bytes;
